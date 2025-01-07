@@ -1,0 +1,32 @@
+const Profesor = require('../models/profesor');
+
+const getProfesores = async (req, res) => {
+  try {
+    const profesores = await Profesor.findAll(); // No SQL aquí
+    res.status(200).json(profesores);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener profesores', error });
+  }
+};
+
+const getProfesorById = async (req, res) => {
+  try {
+    const profesor = await Profesor.findByPk(req.params.id); // No SQL aquí
+    if (!profesor) return res.status(404).json({ message: 'Profesor no encontrado' });
+    res.status(200).json(profesor);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener profesor', error });
+  }
+};
+
+const createProfesor = async (req, res) => {
+  try {
+    const { nombre, apellido, email } = req.body;
+    const profesor = await Profesor.create({ nombre, apellido, email }); // No SQL aquí
+    res.status(201).json(profesor);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear profesor', error });
+  }
+};
+
+module.exports = { getProfesores, getProfesorById, createProfesor };
