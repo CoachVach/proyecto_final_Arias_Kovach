@@ -1,6 +1,6 @@
+// models/MesaExamen.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const Profesor = require('./profesor'); // Asumimos que ya tienes el modelo de Profesor
 
 const MesaExamen = sequelize.define('MesaExamen', {
   id_mesa: {
@@ -8,37 +8,32 @@ const MesaExamen = sequelize.define('MesaExamen', {
     autoIncrement: true,
     primaryKey: true,
   },
-  nombre_mesa: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   fecha: {
     type: DataTypes.DATE,
-    allowNull: false,
-  },
-  id_profesor: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Profesor, // Relación con el modelo Profesor
-      key: 'id_profesor',
-    },
     allowNull: false,
   },
   materia: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  aula: {
-    type: DataTypes.STRING,
+  id_profesor: {
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: 'Profesor',
+      key: 'id_profesor',
+    },
   },
 }, {
   tableName: 'MesaExamen',
   timestamps: false,
 });
 
-// Relación con Profesor (un profesor puede tener muchas mesas de examen)
-MesaExamen.belongsTo(Profesor, { foreignKey: 'id_profesor' });
-Profesor.hasMany(MesaExamen, { foreignKey: 'id_profesor' });
+// Relación muchos a muchos con Estudiante a través de MesaEstudiante
+MesaExamen.belongsToMany(require('./Estudiante'), {
+  through: require('./MesaEstudiante'),
+  foreignKey: 'id_mesa',
+  otherKey: 'id_estudiante',
+});
 
 module.exports = MesaExamen;
