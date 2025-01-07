@@ -1,8 +1,7 @@
-// models/Estudiante.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Estudiante = sequelize.define('Estudiante', {
+const alumno = sequelize.define('alumno', {
   id_estudiante: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -11,7 +10,7 @@ const Estudiante = sequelize.define('Estudiante', {
   lu: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true, // LU único para cada estudiante
+    unique: true,
   },
   nombre: {
     type: DataTypes.STRING,
@@ -26,15 +25,8 @@ const Estudiante = sequelize.define('Estudiante', {
     allowNull: false,
   },
 }, {
-  tableName: 'Estudiante',
+  tableName: 'alumno',
   timestamps: false,
 });
 
-// Relación muchos a muchos con MesaExamen a través de MesaEstudiante
-Estudiante.belongsToMany(require('./MesaExamen'), {
-  through: require('./MesaEstudiante'),
-  foreignKey: 'id_estudiante',
-  otherKey: 'id_mesa',
-});
-
-module.exports = Estudiante;
+module.exports = alumno;

@@ -1,8 +1,7 @@
-// models/MesaExamen.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const MesaExamen = sequelize.define('MesaExamen', {
+const mesa_examen = sequelize.define('mesa_examen', {
   id_mesa: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -19,21 +18,10 @@ const MesaExamen = sequelize.define('MesaExamen', {
   id_profesor: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'Profesor',
-      key: 'id_profesor',
-    },
   },
 }, {
-  tableName: 'MesaExamen',
+  tableName: 'mesa_examen',
   timestamps: false,
 });
 
-// Relación muchos a muchos con Estudiante a través de MesaEstudiante
-MesaExamen.belongsToMany(require('./Estudiante'), {
-  through: require('./MesaEstudiante'),
-  foreignKey: 'id_mesa',
-  otherKey: 'id_estudiante',
-});
-
-module.exports = MesaExamen;
+module.exports = mesa_examen;
