@@ -28,7 +28,7 @@ const getMesaById = async (req, res) => {
 // Obtener una mesa de examen por ID_PROFESOR
 const getMesaByIdProfesor = async (req, res) => {
     try {
-        const mesas = await MesaExamen.findAll({ where: { id_profesor: req.params.id_profesor } });
+        const mesas = await MesaExamen.findAll({ where: { id_profesor: req.params.id } });
         if (!mesas.length) {
             return res.status(404).json({ error: 'No se encontraron mesas de examen para este profesor' });
         }
