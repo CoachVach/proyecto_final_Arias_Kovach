@@ -53,4 +53,9 @@ const deleteProfesor = async (req, res) => {
   }
 };
 
-module.exports = { getProfesorById, createProfesor, deleteProfesor };
+module.exports = { 
+  getProfesorById, 
+  createProfesor, 
+  deleteProfesor,
+  updateProfesor 
+};

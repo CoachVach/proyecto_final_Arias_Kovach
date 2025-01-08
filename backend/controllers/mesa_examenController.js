@@ -86,6 +86,5 @@ module.exports = {
     getMesaByIdProfesor,
     createMesa,
     updateMesa,
-    deleteMesa,
-    asignarAlumnoAMesa,
+    deleteMesa
 };

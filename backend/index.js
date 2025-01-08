@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-
 // Importa Sequelize y modelos desde el archivo central
 const { sequelize } = require('./models');
+//Importamos las rutas de la api
+const alumnoRoutes =require('./routes/alumnoRoutes');
+const mesa_examenRoutes =require('./routes/mesa_examenRoutes');
+const profesorRoutes =require('./routes/profesorRoutes');
+
 
 // Middleware de express
 app.use(express.json());
@@ -26,6 +30,12 @@ sequelize
 app.get('/', (req, res) => {
   res.send('¡Hola, mundo desde Express!');
 });
+
+//Rutas 
+app.use('/api/alumnos', alumnoRoutes);
+app.use('/api/profesores', profesorRoutes);
+app.use('/api/mesas',mesa_examenRoutes);
+
 
 // Iniciar servidor
 app.listen(port, () => {
