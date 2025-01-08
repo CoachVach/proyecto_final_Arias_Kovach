@@ -24,6 +24,10 @@ const alumno = sequelize.define('alumno', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  id_mesa: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 }, {
   tableName: 'alumno',
   timestamps: false,
