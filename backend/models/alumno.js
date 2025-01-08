@@ -7,6 +7,11 @@ const alumno = sequelize.define('alumno', {
     autoIncrement: true,
     primaryKey: true,
   },
+  dni: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    unique: true,
+  },
   lu: {
     type: DataTypes.STRING,
     allowNull: false,

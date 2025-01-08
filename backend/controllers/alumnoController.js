@@ -39,8 +39,8 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
 // Crear un nuevo alumno
 const createAlumno = async (req, res) => {
     try {
-        const { lu, nombre, apellido, carrera, id_mesa } = req.body;
-        const newAlumno = await Alumno.create({ lu, nombre, apellido, carrera, id_mesa });
+        const { dni, lu, nombre, apellido, carrera, id_mesa } = req.body;
+        const newAlumno = await Alumno.create({ dni, lu, nombre, apellido, carrera, id_mesa });
         res.status(201).json(newAlumno);
     } catch (error) {
         res.status(400).json({ error: 'Error al crear el alumno', details: error });
@@ -54,8 +54,8 @@ const updateAlumno = async (req, res) => {
         if (!alumno) {
             return res.status(404).json({ error: 'Alumno no encontrado' });
         }
-        const { lu, nombre, apellido, carrera, id_mesa } = req.body;
-        await alumno.update({ lu, nombre, apellido, carrera, id_mesa });
+        const { dni, lu, nombre, apellido, carrera, id_mesa } = req.body;
+        await alumno.update({ dni, lu, nombre, apellido, carrera, id_mesa });
         res.status(200).json(alumno);
     } catch (error) {
         res.status(400).json({ error: 'Error al actualizar el alumno', details: error });

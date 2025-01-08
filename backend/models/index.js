@@ -11,7 +11,7 @@ mesa_examen.belongsTo(profesor, {
   foreignKey: 'id_profesor',
 });
 mesa_examen.hasMany(alumno, {
-  foreignKey: 'id_alumno',
+  foreignKey: 'id_mesa',
 });
 alumno.belongsTo(mesa_examen, {
   foreignKey: 'id_mesa',
