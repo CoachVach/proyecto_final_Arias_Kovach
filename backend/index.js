@@ -7,7 +7,9 @@ const { sequelize } = require('./models');
 const alumnoRoutes =require('./routes/alumnoRoutes');
 const mesa_examenRoutes =require('./routes/mesa_examenRoutes');
 const profesorRoutes =require('./routes/profesorRoutes');
-
+const authRoutes = require('./routes/authRoutes');
+//Importamos los middlewares
+const {verifyToken} = require('./middlewares/authMiddleware');
 
 // Middleware de express
 app.use(express.json());
@@ -32,10 +34,10 @@ app.get('/', (req, res) => {
 });
 
 //Rutas 
-app.use('/api/alumnos', alumnoRoutes);
-app.use('/api/profesores', profesorRoutes);
-app.use('/api/mesas',mesa_examenRoutes);
-
+app.use('/api/alumnos',verifyToken, alumnoRoutes);
+app.use('/api/profesores', verifyToken, profesorRoutes);
+app.use('/api/mesas',verifyToken, mesa_examenRoutes);
+app.use('/api/login/', authRoutes);
 
 // Iniciar servidor
 app.listen(port, () => {
