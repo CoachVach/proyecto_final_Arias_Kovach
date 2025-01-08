@@ -26,7 +26,7 @@ const getAlumnoById = async (req, res) => {
 // Obtener un alumno por IDMesaExamen
 const getAlumnosByIdMesaExamen = async (req, res) => {
     try {
-        const alumnos = await Alumno.findByPk(req.params.id_mesa);
+        const alumnos = await Alumno.findAll({ where: { id_mesa: req.params.id } });
         if (!alumnos) {
             return res.status(404).json({ error: 'Alumnos no encontrados' });
         }
