@@ -78,34 +78,6 @@ const deleteMesa = async (req, res) => {
     }
 };
 
-// Asignar un alumno a una mesa de examen
-const asignarAlumnoAMesa = async (req, res) => {
-    try {
-        const { id_mesa, id_alumno } = req.body;
-
-        // Verificar que la mesa de examen exista
-        const mesa = await MesaExamen.findByPk(id_mesa);
-        if (!mesa) {
-            return res.status(404).json({ error: 'Mesa de examen no encontrada' });
-        }
-
-        // Verificar que el alumno exista
-        const estudiante = await Alumno.findByPk(id_alumno);
-        if (!estudiante) {
-            return res.status(404).json({ error: 'Alumno no encontrado' });
-        }
-
-        // Crear la relación en la tabla intermedia
-        await MesaAlumno.create({
-            id_mesa,
-            id_estudiante: id_alumno,
-        });
-
-        res.json({ message: 'Alumno asignado a la mesa de examen con éxito' });
-    } catch (error) {
-        res.status(500).json({ error: 'Error al asignar alumno a la mesa de examen', details: error.message });
-    }
-};
 
 // Exportar las funciones del controlador
 module.exports = {
