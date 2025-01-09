@@ -33,6 +33,16 @@ const alumno = sequelize.define('alumno', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  presente: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  insripto: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  },
 }, {
   tableName: 'alumno',
   timestamps: false,
