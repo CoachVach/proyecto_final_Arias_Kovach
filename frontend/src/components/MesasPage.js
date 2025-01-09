@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/MesasPage.css';
+import Logout from './Logout';
 
 const MesasPage = () => {
   const [mesas, setMesas] = useState([]);
@@ -68,6 +69,7 @@ const MesasPage = () => {
       <button onClick={() => navigate('/crear-mesa')} className="create-button">
         Crear Nueva Mesa
       </button>
+      <Logout />
     </div>
   );
 };

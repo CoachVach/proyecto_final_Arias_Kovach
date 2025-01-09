@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/UserPage.css';
+import Logout from './Logout';
 
 const UserPage = () => {
   const [user, setUser] = useState({});
@@ -124,6 +125,7 @@ const UserPage = () => {
           </button>
         </form>
       )}
+    <Logout/>
     </div>
   );
 };
