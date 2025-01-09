@@ -1,4 +1,5 @@
 const Profesor = require('../models/profesor');
+const bcrypt = require('bcrypt');
 
 // Obtener un profesor por ID
 const getProfesorById = async (req, res) => {
@@ -13,16 +14,24 @@ const getProfesorById = async (req, res) => {
   }
 };
 
-// Crear un nuevo profesor
+
 const createProfesor = async (req, res) => {
   try {
-    const { nombre, apellido, email } = req.body;
-    const profesor = await Profesor.create({ nombre, apellido, email }); // No SQL aquí
+    const { nombre, apellido, email, password } = req.body;
+
+    // Encriptar la contraseña
+    const salt = await bcrypt.genSalt(10); // Se crea un "salt" de 10 rondas
+    const hashedPassword = await bcrypt.hash(password, salt); // Se encripta la contraseña con el salt
+
+    // Crear el profesor con la contraseña encriptada
+    const profesor = await Profesor.create({ nombre, apellido, email, password: hashedPassword });
+
     res.status(201).json(profesor);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear profesor', error });
   }
 };
+
 
 // Actualizar un profesor
 const updateProfesor = async (req, res) => {
