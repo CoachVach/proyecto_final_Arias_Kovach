@@ -1,5 +1,5 @@
 const MesaExamen = require('../models/mesa_examen');
-
+const Profesor = require('../models/profesor');
 
 const getAllMesas = async (req, res) => {
     try {
@@ -18,7 +18,7 @@ const getMesaById = async (req, res) => {
         }
         res.status(200).json(mesa);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener la mesa de examen' });
+        res.status(500).json({ error: 'Error al obtener la mesa de examenes' });
     }
 };
 
@@ -31,18 +31,16 @@ const getMesaByProfesor = async (req, res) => {
 
         const decodedToken = JSON.parse(atob(token.split('.')[1])); 
         const email = decodedToken.email;
-
         const profesor = await Profesor.findOne({ where: { email } });
         if (!profesor) {
             return res.status(404).json({ error: 'Profesor no encontrado' });
         }
 
-        const mesas = await MesaExamen.findAll({ where: { id_profesor: profesor.id } });
+        const mesas = await MesaExamen.findAll({ where: { id_profesor: profesor.id_profesor } });
         if (!mesas.length) {
             return res.status(404).json({ error: 'No se encontraron mesas de examen para este profesor' });
         }
-
-        res.status(200).json(mesas);
+        return res.status(200).json(mesas);
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener las mesas de examen' });
     }
@@ -50,13 +48,36 @@ const getMesaByProfesor = async (req, res) => {
 
 const createMesa = async (req, res) => {
     try {
-        const { fecha, materia, id_profesor } = req.body;
-        const newMesa = await MesaExamen.create({ fecha, materia, id_profesor });
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
+        }
+
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); 
+        const email = decodedToken.email;
+
+        const profesor = await Profesor.findOne({ where: { email } });
+        if (!profesor) {
+            return res.status(404).json({ error: 'Profesor no encontrado' });
+        }
+
+        const { fecha, materia } = req.body;
+        if (!fecha || !materia) {
+            return res.status(400).json({ error: 'Fecha y materia son requeridos' });
+        }
+
+        const newMesa = await MesaExamen.create({ 
+            fecha, 
+            materia, 
+            id_profesor: profesor.id_profesor 
+        });
+
         res.status(201).json(newMesa);
     } catch (error) {
-        res.status(400).json({ error: 'Error al crear la mesa de examen', details: error });
+        res.status(500).json({ error: 'Error al crear la mesa de examen', details: error.message });
     }
 };
+
 
 const updateMesa = async (req, res) => {
     try {
