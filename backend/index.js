@@ -35,9 +35,9 @@ app.get('/', (req, res) => {
 });
 
 //Rutas 
-app.use('/api/alumnos',verifyToken, alumnoRoutes);
-app.use('/api/profesores', profesorRoutes);
-app.use('/api/mesas',verifyToken, mesa_examenRoutes);
+app.use('/api/alumnos', verifyToken, alumnoRoutes);
+app.use('/api/profesores', verifyToken, profesorRoutes);
+app.use('/api/mesas', verifyToken, mesa_examenRoutes);
 app.use('/api/login/', authRoutes);
 
 // Iniciar servidor
