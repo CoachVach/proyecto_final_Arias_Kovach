@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 3000;
 // Importa Sequelize y modelos desde el archivo central
@@ -13,7 +14,7 @@ const {verifyToken} = require('./middlewares/authMiddleware');
 
 // Middleware de express
 app.use(express.json());
-
+app.use(cors()); //CAMBIAR
 // Probar conexión y sincronizar tablas
 sequelize
   .authenticate()
@@ -35,7 +36,7 @@ app.get('/', (req, res) => {
 
 //Rutas 
 app.use('/api/alumnos',verifyToken, alumnoRoutes);
-app.use('/api/profesores', verifyToken, profesorRoutes);
+app.use('/api/profesores', profesorRoutes);
 app.use('/api/mesas',verifyToken, mesa_examenRoutes);
 app.use('/api/login/', authRoutes);
 

@@ -1,13 +1,14 @@
 const express = require('express');
-const { getProfesorById, createProfesor, deleteProfesor, updateProfesor } = require('../controllers/profesorController.js');
-
 const router = express.Router();
+const { 
+  getProfesorByToken, 
+  updateProfesor, 
+  deleteProfesor 
+} = require('../controllers/profesorController');
 
-// Route definitions
-
-router.get('/:id', getProfesorById);
-router.post('/', createProfesor);
-router.post('/:id', updateProfesor);
-router.delete('/:id', deleteProfesor);
+// Rutas para gestión de profesores usando el token JWT para obtener el ID
+router.get('/', getProfesorByToken); // Obtener el profesor usando el token
+router.put('/', updateProfesor); // Actualizar el profesor usando el token
+router.delete('/', deleteProfesor); // Eliminar el profesor usando el token
 
 module.exports = router;

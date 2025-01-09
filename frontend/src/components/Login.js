@@ -15,7 +15,6 @@ const Login = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      console.log(email, password)
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.token);

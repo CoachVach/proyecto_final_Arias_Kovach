@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const Profesor = require('../models/profesor');
 const validator = require('validator'); // Agregar esta línea
 const { createProfesor} = require('../controllers/profesorController.js');
 const SECRET_KEY = process.env.SECRET_KEY || 'tu_clave_secreta';
@@ -14,6 +15,7 @@ const login = async (req, res) => {
     if (!profesor) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
+    console.log(profesor); // Verifica si devuelve el usuario
 
     // Validar la contraseña
     const isPasswordValid = await bcrypt.compare(password, profesor.password);
