@@ -25,7 +25,7 @@ const getProfesorByToken = async (req, res) => {
 const createProfesor = async ({ nombre, apellido, email, password }) => {
   try {
     // Encriptar la contraseña
-    const salt = await bcrypt.genSalt(10); // Se crea un "salt" de 10 rondas
+    const salt = await bcrypt.genSalt(10); 
     const hashedPassword = await bcrypt.hash(password, salt); // Se encripta la contraseña con el salt
 
     // Crear el profesor con la contraseña encriptada
