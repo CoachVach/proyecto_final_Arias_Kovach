@@ -10,7 +10,6 @@ const getAllMesas = async (req, res) => {
     }
 };
 
-// Obtener una mesa de examen por ID
 const getMesaById = async (req, res) => {
     try {
         const mesa = await MesaExamen.findByPk(req.params.id);
@@ -23,7 +22,6 @@ const getMesaById = async (req, res) => {
     }
 };
 
-// Obtener una mesa de examen por ID_PROFESOR
 const getMesaByProfesor = async (req, res) => {
     try {
         const token = req.headers.authorization?.split(' ')[1]; 
