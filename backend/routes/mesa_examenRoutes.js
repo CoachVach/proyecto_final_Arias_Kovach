@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Route definitions
 router.get('/:id', getMesaById);
-router.get('/profesor/:id', getMesaByProfesor);
+router.get('/profesor/', getMesaByProfesor);
 router.post('/', createMesa);
 router.post('/:id', updateMesa);
 router.delete('/:id', deleteMesa);
