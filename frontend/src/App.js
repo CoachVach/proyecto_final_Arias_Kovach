@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import UserPage from './components/UserPage';
 import MesasPage from './components/MesasPage';
 import CrearMesaPage from './components/CrearMesaPage';
+import MesaDetailPage from './components/MesaDetailPage';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/user" element={<UserPage />} />
         <Route path="/mesas" element={<MesasPage />} />
         <Route path="/crear-mesa" element={<CrearMesaPage />} />
+        <Route path="/mesa/:id" element={<MesaDetailPage />} />
         <Route
           path="/dashboard"
           element={

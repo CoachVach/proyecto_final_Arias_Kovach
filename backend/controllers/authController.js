@@ -32,23 +32,33 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  const {email, password, confirmPassword } = req.body;
+  const { nombre, apellido, email, password, confirmPassword } = req.body;
 
   try {
     if (password !== confirmPassword) {
       return res.status(401).json({ message: 'Las contraseñas ingresadas no son idénticas' });
     }
+
     if (!validator.isEmail(email)) {
       return res.status(401).json({ message: 'El formato del correo electrónico no es válido' });
     }
 
-    await createProfesor(req, res);
-    
-    return res.status(200).json({ message: 'Registro exitoso'});
+    // Verificar si el correo ya está registrado
+    const existingProfesor = await Profesor.findOne({ where: { email } });
+    if (existingProfesor) {
+      return res.status(409).json({ message: 'El correo electrónico ya está registrado' }); // Código 409: Conflicto
+    }
+
+    // Crear el profesor
+    const profesor = await createProfesor({ nombre, apellido, email, password });
+
+    return res.status(200).json({ message: 'Registro exitoso', profesor });
   } catch (error) {
-    return res.status(500).json({ message: 'Error en el servidor', error });
+    return res.status(500).json({ message: 'Error en el servidor', error: error.message });
   }
 };
+
+
 
 
 // Exportar las funciones del controlador

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/Register.css';
 
 const Register = () => {
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,7 +20,7 @@ const Register = () => {
       const response = await fetch('http://localhost:3000/api/login/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, confirmPassword }),
+        body: JSON.stringify({ nombre, apellido, email, password, confirmPassword }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -36,6 +38,24 @@ const Register = () => {
     <div className="register-container">
       <h1>Crear Cuenta</h1>
       <form onSubmit={handleRegister}>
+        <label htmlFor="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          placeholder="Ingresa tu nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+        <label htmlFor="apellido">Apellido</label>
+        <input
+          type="text"
+          id="apellido"
+          placeholder="Ingresa tu apellido"
+          value={apellido}
+          onChange={(e) => setApellido(e.target.value)}
+          required
+        />
         <label htmlFor="email">Correo electrónico</label>
         <input
           type="email"

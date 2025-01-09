@@ -1,4 +1,5 @@
 const Profesor = require('../models/profesor');
+const bcrypt = require('bcrypt');
 
 const getProfesorByToken = async (req, res) => {
   try {
@@ -20,6 +21,22 @@ const getProfesorByToken = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener profesor', error });
   }
 };
+
+const createProfesor = async ({ nombre, apellido, email, password }) => {
+  try {
+    // Encriptar la contraseña
+    const salt = await bcrypt.genSalt(10); // Se crea un "salt" de 10 rondas
+    const hashedPassword = await bcrypt.hash(password, salt); // Se encripta la contraseña con el salt
+
+    // Crear el profesor con la contraseña encriptada
+    const profesor = await Profesor.create({ nombre, apellido, email, password: hashedPassword });
+
+    return profesor;
+  } catch (error) {
+    throw new Error('Error al crear profesor: ' + error.message);
+  }
+};
+
 
 const updateProfesor = async (req, res) => {
   try {
@@ -69,5 +86,6 @@ const deleteProfesor = async (req, res) => {
 module.exports = { 
   getProfesorByToken, 
   updateProfesor, 
-  deleteProfesor 
+  deleteProfesor,
+  createProfesor 
 };
