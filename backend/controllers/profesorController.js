@@ -1,5 +1,4 @@
 const Profesor = require('../models/profesor');
-const bcrypt = require('bcrypt');
 
 const getProfesorByToken = async (req, res) => {
   try {
