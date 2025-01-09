@@ -51,7 +51,13 @@ const MesasPage = () => {
 
   return (
     <div className="mesas-page">
+      {        <Logout />}
+      <div className="logout-container">
+
+      </div>
+  
       <h1>Mesas de Examen</h1>
+  
       {mesas.length === 0 ? (
         <div className="no-mesas">
           <p>No hay mesas de examen asociadas a este profesor.</p>
@@ -66,12 +72,13 @@ const MesasPage = () => {
           ))}
         </div>
       )}
+  
       <button onClick={() => navigate('/crear-mesa')} className="create-button">
         Crear Nueva Mesa
       </button>
-      <Logout />
     </div>
   );
+  
 };
 
 export default MesasPage;
