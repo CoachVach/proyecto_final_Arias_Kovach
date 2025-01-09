@@ -1,25 +1,22 @@
 const Profesor = require('../models/profesor');
 const bcrypt = require('bcrypt');
 
-// Obtener un profesor usando el email del token
 const getProfesorByToken = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]; // Obtener el token de los headers
+    const token = req.headers.authorization?.split(' ')[1]; 
     if (!token) {
       return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
     }
 
-    // Decodificar el token para obtener el email
-    const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodifica el token JWT
-    const email = decodedToken.email; // Usamos el email del token
+    const decodedToken = JSON.parse(atob(token.split('.')[1])); 
+    const email = decodedToken.email; 
 
-    // Buscar al profesor por email
     const profesor = await Profesor.findOne({ where: { email } });
     if (!profesor) {
       return res.status(404).json({ message: 'Profesor no encontrado' });
     }
 
-    res.status(200).json(profesor); // Enviar la información del profesor
+    res.status(200).json(profesor); 
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener profesor', error });
   }

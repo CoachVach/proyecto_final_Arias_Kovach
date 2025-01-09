@@ -1,6 +1,6 @@
 const MesaExamen = require('../models/mesa_examen');
 
-// Obtener todas las mesas de examen
+
 const getAllMesas = async (req, res) => {
     try {
         const mesas = await MesaExamen.findAll();
@@ -24,19 +24,32 @@ const getMesaById = async (req, res) => {
 };
 
 // Obtener una mesa de examen por ID_PROFESOR
-const getMesaByIdProfesor = async (req, res) => {
+const getMesaByProfesor = async (req, res) => {
     try {
-        const mesas = await MesaExamen.findAll({ where: { id_profesor: req.params.id } });
+        const token = req.headers.authorization?.split(' ')[1]; 
+        if (!token) {
+            return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
+        }
+
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); 
+        const email = decodedToken.email;
+
+        const profesor = await Profesor.findOne({ where: { email } });
+        if (!profesor) {
+            return res.status(404).json({ error: 'Profesor no encontrado' });
+        }
+
+        const mesas = await MesaExamen.findAll({ where: { id_profesor: profesor.id } });
         if (!mesas.length) {
             return res.status(404).json({ error: 'No se encontraron mesas de examen para este profesor' });
         }
+
         res.status(200).json(mesas);
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener las mesas de examen' });
     }
 };
 
-// Crear una nueva mesa de examen
 const createMesa = async (req, res) => {
     try {
         const { fecha, materia, id_profesor } = req.body;
@@ -47,7 +60,6 @@ const createMesa = async (req, res) => {
     }
 };
 
-// Actualizar una mesa de examen
 const updateMesa = async (req, res) => {
     try {
         const mesa = await MesaExamen.findByPk(req.params.id);
@@ -62,7 +74,6 @@ const updateMesa = async (req, res) => {
     }
 };
 
-// Eliminar una mesa de examen
 const deleteMesa = async (req, res) => {
     try {
         const mesa = await MesaExamen.findByPk(req.params.id);
@@ -76,12 +87,10 @@ const deleteMesa = async (req, res) => {
     }
 };
 
-
-// Exportar las funciones del controlador
 module.exports = {
     getAllMesas,
     getMesaById,
-    getMesaByIdProfesor,
+    getMesaByProfesor,
     createMesa,
     updateMesa,
     deleteMesa

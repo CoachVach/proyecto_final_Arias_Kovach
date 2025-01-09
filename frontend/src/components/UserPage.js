@@ -9,13 +9,13 @@ const UserPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token'); // Obtener el token del almacenamiento local
+        const token = localStorage.getItem('token');
         if (!token) {
           console.error('No se encontró el token');
           return;
         }
 
-        const response = await fetch('http://localhost:3000/api/profesores', { // API que solo usa el token
+        const response = await fetch('http://localhost:3000/api/profesores', { 
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,7 +47,7 @@ const UserPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3000/api/profesores`, { // API que solo usa el token
+      const response = await fetch(`http://localhost:3000/api/profesores`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
