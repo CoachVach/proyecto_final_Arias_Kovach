@@ -38,7 +38,7 @@ const alumno = sequelize.define('alumno', {
     allowNull: false,
     defaultValue: false,
   },
-  insripto: {
+  inscripto: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,

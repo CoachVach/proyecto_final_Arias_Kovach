@@ -19,7 +19,7 @@ const App = () => {
           <Route path="/user" element={<UserPage />} />
           <Route path="/mesas" element={<MesasPage />} />
           <Route path="/crear-mesa" element={<CrearMesaPage />} />
-          <Route path="/mesa/:id" element={<MesaDetailPage />} />
+          <Route path="/mesadp" element={<MesaDetailPage />} />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
