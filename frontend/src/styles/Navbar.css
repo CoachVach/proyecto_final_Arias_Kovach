@@ -1,0 +1,132 @@
+.navbar {
+    background: linear-gradient(90deg, #2a9d8f, #e76f51);
+    color: white;
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Diseño del logo para desktop */
+  .navbar-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .navbar-logo-container img {
+    width: 40px;
+    height: auto;
+  }
+  
+  .navbar-logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .navbar-logo span {
+    color: #f4a261;
+  }
+  
+  .navbar-toggle {
+    display: none;
+    font-size: 1.8rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .navbar-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+  
+  .navbar-links li a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar-links li a:hover {
+    color: #f4a261;
+  }
+  
+  .navbar-links.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    padding-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Estilo para mobile */
+  @media (max-width: 768px) {
+    .navbar-container {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%; /* Contenedor completo */
+      padding: 0;
+    }
+  
+    .navbar-logo-container {
+      width: 100%;
+      justify-content: space-between;
+      padding: 0 15px; /* Padding para evitar que toque los bordes */
+    }
+  
+    .navbar-logo {
+      font-size: 1.5rem;
+    }
+  
+    .navbar-logo-container img {
+      width: 30px; /* Logo más pequeño en móvil */
+    }
+  
+    .navbar-toggle {
+      display: block;
+      margin-right: 15px; /* Espacio entre el toggle y el borde */
+    }
+  
+    .navbar-links {
+      display: none; /* Ocultar los links por defecto */
+      flex-direction: column;
+      width: 100%; /* Alinear con el ancho completo */
+      padding: 10px 0;
+    }
+  
+    .navbar-links.active {
+      display: flex; /* Mostrar el menú al activarlo */
+    }
+  
+    .navbar-links li a {
+      padding: 10px 20px; /* Espaciado interno para mejor legibilidad */
+      width: 100%;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  
+    /* Asegurar que los enlaces no se corten */
+    .navbar-links li {
+      width: 100%;
+    }
+  }
+  

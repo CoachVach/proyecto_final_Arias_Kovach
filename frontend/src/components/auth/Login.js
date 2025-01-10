@@ -18,7 +18,8 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        navigate('/dashboard');
+        navigate('/'); 
+        window.location.reload()
       } else {
         alert(data.message);
       }

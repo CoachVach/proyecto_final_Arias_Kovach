@@ -42,7 +42,7 @@ const CrearMesaPage = () => {
       <h1>Crear Mesa de Examen</h1>
       <form onSubmit={handleSubmit} className="crear-mesa-form">
         <div className="form-group">
-          <label htmlFor="fecha">Fecha</label>
+          <label htmlFor="fecha">Fecha: </label>
           <input
             type="date"
             id="fecha"
@@ -52,7 +52,7 @@ const CrearMesaPage = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="materia">Materia</label>
+          <label htmlFor="materia">Materia: </label>
           <input
             type="text"
             id="materia"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 
@@ -7,8 +7,6 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      <img src="/logo-dcic.png" alt="Logo DCIC" className="logo-left" />
-      <img src="/logo-uns.png" alt="Logo UNS" className="logo-right" />
       <header className="home-header">
         <h1>Bienvenidos a la Plataforma de Gestión de Mesas de Exámenes</h1>
       </header>

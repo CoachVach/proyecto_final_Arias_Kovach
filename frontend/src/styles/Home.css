@@ -1,29 +1,31 @@
-/* Estilos para Home.js */
-
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f4f4f9, #f7ede2);
   color: #333;
 }
 
+/* Contenedor Principal */
 .home-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: calc(100vh - 60px); /* Ajusta al navbar */
   text-align: center;
   padding: 20px;
 }
 
+/* Encabezado Principal */
 .home-header {
   font-size: 3rem;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 1rem;
-  color: #2a9d8f;
+  color: #264653;
+  line-height: 1.2;
 }
 
+/* Descripción */
 .home-description {
   font-size: 1.5rem;
   margin-bottom: 2rem;
@@ -32,6 +34,7 @@ body {
   max-width: 700px;
 }
 
+/* Botones */
 .home-buttons {
   display: flex;
   gap: 1rem;
@@ -44,78 +47,69 @@ body {
   font-size: 1.2rem;
   font-weight: bold;
   border: none;
-  border-radius: 12px;
+  border-radius: 25px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   text-transform: uppercase;
-  letter-spacing: 1px;
   text-decoration: none;
   display: inline-block;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilo Botón Primario */
 .home-button-primary {
   background-color: #2a9d8f;
   color: white;
 }
 
 .home-button-primary:hover {
-  background-color: #21867a;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(33, 134, 122, 0.4);
+  background: linear-gradient(45deg, #2a9d8f, #264653);
+  transform: translateY(-4px);
 }
 
+/* Estilo Botón Secundario */
 .home-button-secondary {
   background-color: #e76f51;
   color: white;
 }
 
 .home-button-secondary:hover {
-  background-color: #c4583c;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(196, 88, 60, 0.4);
+  background: linear-gradient(45deg, #e76f51, #c4583c);
+  transform: translateY(-4px);
 }
 
-.home-button:active {
-  transform: scale(0.95);
-}
-
-.footer {
-  position: absolute;
-  bottom: 10px;
-  width: 100%;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #aaa;
-}
-
-.logo-left,
-.logo-right {
-  width: 100px; /* Ajusta el tamaño según sea necesario */
-  height: auto; /* Mantiene la proporción del logo */
-  position: absolute;
-  top: 10px;
-}
-
-.logo-left {
-  left: 10px;
-}
-
-.logo-right {
-  right: 10px;
-}
-
-/* Estilos responsivos */
-@media (max-width: 600px) {
-  .logo-left,
-  .logo-right {
-    width: 80px; /* Ajusta el tamaño para pantallas pequeñas */
+/* MEDIA QUERIES PARA MOBILE */
+@media (max-width: 768px) {
+  /* Ajustar el contenedor */
+  .home-container {
+    padding: 10px;
+    height: auto; /* Permite scroll si es necesario */
   }
-  
-  .home-header,
-  .home-description,
+
+  /* Encabezado más pequeño y legible */
+  .home-header {
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+  }
+
+  /* Descripción más compacta */
+  .home-description {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    max-width: 90%; /* Adaptar al ancho de pantalla */
+  }
+
+  /* Botones más accesibles */
   .home-buttons {
-    margin-top: 120px; /* Asegura que el contenido no se superponga */
+    flex-direction: column; /* Cambiar disposición a vertical */
+    gap: 0.8rem; /* Reducir espacio entre botones */
+  }
+
+  .home-button {
+    width: 100%; /* Botones a lo ancho de la pantalla */
+    font-size: 1rem; /* Tamaño reducido */
+    padding: 0.8rem 1.5rem; /* Más compacto */
   }
 }
-

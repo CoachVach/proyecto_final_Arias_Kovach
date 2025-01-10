@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/MesasPage.css';
-import Logout from '../components/auth/Logout';
 
 const MesasPage = () => {
   const [mesas, setMesas] = useState([]);
@@ -51,10 +50,6 @@ const MesasPage = () => {
 
   return (
     <div className="mesas-page">
-      {        <Logout />}
-      <div className="logout-container">
-
-      </div>
   
       <h1>Mesas de Examen</h1>
   

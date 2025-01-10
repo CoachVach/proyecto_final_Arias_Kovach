@@ -1,114 +1,133 @@
-/* Mobile-first styles */
+/* Login.css */
+
+/* Estilos Globales */
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-  }
-  
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f4f4f9, #f7ede2);
+  color: #333;
+}
+
+/* Contenedor Principal */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 60px); /* Ajusta al navbar */
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #264653;
+}
+
+label {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Estilo de los botones */
+button {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.btn-login {
+  background-color: #2a9d8f;
+  color: white;
+}
+
+.btn-login:hover {
+  background: linear-gradient(45deg, #2a9d8f, #264653);
+  transform: translateY(-4px);
+}
+
+.btn-register {
+  background-color: #e76f51;
+  color: white;
+}
+
+.btn-register:hover {
+  background: linear-gradient(45deg, #e76f51, #c4583c);
+  transform: translateY(-4px);
+}
+
+/* Mensajes adicionales */
+p {
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+/* MOBILE FIRST - Media Queries */
+@media (max-width: 768px) {
+  /* Contenedor más compacto */
   .login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  h1 {
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  label {
-    text-align: left;
-    color: #666;
-    font-weight: bold;
-    font-size: 14px;
-  }
-  
-  input {
     padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    height: auto;
   }
-  
-  input:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
   }
-  
-  .btn-login {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+
+  /* Formulario más compacto */
+  input {
+    padding: 0.8rem;
+    font-size: 1rem;
   }
-  
-  .btn-login:hover {
-    background-color: #0056b3;
+
+  button {
+    width: 100%;
+    padding: 1rem 0;
+    font-size: 1rem;
   }
-  
-  .register-prompt {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #666;
+
+  .btn-login, .btn-register {
+    width: 100%;
   }
-  
-  .btn-register {
-    background: none;
-    border: none;
-    color: #007bff;
-    font-size: 14px;
-    cursor: pointer;
-    text-decoration: underline;
-    padding: 0;
+
+  p {
+    font-size: 0.9rem;
   }
-  
-  .btn-register:hover {
-    color: #0056b3;
+}
+
+/* Estilos adicionales para asegurar que todo se vea bien en pantallas pequeñas */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem;
   }
-  
-  @media (min-width: 768px) {
-    .login-container {
-      padding: 30px;
-    }
-  
-    h1 {
-      font-size: 24px;
-    }
-  
-    form {
-      gap: 20px;
-    }
-  
-    input {
-      font-size: 18px;
-    }
-  
-    .btn-login {
-      font-size: 18px;
-      padding: 12px 18px;
-    }
-  
-    .register-prompt {
-      font-size: 16px;
-    }
-  
-    .btn-register {
-      font-size: 16px;
-    }
+
+  input {
+    font-size: 0.9rem;
   }
-  
+
+  button {
+    font-size: 1rem;
+  }
+}

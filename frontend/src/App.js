@@ -8,12 +8,14 @@ import UserPage from './pages/UserPage';
 import MesasPage from './pages/MesasPage';
 import CrearMesaPage from './pages/CrearMesaPage';
 import MesaDetailPage from './pages/MesaDetailPage';
+import Navbar from './components/Navbar';
 
 const App = () => {
   return (
     <Router>
+      <Navbar />
       <Routes>
-        <Route element={ <ProtectedRoute/>}>
+        <Route element={<ProtectedRoute />}>
           <Route path="/user" element={<UserPage />} />
           <Route path="/mesas" element={<MesasPage />} />
           <Route path="/crear-mesa" element={<CrearMesaPage />} />
