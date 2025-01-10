@@ -1,32 +1,27 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './components/Home';
-import Register from './components/Register';
-import Login from './components/Login';
-import ProtectedRoute from './components/ProtectedRoute';
-import UserPage from './components/UserPage';
-import MesasPage from './components/MesasPage';
-import CrearMesaPage from './components/CrearMesaPage';
-import MesaDetailPage from './components/MesaDetailPage';
+import Home from './pages/Home';
+import Register from './components/auth/Register';
+import Login from './components/auth/Login';
+import ProtectedRoute from './routes/ProtectedRoute';
+import UserPage from './pages/UserPage';
+import MesasPage from './pages/MesasPage';
+import CrearMesaPage from './pages/CrearMesaPage';
+import MesaDetailPage from './pages/MesaDetailPage';
 
 const App = () => {
   return (
     <Router>
       <Routes>
+        <Route element={ <ProtectedRoute/>}>
+          <Route path="/user" element={<UserPage />} />
+          <Route path="/mesas" element={<MesasPage />} />
+          <Route path="/crear-mesa" element={<CrearMesaPage />} />
+          <Route path="/mesa/:id" element={<MesaDetailPage />} />
+        </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/user" element={<UserPage />} />
-        <Route path="/mesas" element={<MesasPage />} />
-        <Route path="/crear-mesa" element={<CrearMesaPage />} />
-        <Route path="/mesa/:id" element={<MesaDetailPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/" element={<Home />} />
       </Routes>
     </Router>
   );

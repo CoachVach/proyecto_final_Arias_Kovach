@@ -1,0 +1,121 @@
+/* Estilos para Home.js */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+}
+
+.home-header {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #2a9d8f;
+}
+
+.home-description {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  color: #555;
+  max-width: 700px;
+}
+
+.home-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.home-button {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.home-button-primary {
+  background-color: #2a9d8f;
+  color: white;
+}
+
+.home-button-primary:hover {
+  background-color: #21867a;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(33, 134, 122, 0.4);
+}
+
+.home-button-secondary {
+  background-color: #e76f51;
+  color: white;
+}
+
+.home-button-secondary:hover {
+  background-color: #c4583c;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(196, 88, 60, 0.4);
+}
+
+.home-button:active {
+  transform: scale(0.95);
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.logo-left,
+.logo-right {
+  width: 100px; /* Ajusta el tamaño según sea necesario */
+  height: auto; /* Mantiene la proporción del logo */
+  position: absolute;
+  top: 10px;
+}
+
+.logo-left {
+  left: 10px;
+}
+
+.logo-right {
+  right: 10px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 600px) {
+  .logo-left,
+  .logo-right {
+    width: 80px; /* Ajusta el tamaño para pantallas pequeñas */
+  }
+  
+  .home-header,
+  .home-description,
+  .home-buttons {
+    margin-top: 120px; /* Asegura que el contenido no se superponga */
+  }
+}
+
