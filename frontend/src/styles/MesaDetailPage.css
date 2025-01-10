@@ -1,0 +1,34 @@
+
+.table-container {
+    margin: 20px auto; /* Margen alrededor de la tabla y centrado */
+    max-width: 1300px; /* Ancho máximo para la tabla y el título */
+
+}
+
+.table {
+    width: 100%; /* Cambia a 100% para que ocupe el ancho del contenedor */
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #dee2e6;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tr:hover {
+    background-color: #e9ecef;
+}
+
+.table .text-center {
+    text-align: center;
+}

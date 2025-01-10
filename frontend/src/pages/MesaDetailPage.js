@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import '../styles/MesaDetailPage.css';
 
 const MesasDetailPage = () =>{
     const [alumnos, setAlumnos] = useState([]);
@@ -58,18 +59,37 @@ const MesasDetailPage = () =>{
     if (error) return <p>Error: {error}</p>;
   
       return (
-        <div>
-        <h1>Alumnos de la Mesa</h1>
-        {alumnos.length > 0 ? (
-          <ul>
-            {alumnos.map((alumno) => (
-              <li key={alumno.id}>{alumno.inscripto ? 'true' : 'false'}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No hay alumnos registrados en esta mesa.</p>
-        )}
-      </div>
+        <div className="table-container">
+          <h1>Alumnos de la Mesa</h1>
+          {alumnos.length > 0 ? (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Inscripto</th>
+                  <th>Presente</th>
+                  <th>Nombre</th>
+                  <th>Apellido</th>
+                  <th>LU</th>
+                  <th>DNI</th>
+                </tr>
+              </thead>
+              <tbody>
+                {alumnos.map((alumno) => (
+                  <tr key={alumno.id}>
+                    <td>{alumno.inscripto ? 'Sí' : 'No'}</td>
+                    <td>{alumno.presente ? 'Sí' : 'No'}</td>
+                    <td>{alumno.nombre}</td>
+                    <td>{alumno.apellido}</td>
+                    <td>{alumno.lu}</td>
+                    <td>{alumno.dni}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No hay alumnos registrados en esta mesa.</p>
+          )}
+        </div>
       );
 };
 
