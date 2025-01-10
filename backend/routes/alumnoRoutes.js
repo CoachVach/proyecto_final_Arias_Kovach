@@ -11,5 +11,4 @@ router.post('/', createAlumno);
 router.post('/:id', updateAlumno);
 router.delete('/:id', deleteAlumno);
 
-
 module.exports = router;

@@ -15,7 +15,6 @@ const {verifyToken} = require('./middlewares/authMiddleware');
 // Middleware de express
 app.use(express.json());
 app.use(cors()); //CAMBIAR
-// Probar conexión y sincronizar tablas
 sequelize
   .authenticate()
   .then(() => {
