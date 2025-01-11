@@ -9,6 +9,7 @@ import MesasPage from './pages/MesasPage';
 import CrearMesaPage from './pages/CrearMesaPage';
 import MesaDetailPage from './pages/MesaDetailPage';
 import Navbar from './components/Navbar';
+import QRScanner from './components/QRScanner';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/crear-mesa" element={<CrearMesaPage />} />
           <Route path="/mesadp" element={<MesaDetailPage />} />
         </Route>
+        <Route path="/qr" element={<QRScanner />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
