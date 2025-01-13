@@ -10,12 +10,10 @@ const alumno = sequelize.define('alumno', {
   dni: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true,
   },
   lu: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
+    allowNull: true,
   },
   nombre: {
     type: DataTypes.STRING,
@@ -27,7 +25,7 @@ const alumno = sequelize.define('alumno', {
   },
   carrera: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   id_mesa: {
     type: DataTypes.INTEGER,

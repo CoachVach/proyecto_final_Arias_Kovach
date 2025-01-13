@@ -2,18 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from '@zxing/library';
 import '../styles/QRScanner.css';
 
-const QRScanner = () => {
-  const [scanResult, setScanResult] = useState('');
+const QRScanner = ({onQRCodeScanned}) => {
+  const [decodedScanResult, setDecodedScanResult] = useState('');
   const [error, setError] = useState('');
   const [isFront, setIsFront] = useState(false); // Estado para controlar la cámara
   const videoRef = useRef(null);
   const codeReader = useRef(null);
   const streamRef = useRef(null);
+  const handleScan = (data) => {
+    if (data) {
+        onQRCodeScanned(data); // Notificar a MesasDetailPage con el código escaneado
+    }
+  };
 
   useEffect(() => {
     const startScanner = async () => {
       const hints = new Map();
-      hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE]);
+      hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.PDF_417]);
 
       codeReader.current = new BrowserMultiFormatReader(hints);
 
@@ -52,7 +57,11 @@ const QRScanner = () => {
           videoRef.current,
           (result, err) => {
             if (result) {
-              setScanResult(result.getText());
+              const decodedText = result.getText();
+              const dataParts = decodedText.split('@'); 
+              const dniScaneo = dataParts[4] || '';
+              setDecodedScanResult(dniScaneo);
+              handleScan(dniScaneo);
               setError('');
             } else if (err && err.name !== 'NotFoundException') {
               console.error('Decoding error:', err);
@@ -94,10 +103,10 @@ const QRScanner = () => {
         Cambiar a {isFront ? 'Cámara Trasera' : 'Cámara Frontal'}
       </button>
 
-      {scanResult && (
+      {decodedScanResult && (
         <div className="result-container">
           <h2>Resultado Escaneado:</h2>
-          <p>{scanResult}</p>
+          <p>{decodedScanResult}</p>
         </div>
       )}
 

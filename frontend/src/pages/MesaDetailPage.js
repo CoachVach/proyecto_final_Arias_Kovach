@@ -13,50 +13,77 @@ const MesasDetailPage = () =>{
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+
+    
+    const fetchAlumnos = async (token,mesaID) =>{
+        try {
+            const response = await fetch(`http://localhost:3000/api/alumnos/mesa/${mesaID}`, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            });
+    
+            if (response.status === 404) {
+              setAlumnos([]);
+              return;
+            }
+            
+            if (!response.ok) {
+              console.error('Error al obtener los alumnos de la mesa');
+              throw new Error('Error');
+            }
+    
+            const data = await response.json();
+            setAlumnos(data);
+          } catch (error) {
+            setError(error.message);
+          } finally {
+            setLoading(false);
+          }
+    };
+    const handleQRCodeScanned = async (data) => {
+      console.log('Código QR escaneado anashe:', data);
+      
+      const token = localStorage.getItem('token');
+      const alumnoEncontrado = alumnos.find(alumno => alumno.dni === parseInt(data, 10));
+      
+      console.log('Alumno encontrado', alumnoEncontrado.nombre);
+      if (alumnoEncontrado) {
+        const response = await fetch(`http://localhost:3000/api/alumnos/${alumnoEncontrado.id_estudiante}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({dni:alumnoEncontrado.dni, lu: alumnoEncontrado.lu, nombre : alumnoEncontrado.nombre, apellido: alumnoEncontrado.apellido, carrera: alumnoEncontrado.carrera, id_mesa: alumnoEncontrado.id_mesa,  presente: true, inscripto: alumnoEncontrado.inscripto}),
+        });
+
+        if (!response.ok) {
+          console.error('Error al realizar el update del alumno');
+          throw new Error('Error');
+        }
+        fetchAlumnos(token, mesa.id_mesa); 
+      } else {
+        
+      }
+    };
    
     useEffect(() => {
-        const fetchAlumnos = async () =>{
-            try {
-                const token = localStorage.getItem('token');
-                const mesaID = mesa.id_mesa
+      const token = localStorage.getItem('token');
+      const mesaID = mesa.id_mesa
 
-                if (!token) {
-                  throw new Error('No se encontró el token de autenticación');
-                }
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
 
-                if (!mesaID) {
-                  throw new Error('No se encontró el identificador de la mesa');
-                }
+      if (!mesaID) {
+        throw new Error('No se encontró el identificador de la mesa');
+      }
 
-                const response = await fetch(`http://localhost:3000/api/alumnos/mesa/${mesaID}`, {
-                  method: 'GET',
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                  },
-                });
-        
-                if (response.status === 404) {
-                  setAlumnos([]);
-                  return;
-                }
-                
-                if (!response.ok) {
-                  console.error('Error al obtener los alumnos de la mesa anashe');
-                  throw new Error('Error');
-                }
-        
-                const data = await response.json();
-                setAlumnos(data);
-              } catch (error) {
-                setError(error.message);
-              } finally {
-                setLoading(false);
-              }
-        };
-        if (mesa.id_mesa) { // Solo ejecuta la consulta si el ID está definido
-          fetchAlumnos();
-        }    
+      fetchAlumnos(token, mesaID);
+ 
     },[mesa.id_mesa]); // Agrega idMesa como dependencia para reejecutar el efecto si cambia
 
     if (!mesa) { return <p>No se encontró información de la mesa.</p>;}
@@ -100,7 +127,7 @@ const MesasDetailPage = () =>{
             Abrir Escáner
           </button>
           <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <QRScanner/>
+            <QRScanner onQRCodeScanned={handleQRCodeScanned}/>
             <button onClick={closeModal}>Cerrar</button>
           </Modal>
         </div>

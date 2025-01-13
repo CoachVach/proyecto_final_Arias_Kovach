@@ -8,7 +8,7 @@ router.get('/', getAllAlumnos);
 router.get('/:id', getAlumnoById);
 router.get('/mesa/:id', getAlumnosByIdMesaExamen);
 router.post('/', createAlumno);
-router.post('/:id', updateAlumno);
+router.post('/:id_estudiante', updateAlumno);
 router.delete('/:id', deleteAlumno);
 
 module.exports = router;
