@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const Profesor = require('../models/profesor');
 const validator = require('validator'); 
 const { createProfesor} = require('../controllers/profesorController.js');
+
 const SECRET_KEY = process.env.SECRET_KEY || 'tu_clave_secreta';
 
 const login = async (req, res) => {
@@ -43,13 +44,11 @@ const register = async (req, res) => {
       return res.status(401).json({ message: 'El formato del correo electrónico no es válido' });
     }
 
-    // Verificar si el correo ya está registrado
     const existingProfesor = await Profesor.findOne({ where: { email } });
     if (existingProfesor) {
       return res.status(409).json({ message: 'El correo electrónico ya está registrado' }); // Código 409: Conflicto
     }
 
-    // Crear el profesor
     const profesor = await createProfesor({ nombre, apellido, email, password });
 
     return res.status(200).json({ message: 'Registro exitoso', profesor });
@@ -58,11 +57,24 @@ const register = async (req, res) => {
   }
 };
 
+const validateToken = (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
 
+  if (!token) {
+    return res.status(401).json({ message: 'Token no proporcionado' });
+  }
 
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Token inválido o expirado' });
+    }
 
-// Exportar las funciones del controlador
+    res.status(200).json({ message: 'Token válido', user: decoded });
+  });
+};
+
 module.exports = {
   login,
   register,
+  validateToken,
 };

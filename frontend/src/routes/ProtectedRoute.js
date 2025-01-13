@@ -1,11 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute = () => {
-  const token = localStorage.getItem('token');
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Verificar el token con el backend
+      fetch('http://localhost:3000/api/login/validate-token', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            setIsAuthenticated(true);
+          } else {
+            localStorage.removeItem('token');
+            setIsAuthenticated(false);
+          }
+        })
+        .catch(() => {
+          localStorage.removeItem('token');
+          setIsAuthenticated(false);
+        });
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
 
- return token? <Outlet/> : <Navigate to="/login"/>;
- 
+  if (isAuthenticated === null) {
+    return <h1>Cargando...</h1>; // Puedes mostrar una pantalla de carga mientras verificas
+  }
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;
