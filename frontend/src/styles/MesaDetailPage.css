@@ -32,3 +32,17 @@
 .table .text-center {
     text-align: center;
 }
+
+.open-modal-button {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .open-modal-button:hover {
+    background: #0056b3;
+  }

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../styles/MesaDetailPage.css';
+import Modal from "../components/common/Modal";
+import QRScanner from "../components/QRScanner";
 
 const MesasDetailPage = () =>{
     const [alumnos, setAlumnos] = useState([]);
@@ -8,6 +10,9 @@ const MesasDetailPage = () =>{
     const {mesa} = location.state || {};
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
    
     useEffect(() => {
         const fetchAlumnos = async () =>{
@@ -89,6 +94,13 @@ const MesasDetailPage = () =>{
           ) : (
             <p>No hay alumnos registrados en esta mesa.</p>
           )}
+          <button onClick={openModal} className="open-modal-button">
+            Abrir Escáner
+          </button>
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <QRScanner/>
+            <button onClick={closeModal}>Cerrar</button>
+          </Modal>
         </div>
       );
 };
