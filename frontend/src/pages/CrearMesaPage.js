@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CrearMesaPage.css';
-import * as XLSX from 'xlsx'; // Biblioteca para leer Excel
+import * as XLSX from 'xlsx';
 
 const CrearMesaPage = () => {
   const [fecha, setFecha] = useState('');
   const [materia, setMateria] = useState('');
   const [error, setError] = useState(null);
-  const [alumnos, setAlumnos] = useState([]); // Estado para almacenar los datos del Excel
+  const [alumnos, setAlumnos] = useState([]);
   const navigate = useNavigate();
 
-  // Manejo del archivo Excel
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -22,7 +21,6 @@ const CrearMesaPage = () => {
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        // Convertir a un formato estructurado
         const formattedData = jsonData.slice(1).map((row) => ({
           nombre: row[0],
           apellido: row[1],
@@ -31,7 +29,7 @@ const CrearMesaPage = () => {
           carrera: row[4],
         }));
 
-        setAlumnos(formattedData); // Guardar los datos del archivo
+        setAlumnos(formattedData);
       };
       reader.readAsArrayBuffer(file);
     }
@@ -44,6 +42,8 @@ const CrearMesaPage = () => {
       alert('No se encontró el token de autenticación');
       return;
     }
+
+    let mesaId = null; // Guardar el ID de la mesa creada
 
     try {
       // Crear la mesa
@@ -61,16 +61,16 @@ const CrearMesaPage = () => {
       }
 
       const mesa = await mesaResponse.json();
+      mesaId = mesa.id_mesa;
 
       // Agregar el ID de la mesa a cada alumno
       const alumnosConMesa = alumnos.map((alumno) => ({
         ...alumno,
-        id_mesa: mesa.id_mesa,
+        id_mesa: mesaId,
       }));
 
       // Enviar los alumnos al backend
       for (const alumno of alumnosConMesa) {
-        console.log(alumno);
         const alumnoResponse = await fetch('http://localhost:3000/api/alumnos', {
           method: 'POST',
           headers: {
@@ -89,6 +89,22 @@ const CrearMesaPage = () => {
       navigate('/mesas');
     } catch (error) {
       setError(error.message);
+
+      // Eliminar la mesa si fue creada
+      if (mesaId) {
+        try {
+          await fetch(`http://localhost:3000/api/mesas/${mesaId}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          console.log('Mesa eliminada debido a un error al crear alumnos.');
+        } catch (deleteError) {
+          console.error('Error al intentar eliminar la mesa:', deleteError.message);
+        }
+      }
     }
   };
 

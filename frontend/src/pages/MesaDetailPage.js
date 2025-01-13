@@ -67,30 +67,32 @@ const MesasDetailPage = () =>{
         <div className="table-container">
           <h1>Alumnos de la Mesa</h1>
           {alumnos.length > 0 ? (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Inscripto</th>
-                  <th>Presente</th>
-                  <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>LU</th>
-                  <th>DNI</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alumnos.map((alumno) => (
-                  <tr key={alumno.id}>
-                    <td>{alumno.inscripto ? 'Sí' : 'No'}</td>
-                    <td>{alumno.presente ? 'Sí' : 'No'}</td>
-                    <td>{alumno.nombre}</td>
-                    <td>{alumno.apellido}</td>
-                    <td>{alumno.lu}</td>
-                    <td>{alumno.dni}</td>
+            <div className="table-wrapper">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Inscripto</th>
+                    <th>Presente</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>LU</th>
+                    <th>DNI</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {alumnos.map((alumno) => (
+                    <tr key={alumno.id}>
+                      <td>{alumno.inscripto ? 'Sí' : 'No'}</td>
+                      <td>{alumno.presente ? 'Sí' : 'No'}</td>
+                      <td>{alumno.nombre}</td>
+                      <td>{alumno.apellido}</td>
+                      <td>{alumno.lu}</td>
+                      <td>{alumno.dni}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <p>No hay alumnos registrados en esta mesa.</p>
           )}
