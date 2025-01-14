@@ -1,0 +1,158 @@
+/* FileModal.css */
+
+/* Estilos generales para el modal */
+.modal-content {
+    width: 500px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  h3 {
+    font-size: 20px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  h4 {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+ /* Estilo para el select múltiple */
+.column-select {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+    font-size: 14px;
+    outline: none;
+    overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+  }
+  
+  .column-select:focus {
+    border-color: #4CAF50;
+  }
+  
+  /* Estilo de cada opción dentro del select */
+  .column-select option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .column-select option:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .column-select input[type="checkbox"] {
+    margin-right: 10px;
+    accent-color: #4CAF50; /* Verde para los checkboxes */
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
+  }
+  
+  .column-select input[type="checkbox"]:hover {
+    transform: scale(1.3);
+  }
+  
+  /* Estilo para opciones seleccionadas */
+  .column-select input[type="checkbox"]:checked + label {
+    background-color: #abdaaf;
+    color: #388e3c;
+  }
+  
+  .column-select input[type="checkbox"]:checked {
+    accent-color: #388e3c; /* Cambiar color cuando está seleccionado */
+  }
+  
+  .column-select input[type="checkbox"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px 2px #4CAF50;
+  }
+  
+  
+  /* Estilos para los filtros */
+  .filter-group {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-group input {
+    margin: 5px 0;
+  }
+  
+  .filter-group label {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Estilo para los botones */
+  button {
+    width: 100%;
+    padding: 12px 0;
+    margin-top: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
+  /* Estilos para el botón de cerrar */
+  button:last-child {
+    background-color: #f44336;
+  }
+  
+  button:last-child:hover {
+    background-color: #e53935;
+  }
+  
+  /* Responsividad */
+  @media (max-width: 600px) {
+    .modal-content {
+      width: 90%;
+    }
+  
+    h2 {
+      font-size: 20px;
+    }
+  
+    h3, h4 {
+      font-size: 18px;
+    }
+  
+    button {
+      font-size: 14px;
+      padding: 10px 0;
+    }
+  }
+  

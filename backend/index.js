@@ -19,7 +19,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log('Conexión exitosa con la base de datos.');
-    return sequelize.sync({ force: true }); // Cambia a `true` para reiniciar las tablas
+    return sequelize.sync({ force: false }); // Cambia a `true` para reiniciar las tablas
   })
   .then(() => {
     console.log('Tablas sincronizadas correctamente.');

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import '../styles/MesaDetailPage.css';
 import Modal from "../components/common/Modal";
 import QRScanner from "../components/QRScanner";
+import FileModal from "../components/FileModal";
 
 const MesasDetailPage = () => {
   const [alumnos, setAlumnos] = useState([]);
@@ -10,10 +11,14 @@ const MesasDetailPage = () => {
   const { mesa } = location.state || {};
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQRScannerModalOpen, setIsQRScannerModalOpen] = useState(false);
+  const [isFileModalOpen, setIsFileModalOpen] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openQRScannerModal = () => setIsQRScannerModalOpen(true);
+  const closeQRScannerModal = () => setIsQRScannerModalOpen(false);
+
+  const openFileModal = () => setIsFileModalOpen(true);
+  const closeFileModal = () => setIsFileModalOpen(false);
 
   // Function to fetch alumnos by mesaID
   const fetchAlumnos = async (token, mesaID) => {
@@ -50,7 +55,7 @@ const MesasDetailPage = () => {
     console.log('Código QR escaneado:', data);
 
     const token = localStorage.getItem('token');
-    const alumnoEncontrado = alumnos.find((alumno) => alumno.dni === parseInt(data.dni, 10));
+    const alumnoEncontrado = alumnos.find((alumno) => alumno.nro_identidad === data.nro_identidad);
 
     if (alumnoEncontrado) {
       const response = await fetch(`http://localhost:3000/api/mesas/${mesa.id_mesa}/${alumnoEncontrado.id_estudiante}`, {
@@ -179,13 +184,21 @@ const MesasDetailPage = () => {
       ) : (
         <p>No hay alumnos registrados en esta mesa.</p>
       )}
-      <button onClick={openModal} className="open-modal-button">
+      <button onClick={openQRScannerModal} className="open-modal-button">
         Abrir Escáner
       </button>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal isOpen={isQRScannerModalOpen} onClose={closeQRScannerModal}>
         <QRScanner onQRCodeScanned={handleQRCodeScanned} />
-        <button onClick={closeModal}>Cerrar</button>
+        <button onClick={closeQRScannerModal}>Cerrar</button>
       </Modal>
+
+      <button onClick={openFileModal} className="open-modal-button">
+        Generar Excel
+      </button>
+      <Modal isOpen={isFileModalOpen} onClose={closeFileModal}>
+        <FileModal alumnos={alumnos} onClose={closeFileModal} materia={mesa.materia} fecha={mesa.fecha}/>
+      </Modal>
+
     </div>
   );
 };

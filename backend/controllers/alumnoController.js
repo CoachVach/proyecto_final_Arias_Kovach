@@ -107,7 +107,6 @@ const assignAlumnoToMesa = async (req, res) => {
 
     try {
         const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa} = req.body;
-        console.log(nro_identidad + '  ' + id_mesa);
         if (!nro_identidad || !id_mesa) {
             return res.status(400).json({ error: 'El DNI y el ID de la mesa son obligatorios' });
         }

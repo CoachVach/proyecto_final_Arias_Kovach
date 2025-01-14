@@ -36,9 +36,6 @@ const CrearMesaPage = () => {
             .findIndex((row) => !row[0]);
 
         const actualEndIndex = endRowIndex === -1 ? jsonData.length : startRowIndex + 1 + endRowIndex;
-        console.log("ANANNASHE");
-        console.log(startRowIndex);
-        console.log(actualEndIndex);
         const formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
           doc: row[2],
           nro_identidad: row[3],
