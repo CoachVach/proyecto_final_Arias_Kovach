@@ -71,6 +71,9 @@ const CrearMesaPage = () => {
 
       // Enviar los alumnos al backend
       for (const alumno of alumnosConMesa) {
+        if (!alumno.dni){
+          continue;
+        }
         const alumnoResponse = await fetch('http://localhost:3000/api/alumnos', {
           method: 'POST',
           headers: {

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const alumno = sequelize.define('alumno', {
+const Alumno = sequelize.define('alumno', {
   id_estudiante: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -10,10 +10,12 @@ const alumno = sequelize.define('alumno', {
   dni: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    unique: true,
   },
   lu: {
     type: DataTypes.STRING,
     allowNull: true,
+    unique: true,
   },
   nombre: {
     type: DataTypes.STRING,
@@ -27,23 +29,9 @@ const alumno = sequelize.define('alumno', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  id_mesa: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  presente: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
-  inscripto: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: true,
-  },
 }, {
   tableName: 'alumno',
   timestamps: false,
 });
 
-module.exports = alumno;
+module.exports = Alumno;

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const mesa_examen = sequelize.define('mesa_examen', {
+const MesaExamen = sequelize.define('mesa_examen', {
   id_mesa: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -24,4 +24,4 @@ const mesa_examen = sequelize.define('mesa_examen', {
   timestamps: false,
 });
 
-module.exports = mesa_examen;
+module.exports = MesaExamen;

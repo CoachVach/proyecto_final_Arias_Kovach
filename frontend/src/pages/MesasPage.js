@@ -23,7 +23,7 @@ const MesasPage = () => {
             'Content-Type': 'application/json',
           },
         });
-
+        console.log(response);
         if (response.status === 404) {
           setMesas([]);
           return;

@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllAlumnos, getAlumnoById, getAlumnosByIdMesaExamen, createAlumno, updateAlumno, deleteAlumno} = require('../controllers/alumnoController');
+const { getAllAlumnos, getAlumnoById, getAlumnosByIdMesaExamen, assignAlumnoToMesa, updateAlumno, deleteAlumno} = require('../controllers/alumnoController');
 
 const router = express.Router();
 
@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', getAllAlumnos);
 router.get('/:id', getAlumnoById);
 router.get('/mesa/:id', getAlumnosByIdMesaExamen);
-router.post('/', createAlumno);
+router.post('/', assignAlumnoToMesa);
 router.post('/:id_estudiante', updateAlumno);
 router.delete('/:id', deleteAlumno);
 

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const profesor = sequelize.define('profesor', {
+const Profesor = sequelize.define('profesor', {
   id_profesor: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -29,4 +29,4 @@ const profesor = sequelize.define('profesor', {
   timestamps: false,
 });
 
-module.exports = profesor;
+module.exports = Profesor;
