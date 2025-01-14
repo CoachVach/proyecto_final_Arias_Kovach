@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import '../styles/MesaDetailPage.css';
 import Modal from "../components/common/Modal";
 import QRScanner from "../components/QRScanner";
+import AlumnoMesaUpdate from "../components/alumnoMesaUpdate";
 
 const MesasDetailPage = () => {
   const [alumnos, setAlumnos] = useState([]);
@@ -10,10 +11,18 @@ const MesasDetailPage = () => {
   const { mesa } = location.state || {};
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQRScannerModalOpen, setIsQRScannerModalOpen] = useState(false);
+  const [isAlumnoUpdateModalOpen, setIsAlumnoUpdateModalOpen] = useState(false);
+  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openQRScannerModal = () => setIsQRScannerModalOpen(true);
+  const closeQRScannerModal = () => setIsQRScannerModalOpen(false);
+
+  const openAlumnoUpdateModal = (alumno) => {
+    setIsAlumnoUpdateModalOpen(true);
+    setAlumnoSeleccionado(alumno);
+  }; 
+  const closeAlumnoUpdateModal = () => setIsAlumnoUpdateModalOpen(false); 
 
   // Function to fetch alumnos by mesaID
   const fetchAlumnos = async (token, mesaID) => {
@@ -144,6 +153,7 @@ const MesasDetailPage = () => {
                 <th>Plan</th>
                 <th>Código</th>
                 <th>Calidad</th>
+                <th>Update</th>
               </tr>
             </thead>
             <tbody>
@@ -170,6 +180,15 @@ const MesasDetailPage = () => {
                   <td>{alumno.plan}</td>
                   <td>{alumno.codigo}</td>
                   <td>{alumno.calidad}</td>
+                  <td>
+                  <button onClick={() => openAlumnoUpdateModal(alumno)} className="open-modal-button">
+                    Realizar Cambios  
+                  </button>
+                  <Modal isOpen={isAlumnoUpdateModalOpen} onClose={closeAlumnoUpdateModal}>
+                    <AlumnoMesaUpdate alumno={alumnoSeleccionado} id_mesa={mesa.id_mesa} />
+                    <button onClick={closeAlumnoUpdateModal}>Cerrar</button>
+                  </Modal>
+                  </td>
                 </tr>
                 );
               })}
@@ -179,12 +198,12 @@ const MesasDetailPage = () => {
       ) : (
         <p>No hay alumnos registrados en esta mesa.</p>
       )}
-      <button onClick={openModal} className="open-modal-button">
+      <button onClick={openQRScannerModal} className="open-modal-button">
         Abrir Escáner
       </button>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal isOpen={isQRScannerModalOpen} onClose={closeQRScannerModal}>
         <QRScanner onQRCodeScanned={handleQRCodeScanned} />
-        <button onClick={closeModal}>Cerrar</button>
+        <button onClick={closeQRScannerModal}>Cerrar</button>
       </Modal>
     </div>
   );
