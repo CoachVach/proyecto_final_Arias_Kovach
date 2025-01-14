@@ -49,7 +49,6 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
             return res.status(404).json({ error: 'No se encontraron estudiantes para esta mesa' });
         }
 
-        // Extrae los IDs de estudiantes y agrega atributos de inscripto y presente
         const estudiantesData = mesaAlumnos.map(ma => ({
             id_estudiante: ma.id_estudiante,
             inscripto: ma.inscripto,
@@ -62,14 +61,13 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
             where: {
                 id_estudiante: estudiantesIds, 
             },
-            attributes: ['id_estudiante', 'nombre', 'apellido', 'lu', 'dni'], // Ajusta según los atributos de Alumno
+            attributes: ['id_estudiante', 'nombre', 'apellido', 'lu', 'dni'], 
         });
 
         if (!alumnos || alumnos.length === 0) {
             return res.status(404).json({ error: 'Alumnos no encontrados' });
         }
 
-        // Combina los datos de los alumnos con los datos de inscripto/presente
         const result = alumnos.map(alumno => {
             const alumnoData = estudiantesData.find(ed => ed.id_estudiante === alumno.id_estudiante);
             return {
@@ -101,7 +99,6 @@ const assignAlumnoToMesa = async (req, res) => {
     try {
         const { dni, lu, nombre, apellido, carrera, presente, inscripto, id_mesa} = req.body;
 
-        // Validar los campos obligatorios
         if (!dni || !id_mesa) {
             return res.status(400).json({ error: 'El DNI y el ID de la mesa son obligatorios' });
         }
