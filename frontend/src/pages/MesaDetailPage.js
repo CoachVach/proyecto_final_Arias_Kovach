@@ -105,7 +105,6 @@ const MesasDetailPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const mesaID = mesa.id_mesa;
-    console.log(mesa.id_mesa);
     if (!token) {
       throw new Error('No se encontró el token de autenticación');
     }
@@ -113,7 +112,7 @@ const MesasDetailPage = () => {
     if (!mesaID) {
       throw new Error('No se encontró el identificador de la mesa');
     }
-    console.log(mesaID);
+
     fetchAlumnos(token, mesaID);
   }, [mesa.id_mesa]);
 
@@ -142,8 +141,8 @@ const MesasDetailPage = () => {
             <tbody>
               {alumnos.map((alumno) => (
                 <tr key={alumno.id_estudiante}>
-                  <td>{alumno.mesa_examens[0].mesa_alumno.inscripto ? 'Sí' : 'No'}</td>
-                  <td>{alumno.mesa_examens[0].mesa_alumno.presente ? 'Sí' : 'No'}</td>
+                  <td>{alumno.inscripto ? 'Sí' : 'No'}</td>
+                  <td>{alumno.presente ? 'Sí' : 'No'}</td>
                   <td>{alumno.nombre}</td>
                   <td>{alumno.apellido}</td>
                   <td>{alumno.lu}</td>

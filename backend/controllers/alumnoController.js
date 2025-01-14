@@ -30,7 +30,7 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
         if (!token) {
             return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
         }
-        // Check if the token is valid for the professor
+
         const decodedToken = JSON.parse(atob(token.split('.')[1])); 
         const email = decodedToken.email;
         const profesor = await Profesor.findOne({ where: { email } });
@@ -38,41 +38,54 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
             return res.status(404).json({ error: 'Profesor no encontrado' });
         }
 
+        const idMesa = req.params.id;
+
         const mesaAlumnos = await MesaAlumno.findAll({
-            where: { id_mesa: req.params.id },
-            attributes: ['id_estudiante'], // Solo seleccionamos el id_estudiante
+            where: { id_mesa: idMesa },
+            attributes: ['id_estudiante', 'inscripto', 'presente'], // Incluye atributos específicos
         });
 
         if (!mesaAlumnos || mesaAlumnos.length === 0) {
             return res.status(404).json({ error: 'No se encontraron estudiantes para esta mesa' });
         }
 
-        // Paso 2: Extraer los id_estudiante
-        const estudiantesIds = mesaAlumnos.map(ma => ma.id_estudiante);
+        // Extrae los IDs de estudiantes y agrega atributos de inscripto y presente
+        const estudiantesData = mesaAlumnos.map(ma => ({
+            id_estudiante: ma.id_estudiante,
+            inscripto: ma.inscripto,
+            presente: ma.presente
+        }));
 
-        // Paso 3: Obtener todos los alumnos con esos id_estudiante, incluyendo los atributos inscripto y presente
+        const estudiantesIds = estudiantesData.map(ed => ed.id_estudiante);
+
         const alumnos = await Alumno.findAll({
             where: {
-                id_estudiante: estudiantesIds, // Buscar todos los alumnos cuyos id coincidan
+                id_estudiante: estudiantesIds, 
             },
-            include: {
-                model: MesaExamen,
-                through: {
-                    attributes: ['inscripto', 'presente'], // Agregamos los atributos de la tabla intermedia
-                },
-            },
+            attributes: ['id_estudiante', 'nombre', 'apellido', 'lu', 'dni'], // Ajusta según los atributos de Alumno
         });
 
-        if (!alumnos) {
+        if (!alumnos || alumnos.length === 0) {
             return res.status(404).json({ error: 'Alumnos no encontrados' });
         }
-        res.status(200).json(alumnos);
+
+        // Combina los datos de los alumnos con los datos de inscripto/presente
+        const result = alumnos.map(alumno => {
+            const alumnoData = estudiantesData.find(ed => ed.id_estudiante === alumno.id_estudiante);
+            return {
+                ...alumno.toJSON(),
+                inscripto: alumnoData.inscripto,
+                presente: alumnoData.presente,
+            };
+        });
+
+        res.status(200).json(result);
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Error al obtener el conjunto de alumnos' });
     }
 };
-
 
 const createAlumno = async (req, res) => {
     try {
