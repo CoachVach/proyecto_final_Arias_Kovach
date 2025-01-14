@@ -59,9 +59,13 @@ const QRScanner = ({onQRCodeScanned}) => {
             if (result) {
               const decodedText = result.getText();
               const dataParts = decodedText.split('@'); 
-              const dniScaneo = dataParts[4] || '';
-              setDecodedScanResult(dniScaneo);
-              handleScan(dniScaneo);
+              const datosDiferenciados = {
+                apellido: dataParts[1] || '',
+                nombre: dataParts[2] || '',
+                dni: dataParts[4] || '',
+              }
+              setDecodedScanResult(datosDiferenciados.dni);
+              handleScan(datosDiferenciados);
               setError('');
             } else if (err && err.name !== 'NotFoundException') {
               console.error('Decoding error:', err);

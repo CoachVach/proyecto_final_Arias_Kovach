@@ -66,6 +66,8 @@ const CrearMesaPage = () => {
       // Agregar el ID de la mesa a cada alumno
       const alumnosConMesa = alumnos.map((alumno) => ({
         ...alumno,
+        presente: false,
+        inscripto:true,
         id_mesa: mesaId,
       }));
 

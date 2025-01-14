@@ -26,23 +26,18 @@ const getAlumnoById = async (req, res) => {
 
 const getAlumnosByIdMesaExamen = async (req, res) => {
     try {
-        console.log("ANASHE");
         const token = req.headers.authorization?.split(' ')[1]; 
         if (!token) {
             return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
         }
-        console.log("ANASHE2");
         // Check if the token is valid for the professor
         const decodedToken = JSON.parse(atob(token.split('.')[1])); 
         const email = decodedToken.email;
-        console.log(email);
         const profesor = await Profesor.findOne({ where: { email } });
         if (!profesor) {
             return res.status(404).json({ error: 'Profesor no encontrado' });
         }
-        console.log("ANASHE3");
-        
-        console.log(req.params.id);
+
         const mesaAlumnos = await MesaAlumno.findAll({
             where: { id_mesa: req.params.id },
             attributes: ['id_estudiante'], // Solo seleccionamos el id_estudiante
@@ -54,8 +49,6 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
 
         // Paso 2: Extraer los id_estudiante
         const estudiantesIds = mesaAlumnos.map(ma => ma.id_estudiante);
-        console.log("ANASHE4");
-        console.log(estudiantesIds);
 
         // Paso 3: Obtener todos los alumnos con esos id_estudiante, incluyendo los atributos inscripto y presente
         const alumnos = await Alumno.findAll({
@@ -70,9 +63,6 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
             },
         });
 
-        console.log("ANASHE5");
-        console.log(alumnos);
-        
         if (!alumnos) {
             return res.status(404).json({ error: 'Alumnos no encontrados' });
         }
@@ -82,7 +72,6 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
         res.status(500).json({ error: 'Error al obtener el conjunto de alumnos' });
     }
 };
-
 
 
 const createAlumno = async (req, res) => {
@@ -97,7 +86,7 @@ const createAlumno = async (req, res) => {
 
 const assignAlumnoToMesa = async (req, res) => {
     try {
-        const { dni, lu, nombre, apellido, carrera, id_mesa } = req.body;
+        const { dni, lu, nombre, apellido, carrera, presente, inscripto, id_mesa} = req.body;
 
         // Validar los campos obligatorios
         if (!dni || !id_mesa) {
@@ -116,7 +105,7 @@ const assignAlumnoToMesa = async (req, res) => {
         // Crear el alumno si no existe
         if (!alumno) {
             alumno = await Alumno.create({ dni, lu, nombre, apellido, carrera });
-            await mesa.addAlumno(alumno); // Asignar el alumno a la mesa
+            await mesa.addAlumno(alumno, { through: { presente, inscripto } }); // Asignar el alumno a la mesa con los parámetros correspondientes
             return res.status(201).json({ message: 'Alumno creado y asignado a la mesa', alumno });
         }
 
@@ -130,12 +119,11 @@ const assignAlumnoToMesa = async (req, res) => {
         }
 
         // Asignar el alumno a la mesa
-        await mesa.addAlumno(alumno);
+        await mesa.addAlumno(alumno , { through: { presente, inscripto } });
         return res.status(200).json({ message: 'Alumno asignado a la mesa correctamente', alumno });
 
     } catch (error) {
         // Manejar errores del servidor
-        console.error(error);
         res.status(500).json({
             error: 'Error al asignar el alumno a la mesa',
             details: error.message,

@@ -50,22 +50,16 @@ const MesasDetailPage = () => {
     console.log('Código QR escaneado:', data);
 
     const token = localStorage.getItem('token');
-    const alumnoEncontrado = alumnos.find((alumno) => alumno.dni === parseInt(data, 10));
+    const alumnoEncontrado = alumnos.find((alumno) => alumno.dni === parseInt(data.dni, 10));
 
     if (alumnoEncontrado) {
-      const response = await fetch(`http://localhost:3000/api/alumnos/${alumnoEncontrado.id_estudiante}`, {
+      const response = await fetch(`http://localhost:3000/api/mesas/${mesa.id_mesa}/${alumnoEncontrado.id_estudiante}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          dni: alumnoEncontrado.dni,
-          lu: alumnoEncontrado.lu,
-          nombre: alumnoEncontrado.nombre,
-          apellido: alumnoEncontrado.apellido,
-          carrera: alumnoEncontrado.carrera,
-          id_mesa: alumnoEncontrado.id_mesa,
           presente: true,
           inscripto: alumnoEncontrado.inscripto,
         }),
@@ -75,17 +69,43 @@ const MesasDetailPage = () => {
         console.error('Error al realizar el update del alumno');
         throw new Error('Error');
       }
+    } else{
+      //Debemos ingresar al alumno a la base de datos para que quede estipulado que se presentó a la mesa sin
+      //inscripción previa
+      const alumnoResponse = await fetch('http://localhost:3000/api/alumnos', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          dni: parseInt(data.dni, 10),
+          lu: null,
+          nombre: data.nombre,
+          apellido: data.apellido,
+          carrera: null,
+          presente: true,
+          inscripto: false,
+          id_mesa: mesa.id_mesa,
+        }),
+      });
 
+      if (!alumnoResponse.ok) {
+        const errorData = await alumnoResponse.json(); // Obtener el mensaje de error
+        console.error('Error al realizar el update del alumno:', errorData);
+        throw new Error('Error');
+      }
+
+    }
       // Refetch alumnos after the update
       fetchAlumnos(token, mesa.id_mesa);
-    }
   };
 
   // Fetch alumnos on component mount
   useEffect(() => {
     const token = localStorage.getItem('token');
     const mesaID = mesa.id_mesa;
-
+    console.log(mesa.id_mesa);
     if (!token) {
       throw new Error('No se encontró el token de autenticación');
     }
@@ -93,7 +113,7 @@ const MesasDetailPage = () => {
     if (!mesaID) {
       throw new Error('No se encontró el identificador de la mesa');
     }
-
+    console.log(mesaID);
     fetchAlumnos(token, mesaID);
   }, [mesa.id_mesa]);
 
