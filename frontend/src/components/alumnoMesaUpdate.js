@@ -1,6 +1,6 @@
 import React, {useState } from 'react';
 import '../styles/CrearMesaPage.css';
-const AlumnoMesaUpdate = ({alumno, id_mesa}) =>{
+const AlumnoMesaUpdate = ({onClose, alumno, id_mesa}) =>{
     const [inscripto, setInscripto] = useState(alumno.inscripto);
     const [presente, setPresente] = useState(alumno.presente);
     const [carrera, setCarrera] = useState(alumno.carrera);
@@ -30,6 +30,8 @@ const AlumnoMesaUpdate = ({alumno, id_mesa}) =>{
         
               if (!alumnoMesaUpdate.ok) {
                 throw new Error('Error al intentar modificar al alumno de la mesa');
+              } else{
+                onClose();
               }
         }catch(error){
             setError(error.message);
@@ -109,6 +111,7 @@ const AlumnoMesaUpdate = ({alumno, id_mesa}) =>{
             <button type="submit" className="submit-button">Crear</button>
           </form>
           {error && <div className="error">{error}</div>}
+          <button onClick={onClose}>Cerrar</button>
         </div>
       );
 };

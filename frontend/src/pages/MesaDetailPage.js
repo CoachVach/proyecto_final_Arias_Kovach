@@ -22,12 +22,15 @@ const MesasDetailPage = () => {
 
   const openFileModal = () => setIsFileModalOpen(true);
   const closeFileModal = () => setIsFileModalOpen(false);
-  
+
   const openAlumnoUpdateModal = (alumno) => {
     setIsAlumnoUpdateModalOpen(true);
     setAlumnoSeleccionado(alumno);
   }; 
-  const closeAlumnoUpdateModal = () => setIsAlumnoUpdateModalOpen(false); 
+  const closeAlumnoUpdateModal = () => {
+    setIsAlumnoUpdateModalOpen(false); 
+    fetchAlumnos(localStorage.getItem('token'), mesa.id_mesa);
+  }
 
   // Function to fetch alumnos by mesaID
   const fetchAlumnos = async (token, mesaID) => {
@@ -115,7 +118,6 @@ const MesasDetailPage = () => {
       }
 
     }
-      // Refetch alumnos after the update
       fetchAlumnos(token, mesa.id_mesa);
   };
 
@@ -189,9 +191,8 @@ const MesasDetailPage = () => {
                   <button onClick={() => openAlumnoUpdateModal(alumno)} className="open-modal-button">
                     Realizar Cambios  
                   </button>
-                  <Modal isOpen={isAlumnoUpdateModalOpen} onClose={closeAlumnoUpdateModal}>
-                    <AlumnoMesaUpdate alumno={alumnoSeleccionado} id_mesa={mesa.id_mesa} />
-                    <button onClick={closeAlumnoUpdateModal}>Cerrar</button>
+                  <Modal isOpen={isAlumnoUpdateModalOpen}>
+                    <AlumnoMesaUpdate onClose={closeAlumnoUpdateModal} alumno={alumnoSeleccionado} id_mesa={mesa.id_mesa} />
                   </Modal>
                   </td>
                 </tr>
