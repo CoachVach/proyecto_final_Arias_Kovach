@@ -72,6 +72,7 @@ const MesasDetailPage = () => {
     } else{
       //Debemos ingresar al alumno a la base de datos para que quede estipulado que se presentó a la mesa sin
       //inscripción previa
+      console.log(data.nro_identidad);
       const alumnoResponse = await fetch('http://localhost:3000/api/alumnos', {
         method: 'POST',
         headers: {
@@ -79,11 +80,14 @@ const MesasDetailPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          dni: parseInt(data.dni, 10),
+          doc: 'DNI',
+          nro_identidad: data.nro_identidad,
           lu: null,
-          nombre: data.nombre,
-          apellido: data.apellido,
+          nombre_completo: data.nombre_completo,
           carrera: null,
+          calidad: null,
+          codigo: null,
+          plan: null,
           presente: true,
           inscripto: false,
           id_mesa: mesa.id_mesa,
@@ -132,16 +136,20 @@ const MesasDetailPage = () => {
               <tr>
                 <th>Inscripto</th>
                 <th>Presente</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
                 <th>LU</th>
-                <th>DNI</th>
+                <th>Doc</th>
+                <th>Número Identidad</th>
+                <th>Nombre Completo</th>
+                <th>Carrea</th>
+                <th>Plan</th>
+                <th>Código</th>
+                <th>Calidad</th>
               </tr>
             </thead>
             <tbody>
               {alumnos.map((alumno) =>{
                 let rowClass ='';
-              
+                console.log(alumno);
                 if(alumno.inscripto && !alumno.presente ){
                   rowClass = 'row-enrolled-not-present';
                 } else if(!alumno.inscripto && alumno.presente){
@@ -154,10 +162,14 @@ const MesasDetailPage = () => {
                 <tr key={alumno.id_estudiante} className={rowClass}>
                   <td>{alumno.inscripto ? 'Sí' : 'No'}</td>
                   <td>{alumno.presente ? 'Sí' : 'No'}</td>
-                  <td>{alumno.nombre}</td>
-                  <td>{alumno.apellido}</td>
                   <td>{alumno.lu}</td>
-                  <td>{alumno.dni}</td>
+                  <td>{alumno.doc}</td>
+                  <td>{alumno.nro_identidad}</td>
+                  <td>{alumno.nombre_completo}</td>
+                  <td>{alumno.carrera}</td>
+                  <td>{alumno.plan}</td>
+                  <td>{alumno.codigo}</td>
+                  <td>{alumno.calidad}</td>
                 </tr>
                 );
               })}

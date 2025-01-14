@@ -10,7 +10,6 @@ const Alumno = sequelize.define('alumno', {
   doc: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   nro_identidad: {
     type: DataTypes.STRING,

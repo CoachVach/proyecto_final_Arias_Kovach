@@ -60,9 +60,8 @@ const QRScanner = ({onQRCodeScanned}) => {
               const decodedText = result.getText();
               const dataParts = decodedText.split('@'); 
               const datosDiferenciados = {
-                apellido: dataParts[1] || '',
-                nombre: dataParts[2] || '',
-                dni: dataParts[4] || '',
+                nombre_completo : (dataParts[1] || '') + ', ' +(dataParts[2] || ''),
+                nro_identidad: dataParts[4] || '',
               }
               setDecodedScanResult(datosDiferenciados.dni);
               handleScan(datosDiferenciados);

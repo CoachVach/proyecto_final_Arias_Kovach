@@ -42,7 +42,7 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
 
         const mesaAlumnos = await MesaAlumno.findAll({
             where: { id_mesa: idMesa },
-            attributes: ['id_estudiante', 'inscripto', 'presente'], // Incluye atributos específicos
+            attributes: ['id_estudiante', 'inscripto', 'presente','carrera','plan', 'codigo', 'calidad'], // Incluye atributos específicos
         });
 
         if (!mesaAlumnos || mesaAlumnos.length === 0) {
@@ -51,6 +51,10 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
 
         const estudiantesData = mesaAlumnos.map(ma => ({
             id_estudiante: ma.id_estudiante,
+            carrera: ma.carrera,
+            plan: ma.plan,
+            codigo: ma.codigo,
+            calidad: ma.calidad,
             inscripto: ma.inscripto,
             presente: ma.presente
         }));
@@ -61,7 +65,7 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
             where: {
                 id_estudiante: estudiantesIds, 
             },
-            attributes: ['id_estudiante', 'nombre', 'apellido', 'lu', 'dni'], 
+            attributes: ['id_estudiante', 'nombre_completo', 'lu', 'doc', 'nro_identidad'], 
         });
 
         if (!alumnos || alumnos.length === 0) {
@@ -72,6 +76,10 @@ const getAlumnosByIdMesaExamen = async (req, res) => {
             const alumnoData = estudiantesData.find(ed => ed.id_estudiante === alumno.id_estudiante);
             return {
                 ...alumno.toJSON(),
+                carrera: alumnoData.carrera,
+                calidad: alumnoData.calidad,
+                plan: alumnoData.plan,
+                codigo: alumnoData.codigo,
                 inscripto: alumnoData.inscripto,
                 presente: alumnoData.presente,
             };
@@ -99,6 +107,7 @@ const assignAlumnoToMesa = async (req, res) => {
 
     try {
         const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa} = req.body;
+        console.log(nro_identidad + '  ' + id_mesa);
         if (!nro_identidad || !id_mesa) {
             return res.status(400).json({ error: 'El DNI y el ID de la mesa son obligatorios' });
         }

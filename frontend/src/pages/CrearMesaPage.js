@@ -42,8 +42,8 @@ const CrearMesaPage = () => {
         const formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
           doc: row[2],
           nro_identidad: row[3],
-          lu: row[1],
-          nombre_completo: row[0],
+          lu: row[0],
+          nombre_completo: row[1],
           carrera: row[6],
           calidad: row[4],
           codigo: row[5],
