@@ -96,31 +96,26 @@ const createAlumno = async (req, res) => {
 };
 
 const assignAlumnoToMesa = async (req, res) => {
-    console.log("A1");
+
     try {
         const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa} = req.body;
-        console.log(nro_identidad);
-        if (!dni || !id_mesa) {
+        if (!nro_identidad || !id_mesa) {
             return res.status(400).json({ error: 'El DNI y el ID de la mesa son obligatorios' });
         }
 
-        // Buscar la mesa
         const mesa = await MesaExamen.findByPk(id_mesa);
         if (!mesa) {
             return res.status(404).json({ error: 'Mesa de examen no encontrada' });
         }
 
-        // Buscar al alumno por DNI
-        let alumno = await Alumno.findOne({ where: { nro_identidad } });
+        let alumno = await Alumno.findOne({ where: { nro_identidad:nro_identidad.toString() } });
 
-        // Crear el alumno si no existe
         if (!alumno) {
             alumno = await Alumno.create({ doc, nro_identidad, lu, nombre_completo});
             await mesa.addAlumno(alumno, { through: {carrera, calidad, codigo, plan, presente, inscripto } }); // Asignar el alumno a la mesa con los parámetros correspondientes
             return res.status(201).json({ message: 'Alumno creado y asignado a la mesa', alumno });
         }
 
-        // Verificar si ya está asignado a la mesa
         const mesaAlumno = await MesaAlumno.findOne({
             where: { id_mesa, id_estudiante: alumno.id_estudiante }, // Asume que la clave primaria es `id_alumno`
         });
