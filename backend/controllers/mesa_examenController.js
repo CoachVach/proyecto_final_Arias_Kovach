@@ -93,6 +93,29 @@ const updateAlumnoMesa = async (req, res) =>{
     }
 };
 
+const updateDatosAlumnoMesa = async (req, res) =>{
+    try {
+        const alumno = await Alumno.findByPk(req.params.id_estudiante);
+        const mesa = await MesaExamen.findByPk(req.params.id_mesa);
+        if (!mesa) {
+            return res.status(404).json({ error: 'Mesa de examen no encontrada' });
+        }
+        if (!alumno) {
+            return res.status(404).json({ error: 'Alumno no encontrado' });
+        }
+        const {presente, inscripto, carrera, plan, codigo, calidad} = req.body;
+        await MesaAlumno.update({ presente, inscripto, carrera, plan, codigo, calidad }, {
+            where: {
+                id_estudiante: alumno.id_estudiante,
+                id_mesa: mesa.id_mesa,
+            }
+        });
+        res.status(200).json(mesa);
+    } catch (error) {
+        res.status(400).json({ error: 'Error al actualizar la mesa de examen', details: error });
+    }
+};
+
 const deleteMesa = async (req, res) => {
     try {
         const mesa = await MesaExamen.findByPk(req.params.id);
@@ -137,5 +160,6 @@ module.exports = {
     updateMesa,
     deleteMesa,
     getMesaByProfesor,
-    updateAlumnoMesa
+    updateAlumnoMesa,
+    updateDatosAlumnoMesa
 };

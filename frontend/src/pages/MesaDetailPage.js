@@ -4,6 +4,7 @@ import '../styles/MesaDetailPage.css';
 import Modal from "../components/common/Modal";
 import QRScanner from "../components/QRScanner";
 import FileModal from "../components/FileModal";
+import AlumnoMesaUpdate from "../components/alumnoMesaUpdate";
 
 const MesasDetailPage = () => {
   const [alumnos, setAlumnos] = useState([]);
@@ -13,12 +14,20 @@ const MesasDetailPage = () => {
   const [error, setError] = useState(null);
   const [isQRScannerModalOpen, setIsQRScannerModalOpen] = useState(false);
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
+  const [isAlumnoUpdateModalOpen, setIsAlumnoUpdateModalOpen] = useState(false);
+  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
 
   const openQRScannerModal = () => setIsQRScannerModalOpen(true);
   const closeQRScannerModal = () => setIsQRScannerModalOpen(false);
 
   const openFileModal = () => setIsFileModalOpen(true);
   const closeFileModal = () => setIsFileModalOpen(false);
+  
+  const openAlumnoUpdateModal = (alumno) => {
+    setIsAlumnoUpdateModalOpen(true);
+    setAlumnoSeleccionado(alumno);
+  }; 
+  const closeAlumnoUpdateModal = () => setIsAlumnoUpdateModalOpen(false); 
 
   // Function to fetch alumnos by mesaID
   const fetchAlumnos = async (token, mesaID) => {
@@ -149,6 +158,7 @@ const MesasDetailPage = () => {
                 <th>Plan</th>
                 <th>Código</th>
                 <th>Calidad</th>
+                <th>Update</th>
               </tr>
             </thead>
             <tbody>
@@ -175,6 +185,15 @@ const MesasDetailPage = () => {
                   <td>{alumno.plan}</td>
                   <td>{alumno.codigo}</td>
                   <td>{alumno.calidad}</td>
+                  <td>
+                  <button onClick={() => openAlumnoUpdateModal(alumno)} className="open-modal-button">
+                    Realizar Cambios  
+                  </button>
+                  <Modal isOpen={isAlumnoUpdateModalOpen} onClose={closeAlumnoUpdateModal}>
+                    <AlumnoMesaUpdate alumno={alumnoSeleccionado} id_mesa={mesa.id_mesa} />
+                    <button onClick={closeAlumnoUpdateModal}>Cerrar</button>
+                  </Modal>
+                  </td>
                 </tr>
                 );
               })}
