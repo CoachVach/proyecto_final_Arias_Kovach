@@ -96,9 +96,10 @@ const createAlumno = async (req, res) => {
 };
 
 const assignAlumnoToMesa = async (req, res) => {
+    console.log("A1");
     try {
         const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa} = req.body;
-
+        console.log(nro_identidad);
         if (!dni || !id_mesa) {
             return res.status(400).json({ error: 'El DNI y el ID de la mesa son obligatorios' });
         }

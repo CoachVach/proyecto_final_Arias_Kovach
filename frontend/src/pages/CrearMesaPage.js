@@ -21,13 +21,36 @@ const CrearMesaPage = () => {
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const formattedData = jsonData.slice(1).map((row) => ({
-          nombre: row[0],
-          apellido: row[1],
-          dni: row[2],
-          lu: row[3],
-          carrera: row[4],
+        const startRowIndex = jsonData.findIndex(
+          (row) =>
+            row[0] === 'Legajo' && row[1] === 'Nombre' && row[2] === 'Doc' && row[3] === 'Número'
+        );
+
+        if (startRowIndex === -1) {
+          console.error('No se encontró la tabla en la hoja de cálculo.');
+          return;
+        }
+
+        const endRowIndex = jsonData
+            .slice(startRowIndex + 1)
+            .findIndex((row) => !row[0]);
+
+        const actualEndIndex = endRowIndex === -1 ? jsonData.length : startRowIndex + 1 + endRowIndex;
+        console.log("ANANNASHE");
+        console.log(startRowIndex);
+        console.log(actualEndIndex);
+        const formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
+          nombre_completo: row[0],
+          lu: row[1],
+          doc: row[2],
+          nro_identidad: row[3],
+          calidad: row[4],
+          codigo: row[5],
+          carrera: row[6],
+          plan: row[7],
         }));
+
+        console.log(jsonData);
 
         setAlumnos(formattedData);
       };
@@ -63,7 +86,6 @@ const CrearMesaPage = () => {
       const mesa = await mesaResponse.json();
       mesaId = mesa.id_mesa;
 
-      // Agregar el ID de la mesa a cada alumno
       const alumnosConMesa = alumnos.map((alumno) => ({
         ...alumno,
         presente: false,
@@ -73,9 +95,10 @@ const CrearMesaPage = () => {
 
       // Enviar los alumnos al backend
       for (const alumno of alumnosConMesa) {
-        if (!alumno.dni){
+        if (!alumno.nro_identidad){
           continue;
         }
+        console.log(alumno);
         const alumnoResponse = await fetch('http://localhost:3000/api/alumnos', {
           method: 'POST',
           headers: {
