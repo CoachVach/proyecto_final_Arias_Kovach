@@ -139,8 +139,19 @@ const MesasDetailPage = () => {
               </tr>
             </thead>
             <tbody>
-              {alumnos.map((alumno) => (
-                <tr key={alumno.id_estudiante}>
+              {alumnos.map((alumno) =>{
+                let rowClass ='';
+              
+                if(alumno.inscripto && !alumno.presente ){
+                  rowClass = 'row-enrolled-not-present';
+                } else if(!alumno.inscripto && alumno.presente){
+                  rowClass= 'row-not-enrolled';
+                } else if(alumno.inscripto && alumno.presente ){
+                  rowClass= 'row-present-enrolled';
+                }
+
+                return(
+                <tr key={alumno.id_estudiante} className={rowClass}>
                   <td>{alumno.inscripto ? 'Sí' : 'No'}</td>
                   <td>{alumno.presente ? 'Sí' : 'No'}</td>
                   <td>{alumno.nombre}</td>
@@ -148,7 +159,8 @@ const MesasDetailPage = () => {
                   <td>{alumno.lu}</td>
                   <td>{alumno.dni}</td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

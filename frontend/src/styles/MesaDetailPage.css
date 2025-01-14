@@ -96,3 +96,16 @@
     padding: 10px;
   }
 }
+
+/* styles.css */
+.row-present-enrolled {
+  background-color: #d4edda; /* Tono verdozo */
+}
+
+.row-not-enrolled {
+  background-color: #ea848c; /* Tono rojizo */
+}
+
+.row-enrolled-not-present {
+  background-color: #ffffff; /* Normal o neutro */
+}

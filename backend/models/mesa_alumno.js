@@ -15,6 +15,22 @@ const MesaAlumno = sequelize.define('mesa_alumno', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  carrera: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  calidad: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  codigo: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  plan: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   presente: {
     type: DataTypes.BOOLEAN,
     allowNull: false,

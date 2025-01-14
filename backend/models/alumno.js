@@ -7,8 +7,13 @@ const Alumno = sequelize.define('alumno', {
     autoIncrement: true,
     primaryKey: true,
   },
-  dni: {
-    type: DataTypes.INTEGER,
+  doc: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  nro_identidad: {
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
@@ -17,17 +22,9 @@ const Alumno = sequelize.define('alumno', {
     allowNull: true,
     unique: true,
   },
-  nombre: {
+  nombre_completo: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  apellido: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  carrera: {
-    type: DataTypes.STRING,
-    allowNull: true,
   },
 }, {
   tableName: 'alumno',

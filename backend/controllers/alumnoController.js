@@ -97,7 +97,7 @@ const createAlumno = async (req, res) => {
 
 const assignAlumnoToMesa = async (req, res) => {
     try {
-        const { dni, lu, nombre, apellido, carrera, presente, inscripto, id_mesa} = req.body;
+        const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa} = req.body;
 
         if (!dni || !id_mesa) {
             return res.status(400).json({ error: 'El DNI y el ID de la mesa son obligatorios' });
@@ -110,12 +110,12 @@ const assignAlumnoToMesa = async (req, res) => {
         }
 
         // Buscar al alumno por DNI
-        let alumno = await Alumno.findOne({ where: { dni } });
+        let alumno = await Alumno.findOne({ where: { nro_identidad } });
 
         // Crear el alumno si no existe
         if (!alumno) {
-            alumno = await Alumno.create({ dni, lu, nombre, apellido, carrera });
-            await mesa.addAlumno(alumno, { through: { presente, inscripto } }); // Asignar el alumno a la mesa con los parámetros correspondientes
+            alumno = await Alumno.create({ doc, nro_identidad, lu, nombre_completo});
+            await mesa.addAlumno(alumno, { through: {carrera, calidad, codigo, plan, presente, inscripto } }); // Asignar el alumno a la mesa con los parámetros correspondientes
             return res.status(201).json({ message: 'Alumno creado y asignado a la mesa', alumno });
         }
 
@@ -129,7 +129,7 @@ const assignAlumnoToMesa = async (req, res) => {
         }
 
         // Asignar el alumno a la mesa
-        await mesa.addAlumno(alumno , { through: { presente, inscripto } });
+        await mesa.addAlumno(alumno , { through: {carrera, calidad, codigo, plan, presente, inscripto } });
         return res.status(200).json({ message: 'Alumno asignado a la mesa correctamente', alumno });
 
     } catch (error) {
