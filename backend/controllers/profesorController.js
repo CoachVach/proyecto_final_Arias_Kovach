@@ -37,7 +37,6 @@ const createProfesor = async ({ nombre, apellido, email, password }) => {
   }
 };
 
-
 const updateProfesor = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]; 

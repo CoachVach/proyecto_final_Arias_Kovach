@@ -15,6 +15,9 @@ const getAllMesas = async (req, res) => {
 const getMesaById = async (req, res) => {
     try {
         const mesa = await MesaExamen.findByPk(req.params.id, { include: { model: Alumno, through: MesaAlumno } });
+        if (mesa.id_profesor !== req.profesor.id_profesor){
+            return res.status(400).json({ error: 'La mesa no pertence al profesor' });
+        }
         if (!mesa) {
             return res.status(404).json({ error: 'Mesa de examen no encontrada' });
         }
@@ -26,19 +29,6 @@ const getMesaById = async (req, res) => {
 
 const createMesa = async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
-        }
-
-        const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        const email = decodedToken.email;
-
-        const profesor = await Profesor.findOne({ where: { email } });
-        if (!profesor) {
-            return res.status(404).json({ error: 'Profesor no encontrado' });
-        }
-
         const { fecha, materia } = req.body;
         if (!fecha || !materia) {
             return res.status(400).json({ error: 'Fecha y materia son requeridos' });
@@ -47,7 +37,7 @@ const createMesa = async (req, res) => {
         const newMesa = await MesaExamen.create({
             fecha,
             materia,
-            id_profesor: profesor.id_profesor
+            id_profesor: req.profesor.id_profesor
         });
 
         res.status(201).json(newMesa);
@@ -59,6 +49,9 @@ const createMesa = async (req, res) => {
 const updateMesa = async (req, res) => {
     try {
         const mesa = await MesaExamen.findByPk(req.params.id);
+        if (mesa.id_profesor !== req.profesor.id_profesor){
+            return res.status(400).json({ error: 'La mesa no pertence al profesor' });
+        }
         if (!mesa) {
             return res.status(404).json({ error: 'Mesa de examen no encontrada' });
         }
@@ -74,6 +67,9 @@ const updateAlumnoMesa = async (req, res) =>{
     try {
         const alumno = await Alumno.findByPk(req.params.id_estudiante);
         const mesa = await MesaExamen.findByPk(req.params.id_mesa);
+        if (mesa.id_profesor !== req.profesor.id_profesor){
+            return res.status(400).json({ error: 'La mesa no pertence al profesor' });
+        }
         if (!mesa) {
             return res.status(404).json({ error: 'Mesa de examen no encontrada' });
         }
@@ -97,6 +93,9 @@ const updateDatosAlumnoMesa = async (req, res) =>{
     try {
         const alumno = await Alumno.findByPk(req.params.id_estudiante);
         const mesa = await MesaExamen.findByPk(req.params.id_mesa);
+        if (mesa.id_profesor !== req.profesor.id_profesor){
+            return res.status(400).json({ error: 'La mesa no pertence al profesor' });
+        }
         if (!mesa) {
             return res.status(404).json({ error: 'Mesa de examen no encontrada' });
         }
@@ -119,6 +118,9 @@ const updateDatosAlumnoMesa = async (req, res) =>{
 const deleteMesa = async (req, res) => {
     try {
         const mesa = await MesaExamen.findByPk(req.params.id);
+        if (mesa.id_profesor !== req.profesor.id_profesor){
+            return res.status(400).json({ error: 'La mesa no pertence al profesor' });
+        }
         if (!mesa) {
             return res.status(404).json({ error: 'Mesa de examen no encontrada' });
         }
@@ -131,19 +133,7 @@ const deleteMesa = async (req, res) => {
 
 const getMesaByProfesor = async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]; 
-        if (!token) {
-            return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
-        }
-
-        const decodedToken = JSON.parse(atob(token.split('.')[1])); 
-        const email = decodedToken.email;
-        const profesor = await Profesor.findOne({ where: { email } });
-        if (!profesor) {
-            return res.status(404).json({ error: 'Profesor no encontrado' });
-        }
-
-        const mesas = await MesaExamen.findAll({ where: { id_profesor: profesor.id_profesor } });
+        const mesas = await MesaExamen.findAll({ where: { id_profesor: req.profesor.id_profesor } });
         if (!mesas.length) {
             return res.status(404).json({ error: 'No se encontraron mesas de examen para este profesor' });
         }
