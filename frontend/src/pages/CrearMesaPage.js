@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/CrearMesaPage.css';
 import * as XLSX from 'xlsx';
+import '../styles/pages/CrearMesaPage.css';
+import { createMesa, createAlumno, deleteMesa } from '../services/apiService';
+import FormInput from '../components/FormInput';
+import FileUpload from '../components/FileUpload';
+import ErrorMessage from '../components/common/ErrorMessage';
 
 const CrearMesaPage = () => {
-  const [fecha, setFecha] = useState('');
-  const [materia, setMateria] = useState('');
-  const [error, setError] = useState(null);
-  const [alumnos, setAlumnos] = useState([]);
+  const [formData, setFormData] = useState({
+    fecha: '',
+    materia: '',
+    alumnos: [],
+    error: null,
+  });
   const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -32,10 +43,11 @@ const CrearMesaPage = () => {
         }
 
         const endRowIndex = jsonData
-            .slice(startRowIndex + 1)
-            .findIndex((row) => !row[0]);
+          .slice(startRowIndex + 1)
+          .findIndex((row) => !row[0]);
 
-        const actualEndIndex = endRowIndex === -1 ? jsonData.length : startRowIndex + 1 + endRowIndex;
+        const actualEndIndex =
+          endRowIndex === -1 ? jsonData.length : startRowIndex + 1 + endRowIndex;
         const formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
           doc: row[2],
           nro_identidad: row[3],
@@ -47,9 +59,7 @@ const CrearMesaPage = () => {
           plan: row[7],
         }));
 
-        console.log(jsonData);
-
-        setAlumnos(formattedData);
+        setFormData((prevData) => ({ ...prevData, alumnos: formattedData }));
       };
       reader.readAsArrayBuffer(file);
     }
@@ -57,74 +67,37 @@ const CrearMesaPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('No se encontró el token de autenticación');
-      return;
-    }
-
-    let mesaId = null; // Guardar el ID de la mesa creada
+    let mesaId = null;
 
     try {
-      // Crear la mesa
-      const mesaResponse = await fetch('http://localhost:3000/api/mesas', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fecha, materia }),
+      const mesa = await createMesa({
+        fecha: formData.fecha,
+        materia: formData.materia,
       });
 
-      if (!mesaResponse.ok) {
-        throw new Error('Error al crear la mesa de examen');
-      }
-
-      const mesa = await mesaResponse.json();
       mesaId = mesa.id_mesa;
 
-      const alumnosConMesa = alumnos.map((alumno) => ({
+      const alumnosConMesa = formData.alumnos.map((alumno) => ({
         ...alumno,
         presente: false,
-        inscripto:true,
+        inscripto: true,
         id_mesa: mesaId,
       }));
 
-      // Enviar los alumnos al backend
       for (const alumno of alumnosConMesa) {
-        if (!alumno.nro_identidad){
-          continue;
-        }
-        console.log(alumno);
-        const alumnoResponse = await fetch('http://localhost:3000/api/alumnos', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(alumno),
-        });
-
-        if (!alumnoResponse.ok) {
-          throw new Error('Error al crear un alumno');
+        if (alumno.nro_identidad) {
+          await createAlumno(alumno);
         }
       }
 
       alert('Mesa y alumnos creados correctamente');
       navigate('/mesas');
     } catch (error) {
-      setError(error.message);
+      setFormData((prevData) => ({ ...prevData, error: error.message }));
 
-      // Eliminar la mesa si fue creada
       if (mesaId) {
         try {
-          await fetch(`http://localhost:3000/api/mesas/${mesaId}`, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          });
+          await deleteMesa(mesaId);
           console.log('Mesa eliminada debido a un error al crear alumnos.');
         } catch (deleteError) {
           console.error('Error al intentar eliminar la mesa:', deleteError.message);
@@ -137,38 +110,30 @@ const CrearMesaPage = () => {
     <div className="crear-mesa-page">
       <h1>Crear Mesa de Examen</h1>
       <form onSubmit={handleSubmit} className="crear-mesa-form">
-        <div className="form-group">
-          <label htmlFor="fecha">Fecha: </label>
-          <input
-            type="date"
-            id="fecha"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="materia">Materia: </label>
-          <input
-            type="text"
-            id="materia"
-            value={materia}
-            onChange={(e) => setMateria(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="archivo">Cargar Alumnos (Excel): </label>
-          <input
-            type="file"
-            id="archivo"
-            accept=".xlsx, .xls"
-            onChange={handleFileUpload}
-          />
-        </div>
-        <button type="submit" className="submit-button">Crear</button>
+        <FormInput
+          label="Fecha:"
+          type="date"
+          id="fecha"
+          name="fecha"
+          value={formData.fecha}
+          onChange={handleInputChange}
+          required
+        />
+        <FormInput
+          label="Materia:"
+          type="text"
+          id="materia"
+          name="materia"
+          value={formData.materia}
+          onChange={handleInputChange}
+          required
+        />
+        <FileUpload onFileChange={handleFileUpload} />
+        <button type="submit" className="submit-button">
+          Crear
+        </button>
       </form>
-      {error && <div className="error">{error}</div>}
+      <ErrorMessage error={formData.error} />
     </div>
   );
 };

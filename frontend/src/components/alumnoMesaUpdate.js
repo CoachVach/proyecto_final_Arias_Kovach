@@ -1,5 +1,5 @@
 import React, {useState } from 'react';
-import '../styles/CrearMesaPage.css';
+import '../styles/pages/CrearMesaPage.css';
 const AlumnoMesaUpdate = ({onClose, alumno, id_mesa}) =>{
     const [inscripto, setInscripto] = useState(alumno.inscripto);
     const [presente, setPresente] = useState(alumno.presente);

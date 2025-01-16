@@ -1,7 +1,6 @@
 const MesaExamen = require('../models/mesa_examen');
 const Alumno = require('../models/alumno');
 const MesaAlumno = require('../models/mesa_alumno');
-const Profesor = require('../models/profesor');
 
 const getAllMesas = async (req, res) => {
     try {

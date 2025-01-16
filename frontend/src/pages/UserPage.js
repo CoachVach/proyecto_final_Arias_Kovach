@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/UserPage.css';
+import { updateUserData, getUserData } from '../services/apiService'; // Importa las funciones desde apiService
+import '../styles/pages/UserPage.css';
 
 const UserPage = () => {
   const [user, setUser] = useState({});
@@ -9,25 +10,7 @@ const UserPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No se encontró el token');
-          return;
-        }
-
-        const response = await fetch('http://localhost:3000/api/profesores', { 
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('No autorizado o error al obtener los datos');
-        }
-
-        const data = await response.json();
+        const data = await getUserData(); // Usamos la función getUserData desde apiService
         setUser(data);
         setFormData(data);
       } catch (error) {
@@ -46,21 +29,7 @@ const UserPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3000/api/profesores`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar los datos');
-      }
-
-      const updatedUser = await response.json();
+      const updatedUser = await updateUserData(formData); // Usamos la función updateUserData desde apiService
       setUser(updatedUser);
       setIsEditing(false);
       alert('Datos actualizados correctamente');

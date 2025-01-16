@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
-import '../styles/FileModal.css';
+import '../styles/components/FileModal.css';
 
 const FileModal = ({ alumnos, onClose, materia, fecha }) => {
   const columns = [

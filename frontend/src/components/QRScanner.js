@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from '@zxing/library';
-import '../styles/QRScanner.css';
+import '../styles/components/QRScanner.css';
 
 const QRScanner = ({onQRCodeScanned}) => {
   const [decodedScanResult, setDecodedScanResult] = useState('');

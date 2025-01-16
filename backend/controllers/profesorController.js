@@ -26,7 +26,6 @@ const createProfesor = async ({ nombre, apellido, email, password }) => {
 
 const updateProfesor = async (req, res) => {
   try {
-
     const { nombre, apellido } = req.body;
     await req.profesor.update({ nombre, apellido });
     res.status(200).json(req.profesor); 
