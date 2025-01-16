@@ -63,7 +63,7 @@ const QRScanner = ({onQRCodeScanned}) => {
                 nombre_completo : (dataParts[1] || '') + ', ' +(dataParts[2] || ''),
                 nro_identidad: dataParts[4] || '',
               }
-              setDecodedScanResult(datosDiferenciados.dni);
+              setDecodedScanResult(datosDiferenciados.nro_identidad);
               handleScan(datosDiferenciados);
               setError('');
             } else if (err && err.name !== 'NotFoundException') {
@@ -108,7 +108,7 @@ const QRScanner = ({onQRCodeScanned}) => {
 
       {decodedScanResult && (
         <div className="result-container">
-          <h2>Resultado Escaneado:</h2>
+          <h2>Alumno escaneado:</h2>
           <p>{decodedScanResult}</p>
         </div>
       )}
