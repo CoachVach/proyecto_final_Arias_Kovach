@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = 3000;
+const { errorMiddleware } = require('./middlewares/errorMiddleware'); // Importar el middleware de manejo de errores
+
+
 // Importa Sequelize y modelos desde el archivo central
 const { sequelize } = require('./models');
 //Importamos las rutas de la api
@@ -43,3 +46,7 @@ app.use('/api/login/', authRoutes);
 app.listen(port, () => {
   console.log(`Servidor ejecutándose en http://localhost:${port}`);
 });
+
+
+// Middleware de manejo de errores (colócalo al final)
+app.use(errorMiddleware);

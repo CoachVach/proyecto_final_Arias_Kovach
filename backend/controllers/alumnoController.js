@@ -1,174 +1,99 @@
-const Alumno = require('../models/alumno');
-const Profesor = require('../models/profesor');
-const MesaAlumno = require('../models/mesa_alumno');
-const MesaExamen = require('../models/mesa_examen');
+const AlumnoService = require('../services/alumnoService');
+const MesaExamenService = require('../services/mesaExamenService');
+const MesaAlumnoService = require('../services/mesaAlumnoService');
+const AppError  = require('../structure/AppError');
 
-const getAllAlumnos = async (req, res) => {
+const getAllAlumnos = async (req, res, next) => {
     try {
-        const alumnos = await Alumno.findAll({ include: { model: MesaExamen, through: MesaAlumno } });
+        const alumnos = await AlumnoService.findAllAlumnos();
         res.status(200).json(alumnos);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los alumnos' });
+        next(new AppError('Error al obtener los alumnos', 500, error.message));
     }
 };
 
-const getAlumnoById = async (req, res) => {
+const getAlumnoById = async (req, res, next) => {
     try {
-        const alumno = await Alumno.findByPk(req.params.id, { include: { model: MesaExamen, through: MesaAlumno } });
-        if (!alumno) {
-            return res.status(404).json({ error: 'Alumno no encontrado' });
-        }
+        const alumno = await AlumnoService.findAlumnoById(req.params.id);
         res.status(200).json(alumno);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener el alumno' });
+        next(error instanceof AppError ? error : new AppError('Error al obtener el alumno', 500, error.message));
     }
 };
 
-const getAlumnosByIdMesaExamen = async (req, res) => {
+const getAlumnosByIdMesaExamen = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]; 
-        if (!token) {
-            return res.status(403).json({ message: 'No se proporcionó un token de autenticación' });
-        }
-
-        const decodedToken = JSON.parse(atob(token.split('.')[1])); 
-        const email = decodedToken.email;
-        const profesor = await Profesor.findOne({ where: { email } });
-        if (!profesor) {
-            return res.status(404).json({ error: 'Profesor no encontrado' });
-        }
-
         const idMesa = req.params.id;
+        await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, idMesa);
 
-        const mesaAlumnos = await MesaAlumno.findAll({
-            where: { id_mesa: idMesa },
-            attributes: ['id_estudiante', 'inscripto', 'presente','carrera','plan', 'codigo', 'calidad'], // Incluye atributos específicos
-        });
-
-        if (!mesaAlumnos || mesaAlumnos.length === 0) {
-            return res.status(404).json({ error: 'No se encontraron estudiantes para esta mesa' });
-        }
-
-        const estudiantesData = mesaAlumnos.map(ma => ({
-            id_estudiante: ma.id_estudiante,
-            carrera: ma.carrera,
-            plan: ma.plan,
-            codigo: ma.codigo,
-            calidad: ma.calidad,
-            inscripto: ma.inscripto,
-            presente: ma.presente
-        }));
-
-        const estudiantesIds = estudiantesData.map(ed => ed.id_estudiante);
-
-        const alumnos = await Alumno.findAll({
-            where: {
-                id_estudiante: estudiantesIds, 
-            },
-            attributes: ['id_estudiante', 'nombre_completo', 'lu', 'doc', 'nro_identidad'], 
-        });
-
-        if (!alumnos || alumnos.length === 0) {
-            return res.status(404).json({ error: 'Alumnos no encontrados' });
-        }
-
-        const result = alumnos.map(alumno => {
-            const alumnoData = estudiantesData.find(ed => ed.id_estudiante === alumno.id_estudiante);
-            return {
-                ...alumno.toJSON(),
-                carrera: alumnoData.carrera,
-                calidad: alumnoData.calidad,
-                plan: alumnoData.plan,
-                codigo: alumnoData.codigo,
-                inscripto: alumnoData.inscripto,
-                presente: alumnoData.presente,
-            };
-        });
+        const mesaAlumnosData = await AlumnoService.findAlumnosDataFromMesaAlumno(idMesa);
+        const estudiantesIds = mesaAlumnosData.map((ed) => ed.id_estudiante);
+        const alumnos = await AlumnoService.findAllAlumnos(estudiantesIds);
+        const result = await AlumnoService.mapAlumnosDataWithMesaAlumnos(alumnos, mesaAlumnosData);
 
         res.status(200).json(result);
-
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al obtener el conjunto de alumnos' });
+        console.log('AppError:', AppError);
+        next(error instanceof AppError ? error : new AppError('Error al obtener el conjunto de alumnos', 500, error.message));
     }
 };
 
-const createAlumno = async (req, res) => {
+const createAlumno = async (req, res, next) => {
     try {
-        const { dni, lu, nombre, apellido, carrera } = req.body;
-        const newAlumno = await Alumno.create({ dni, lu, nombre, apellido, carrera });
+        const { doc, nro_identidad, lu, nombre_completo } = req.body;
+        const newAlumno = await AlumnoService.createAlumno(doc, nro_identidad, lu, nombre_completo);
         res.status(201).json(newAlumno);
     } catch (error) {
-        res.status(400).json({ error: 'Error al crear el alumno', details: error });
+        next(new AppError('Error al crear el alumno', 400, error.message));
     }
 };
 
-const assignAlumnoToMesa = async (req, res) => {
-
+const assignAlumnoToMesa = async (req, res, next) => {
     try {
-        const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa} = req.body;
+        const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa } = req.body;
+
         if (!nro_identidad || !id_mesa) {
-            return res.status(400).json({ error: 'El DNI y el ID de la mesa son obligatorios' });
+            throw new AppError('El DNI y el ID de la mesa son obligatorios', 400);
         }
 
-        const mesa = await MesaExamen.findByPk(id_mesa);
-        if (!mesa) {
-            return res.status(404).json({ error: 'Mesa de examen no encontrada' });
-        }
+        const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
 
-        let alumno = await Alumno.findOne({ where: { nro_identidad:nro_identidad.toString() } });
-
+        let alumno = await AlumnoService.findAlumnoByNroIden(nro_identidad);
         if (!alumno) {
-            alumno = await Alumno.create({ doc, nro_identidad, lu, nombre_completo});
-            await mesa.addAlumno(alumno, { through: {carrera, calidad, codigo, plan, presente, inscripto } }); // Asignar el alumno a la mesa con los parámetros correspondientes
+            alumno = await AlumnoService.createAlumno(doc, nro_identidad, lu, nombre_completo);
+            await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto);
             return res.status(201).json({ message: 'Alumno creado y asignado a la mesa', alumno });
         }
 
-        const mesaAlumno = await MesaAlumno.findOne({
-            where: { id_mesa, id_estudiante: alumno.id_estudiante }, // Asume que la clave primaria es `id_alumno`
-        });
+        await MesaAlumnoService.verifyMesaWithoutAlumno(id_mesa, alumno.id_estudiante);
+        await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto);
 
-        if (mesaAlumno) {
-            return res.status(400).json({ error: 'El alumno ya está asignado a esta mesa' });
-        }
-
-        // Asignar el alumno a la mesa
-        await mesa.addAlumno(alumno , { through: {carrera, calidad, codigo, plan, presente, inscripto } });
-        return res.status(200).json({ message: 'Alumno asignado a la mesa correctamente', alumno });
-
+        res.status(200).json({ message: 'Alumno asignado a la mesa correctamente', alumno });
     } catch (error) {
-        // Manejar errores del servidor
-        res.status(500).json({
-            error: 'Error al asignar el alumno a la mesa',
-            details: error.message,
-        });
+        next(error instanceof AppError ? error : new AppError('Error al asignar el alumno a la mesa', 500, error.message));
     }
 };
 
-const updateAlumno = async (req, res) => {
+const updateAlumno = async (req, res, next) => {
     try {
-        const alumno = await Alumno.findByPk(req.params.id);
-        if (!alumno) {
-            return res.status(404).json({ error: 'Alumno no encontrado' });
-        }
-        const { dni, lu, nombre, apellido, carrera } = req.body;
-        await alumno.update({ dni, lu, nombre, apellido, carrera });
+        const alumno = await AlumnoService.findAlumnoById(req.params.id);
+
+        const { doc, nro_identidad, lu, nombre_completo } = req.body;
+        await AlumnoService.updateAlumno(alumno, doc, nro_identidad, lu, nombre_completo);
+
         res.status(200).json(alumno);
     } catch (error) {
-        res.status(400).json({ error: 'Error al actualizar el alumno', details: error });
+        next(error instanceof AppError ? error : new AppError('Error al actualizar el alumno', 400, error.message));
     }
 };
 
-const deleteAlumno = async (req, res) => {
+const deleteAlumno = async (req, res, next) => {
     try {
-        const alumno = await Alumno.findByPk(req.params.id);
-        if (!alumno) {
-            return res.status(404).json({ error: 'Alumno no encontrado' });
-        }
-        await alumno.destroy();
+        const alumno = await AlumnoService.findAlumnoById(req.params.id);
+        await AlumnoService.deleteAlumno(alumno);
         res.status(200).json({ message: 'Alumno eliminado correctamente' });
     } catch (error) {
-        res.status(500).json({ error: 'Error al eliminar el alumno', details: error });
+        next(error instanceof AppError ? error : new AppError('Error al eliminar el alumno', 500, error.message));
     }
 };
 
