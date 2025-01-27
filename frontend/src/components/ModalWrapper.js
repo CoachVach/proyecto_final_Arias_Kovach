@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from './common/Modal';
 import QRScanner from './QRScanner';
 import FileModal from './FileModal';
-import AlumnoMesaUpdate from './AlumnoMesaUpdate';
+import AlumnoMesaUpdate from './alumnoMesaUpdate';
 
 const ModalWrapper = ({ modalState, closeModal, handleQRCodeScanned, alumnos, mesa }) => {
   if (!modalState.type) return null;
