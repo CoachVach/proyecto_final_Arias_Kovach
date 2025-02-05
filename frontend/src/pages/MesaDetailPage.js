@@ -155,7 +155,8 @@ const MesasDetailPage = () => {
             {decodedScanResult && (
               <div className="result-container">
                 <h2>Alumno escaneado:</h2>
-                <p>{decodedScanResult.nro_identidad}</p>
+                <p>{decodedScanResult.nombre_completo}</p>
+                <p>DNI: {decodedScanResult.nro_identidad}</p>
               </div>
             )}
             {scanError && (

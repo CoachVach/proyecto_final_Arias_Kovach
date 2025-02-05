@@ -14,6 +14,7 @@ const CrearMesaPage = () => {
     alumnos: [],
     error: null,
   });
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -67,6 +68,10 @@ const CrearMesaPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowConfirm(true);
+  };
+
+  const confirmCreate = async () => {
     let mesaId = null;
 
     try {
@@ -104,6 +109,8 @@ const CrearMesaPage = () => {
         }
       }
     }
+
+    setShowConfirm(false);
   };
 
   return (
@@ -133,6 +140,15 @@ const CrearMesaPage = () => {
           Crear
         </button>
       </form>
+
+      {showConfirm && (
+        <div className="confirm-popup">
+          <p>¿Estás seguro de que deseas crear esta mesa?</p>
+          <button onClick={confirmCreate} className="confirm-button">Sí</button>
+          <button onClick={() => setShowConfirm(false)} className="cancel-button">No</button>
+        </div>
+      )}
+
       <ErrorMessage error={formData.error} />
     </div>
   );

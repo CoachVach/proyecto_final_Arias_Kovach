@@ -85,7 +85,7 @@ const updateDatosAlumnoMesa = async (req, res, next) => {
 
 const deleteMesa = async (req, res, next) => {
     try {
-        const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, req.params.id_mesa);
+        const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, req.params.id);
         await MesaExamenService.deleteMesa(mesa);
         res.status(200).json({ message: 'Mesa de examen eliminada correctamente' });
     } catch (error) {

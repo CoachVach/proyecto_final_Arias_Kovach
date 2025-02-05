@@ -2,6 +2,10 @@
   background: linear-gradient(135deg, #f4f4f9, #f7ede2);
   padding: 20px;
   font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .mesas-page h1 {
@@ -17,67 +21,122 @@
   flex-direction: column;
   gap: 1.5rem;
   align-items: center;
+  width: 100%;
+  max-width: 800px;
 }
 
 .mesa-box {
   background-color: white;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 600px;
+  max-width: 500px;
   text-align: center;
-  position: relative; /* Necesario para posicionar el botón */
+  position: relative;
+  transition: transform 0.2s ease-in-out;
+}
+
+.mesa-box:hover {
+  transform: translateY(-4px);
 }
 
 .mesa-box h2 {
   font-size: 1.5rem;
   color: #264653;
+  margin-bottom: 10px;
 }
 
 .mesa-box p {
   font-size: 1rem;
   color: #555;
+  margin-bottom: 15px;
 }
 
 .create-button {
   background-color: #2a9d8f;
   color: white;
-  padding: 1rem 2.5rem;
-  font-size: 1.2rem;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
   border: none;
   border-radius: 25px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
-  display: block;
-  margin: 20px auto;
 }
 
 .create-button:hover {
   background: linear-gradient(45deg, #2a9d8f, #264653);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
-/* Estilos para el botón de eliminar */
 .delete-button {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
+  background: #ff4d4d;
   border: none;
-  font-size: 1.5rem;
-  color: red;
+  font-size: 0.8rem;
+  color: white;
   cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 3px;
+  transition: background 0.2s ease-in-out;
+  width: auto;
+  height: auto;
 }
 
 .delete-button:hover {
-  color: darkred;
+  background: #cc0000;
 }
 
-/* Mobile styles */
+.confirm-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.confirm-popup p {
+  margin-bottom: 15px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.confirm-button, .cancel-button {
+  margin: 5px;
+  padding: 8px 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+.confirm-button {
+  background: #ff4d4d;
+  color: white;
+}
+
+.confirm-button:hover {
+  background: #cc0000;
+}
+
+.cancel-button {
+  background: #ccc;
+  color: black;
+}
+
+.cancel-button:hover {
+  background: #999;
+}
+
 @media (max-width: 768px) {
   .mesas-page h1 {
     font-size: 2rem;
@@ -85,12 +144,12 @@
 
   .mesa-box {
     width: 100%;
-    padding: 12px;
+    padding: 15px;
   }
 
   .create-button {
-    font-size: 1rem;
+    font-size: 0.9rem;
     width: 100%;
-    padding: 0.8rem 1.5rem;
+    padding: 0.8rem;
   }
 }

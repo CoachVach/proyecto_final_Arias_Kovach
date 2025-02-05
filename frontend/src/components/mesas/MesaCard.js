@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const MesaCard = ({ mesa, onDelete }) => {
   const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleDeleteClick = () => {
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    onDelete(mesa.id_mesa);
+    setShowConfirm(false);
+  };
 
   return (
     <div key={mesa.id_mesa} className="mesa-box">
       <button
         className="delete-button"
-        onClick={() => onDelete(mesa.id_mesa)}
+        onClick={handleDeleteClick}
         title="Eliminar mesa"
       >
-        🗑️
+        ✖
       </button>
       <h2>{mesa.materia}</h2>
       <p>
@@ -23,6 +33,14 @@ const MesaCard = ({ mesa, onDelete }) => {
       >
         Detalles
       </button>
+
+      {showConfirm && (
+        <div className="confirm-popup">
+          <p>¿Estás seguro de que deseas eliminar esta mesa?</p>
+          <button onClick={confirmDelete} className="confirm-button">Sí</button>
+          <button onClick={() => setShowConfirm(false)} className="cancel-button">No</button>
+        </div>
+      )}
     </div>
   );
 };

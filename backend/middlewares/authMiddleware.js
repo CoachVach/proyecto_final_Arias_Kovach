@@ -22,8 +22,7 @@ const verifyToken = async (req, res, next) => {
     if (!profesor) {
         return res.status(404).json({ error: 'Profesor no encontrado' });
     }
-
-    // Attach decoded information to the request (you can also add email or id)
+    
     req.profesor = profesor;
     next();
   });
