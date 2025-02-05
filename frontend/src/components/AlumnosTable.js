@@ -12,7 +12,6 @@ const AlumnosTable = ({ alumnos, openModal, mesa }) => {
         }));
     };
 
-    // Enviar datos al backend
     const guardarNotas = async () => {
         const datosNotas = alumnos
             .filter(alumno => notas[alumno.id_estudiante] !== undefined) // Solo los modificados

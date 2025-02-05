@@ -21,7 +21,7 @@ const MesasDetailPage = () => {
     data: null,
   });
 
-  const [decodedScanResult, setDecodedScanResult] = useState('');
+  const [scanResult, setScanResult] = useState(null);
   const [scanError, setScanError] = useState('');
   const [isFront, setIsFront] = useState(false);
   const videoRef = useRef(null);
@@ -36,14 +36,26 @@ const MesasDetailPage = () => {
 
   const handleQRCodeScanned = async (data) => {
     try {
+      let message = '';
+      let errorMsg = false;
+
       const alumnoExistente = alumnos.find(
         (alumno) => alumno.nro_identidad === data.nro_identidad
       );
+
       if (alumnoExistente) {
-        await updateAlumno(mesa.id_mesa, alumnoExistente.id_estudiante, {
-          presente: true,
-          inscripto: alumnoExistente.inscripto,
-        });
+        if (alumnoExistente.presente) {
+          message = 'El alumno ya se encuentra presente';
+          errorMsg = false;
+        } else {
+          // El alumno está inscripto, marcamos como presente
+          await updateAlumno(mesa.id_mesa, alumnoExistente.id_estudiante, {
+            presente: true,
+            inscripto: alumnoExistente.inscripto,
+          });
+          message = 'Alumno Presente';
+          errorMsg = false;
+        }
       } else {
         await createAlumno({
           doc: 'DNI',
@@ -58,9 +70,19 @@ const MesasDetailPage = () => {
           inscripto: false,
           id_mesa: mesa.id_mesa,
         });
+        message = 'El alumno no está inscripto';
+        errorMsg = true;
       }
-      
+
+      setScanResult({
+        nombre_completo: data.nombre_completo,
+        nro_identidad: data.nro_identidad,
+        message: message,
+        error: errorMsg,
+      });
+
       fetchAlumnos();
+      setScanError('');
     } catch (err) {
       console.error('Error al manejar el código QR:', err.message);
     }
@@ -129,7 +151,6 @@ const MesasDetailPage = () => {
                 nombre_completo : (dataParts[1] || '') + ', ' +(dataParts[2] || ''),
                 nro_identidad: dataParts[4] || '',
               };
-              setDecodedScanResult(datosDiferenciados);
               handleQRCodeScanned(datosDiferenciados);
               setScanError('');
             } else if (err && err.name !== 'NotFoundException') {
@@ -168,7 +189,7 @@ const MesasDetailPage = () => {
     <div className="table-container">
       <h1>Alumnos de la Mesa</h1>
       {alumnos.length > 0 ? (
-        <AlumnosTable alumnos={alumnos} openModal={openModal} mesa = {mesa}/>
+        <AlumnosTable alumnos={alumnos} openModal={openModal} mesa={mesa} />
       ) : (
         <p>No hay alumnos registrados en esta mesa.</p>
       )}
@@ -184,11 +205,11 @@ const MesasDetailPage = () => {
             <button onClick={toggleCamera}>
               Cambiar a {isFront ? 'Cámara Trasera' : 'Cámara Frontal'}
             </button>
-            {decodedScanResult && (
-              <div className="result-container">
-                <h2>Alumno escaneado:</h2>
-                <p>{decodedScanResult.nombre_completo}</p>
-                <p>DNI: {decodedScanResult.nro_identidad}</p>
+            {scanResult && (
+              <div className={`result-container ${scanResult.error ? 'error-container' : 'result-container'}`}>
+                <h2>{scanResult.message}</h2>
+                <p>{scanResult.nombre_completo}</p>
+                <p>DNI: {scanResult.nro_identidad}</p>
               </div>
             )}
             {scanError && (
