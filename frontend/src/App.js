@@ -9,6 +9,7 @@ import MesasPage from './pages/MesasPage';
 import CrearMesaPage from './pages/CrearMesaPage';
 import MesaDetailPage from './pages/MesaDetailPage';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
       </Routes>
+      <Footer />
     </Router>
   );
 };
