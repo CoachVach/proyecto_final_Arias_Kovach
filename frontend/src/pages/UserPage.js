@@ -78,15 +78,6 @@ const UserPage = () => {
               onChange={handleChange}
             />
           </label>
-          <label>
-            Contraseña (dejar en blanco para no cambiarla):
-            <input
-              type="password"
-              name="password"
-              value={formData.password || ''}
-              onChange={handleChange}
-            />
-          </label>
           <button type="submit">Guardar</button>
           <button type="button" onClick={() => setIsEditing(false)}>
             Cancelar

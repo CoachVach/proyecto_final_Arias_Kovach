@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from '@zxing/library';
 import '../styles/components/QRScanner.css';
 
-const QRScanner = ({onQRCodeScanned}) => {
+const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
   const [decodedScanResult, setDecodedScanResult] = useState('');
   const [error, setError] = useState('');
-  const [isFront, setIsFront] = useState(false); // Estado para controlar la cámara
+  const [isFront, setIsFront] = useState(false); 
   const videoRef = useRef(null);
   const codeReader = useRef(null);
   const streamRef = useRef(null);
   const handleScan = (data) => {
     if (data) {
-        onQRCodeScanned(data); // Notificar a MesasDetailPage con el código escaneado
+      onQRCodeScanned(data); 
     }
   };
 
@@ -106,12 +106,14 @@ const QRScanner = ({onQRCodeScanned}) => {
         Cambiar a {isFront ? 'Cámara Trasera' : 'Cámara Frontal'}
       </button>
 
-      {decodedScanResult && (
-        <div className="result-container">
-          <h2>Alumno escaneado:</h2>
-          <p>{decodedScanResult.nro_identidad}</p>
-        </div>
-      )}
+
+      {alumnoInscripto && (
+          <div className={`${alumnoInscripto.inscripto ? 'result-container' : 'error-container'}`}>
+            <h2>{alumnoInscripto.message}</h2>
+            <p>{alumnoInscripto.nombre_completo}</p>
+            <p>DNI: {alumnoInscripto.nro_identidad}</p>
+          </div>
+        )}
 
       {error && (
         <div className="error-container">
