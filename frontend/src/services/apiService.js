@@ -2,7 +2,9 @@ const API_BASE_URL = 'http://localhost:3000/api';
 
 // Función para hacer peticiones a la API con autenticación
 const fetchWithAuth = async (url, options = {}) => {
+  
   const token = localStorage.getItem('token');
+  console.log(token);
   if (!token) {
     throw new Error('Token de autenticación no encontrado');
   }
@@ -146,6 +148,22 @@ export const updateMesa = async (mesaId, data) => {
     return mesaActualizada;
   } catch (error) {
     console.error(`Error al actualizar la mesa ${mesaId}:`, error);
+    throw new Error('No se pudo actualizar la mesa de examen.');
+  }
+};
+  // Actualizar las notas de una mesa de examen
+export const  updateNotasMesa = async (mesaId, dataNotas) => {
+  try {
+    const mesaActualizada = await fetchWithAuth(`/mesas/notas/${mesaId}`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({notasById: dataNotas}),
+    });
+    return mesaActualizada;
+  } catch (error) {
+    console.error(`Error al actualizar la mesaddddddd ${mesaId}:`, error);
     throw new Error('No se pudo actualizar la mesa de examen.');
   }
 };

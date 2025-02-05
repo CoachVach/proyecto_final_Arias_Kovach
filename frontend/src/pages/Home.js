@@ -19,20 +19,6 @@ const Home = () => {
           Por favor, inicia sesión o regístrate para comenzar a utilizar las funcionalidades de la plataforma.
         </p>
       </section>
-      <div className="home-buttons">
-        <button 
-          className="home-button home-button-primary"
-          onClick={() => navigate('/login')}
-        >
-          Iniciar Sesión
-        </button>
-        <button 
-          className="home-button home-button-secondary"
-          onClick={() => navigate('/register')}
-        >
-          Registrarse
-        </button>
-      </div>
     </div>
   );
 };

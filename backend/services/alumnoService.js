@@ -2,6 +2,8 @@ const Alumno = require('../models/alumno');
 const MesaAlumno = require('../models/mesa_alumno');
 const MesaExamen = require('../models/mesa_examen');
 const AppError  = require('../structure/AppError');
+const MesaExamenService = require('../services/mesaExamenService');
+
 
 class AlumnoService{
 
@@ -49,7 +51,7 @@ class AlumnoService{
     static async findAlumnosDataFromMesaAlumno(idMesa) {
         const mesaAlumnosData= await MesaAlumno.findAll({
             where: { id_mesa: idMesa },
-            attributes: ['id_estudiante', 'inscripto', 'presente', 'carrera', 'plan', 'codigo', 'calidad'],
+            attributes: ['id_estudiante', 'inscripto', 'presente', 'carrera', 'plan', 'codigo', 'calidad', 'nota'],
         });
 
         if (!mesaAlumnosData || mesaAlumnosData.length === 0) {
@@ -85,8 +87,19 @@ class AlumnoService{
                 codigo: alumnoData.codigo,
                 inscripto: alumnoData.inscripto,
                 presente: alumnoData.presente,
+                nota: alumnoData.nota,
             };
         });
+    }
+
+    static async getAlumnosByIdMesaExamen(id_mesa, id_profesor){
+        await MesaExamenService.validateProfesorMesa(id_profesor, id_mesa);
+        const mesaAlumnosData = await this.findAlumnosDataFromMesaAlumno(id_mesa);
+        const estudiantesIds = mesaAlumnosData.map((ed) => ed.id_estudiante);
+        const alumnos = await this.findAllAlumnos(estudiantesIds);
+        const result = await this.mapAlumnosDataWithMesaAlumnos(alumnos, mesaAlumnosData);
+        
+        return result
     }
 }
 

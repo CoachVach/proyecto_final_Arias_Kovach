@@ -15,6 +15,7 @@ const FileModal = ({ alumnos, onClose, materia, fecha }) => {
     'plan',
     'codigo',
     'calidad',
+    'nota',
   ];
   const [selectedColumns, setSelectedColumns] = useState(columns);
   const [includeAusentes, setIncludeAusentes] = useState(true);

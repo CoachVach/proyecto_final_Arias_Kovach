@@ -1,5 +1,5 @@
 const express = require('express');
-const {updateDatosAlumnoMesa, getMesaById, getMesaByProfesor, createMesa, updateMesa, deleteMesa, updateAlumnoMesa } = require('../controllers/mesa_examenController');
+const {updateNotasAlumnos, updateDatosAlumnoMesa, getMesaById, getMesaByProfesor, createMesa, updateMesa, deleteMesa, updateAlumnoMesa } = require('../controllers/mesa_examenController');
 
 const router = express.Router();
 
@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/profesor', getMesaByProfesor);
 router.get('/:id', getMesaById);
 router.post('/', createMesa);
+router.post('/notas/:id_mesa', updateNotasAlumnos);
 router.post('/:id', updateMesa);
 router.post('/:id_mesa/:id_estudiante', updateAlumnoMesa);
 router.post('/update-alumno//:id_mesa/:id_estudiante', updateDatosAlumnoMesa);

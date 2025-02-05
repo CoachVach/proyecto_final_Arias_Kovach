@@ -34,9 +34,40 @@ const MesasDetailPage = () => {
     fetchAlumnos();
   };
 
+  const handleQRCodeScanned = async (data) => {
+    try {
+      const alumnoExistente = alumnos.find(
+        (alumno) => alumno.nro_identidad === data.nro_identidad
+      );
+      if (alumnoExistente) {
+        await updateAlumno(mesa.id_mesa, alumnoExistente.id_estudiante, {
+          presente: true,
+          inscripto: alumnoExistente.inscripto,
+        });
+      } else {
+        await createAlumno({
+          doc: 'DNI',
+          nro_identidad: data.nro_identidad,
+          lu: null,
+          nombre_completo: data.nombre_completo,
+          carrera: null,
+          calidad: null,
+          codigo: null,
+          plan: null,
+          presente: true,
+          inscripto: false,
+          id_mesa: mesa.id_mesa,
+        });
+      }
+      
+      fetchAlumnos();
+    } catch (err) {
+      console.error('Error al manejar el código QR:', err.message);
+    }
+  };
+
   const fetchAlumnos = async () => {
     try {
-      setLoading(true);
       const data = await getAlumnos(mesa.id_mesa);
       setAlumnos(data);
     } catch (err) {
@@ -99,6 +130,7 @@ const MesasDetailPage = () => {
                 nro_identidad: dataParts[4] || '',
               };
               setDecodedScanResult(datosDiferenciados);
+              handleQRCodeScanned(datosDiferenciados);
               setScanError('');
             } else if (err && err.name !== 'NotFoundException') {
               console.error('Decoding error:', err);
@@ -136,7 +168,7 @@ const MesasDetailPage = () => {
     <div className="table-container">
       <h1>Alumnos de la Mesa</h1>
       {alumnos.length > 0 ? (
-        <AlumnosTable alumnos={alumnos} openModal={openModal} />
+        <AlumnosTable alumnos={alumnos} openModal={openModal} mesa = {mesa}/>
       ) : (
         <p>No hay alumnos registrados en esta mesa.</p>
       )}

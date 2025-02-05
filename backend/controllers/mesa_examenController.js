@@ -102,6 +102,24 @@ const getMesaByProfesor = async (req, res, next) => {
     }
 };
 
+const updateNotasAlumnos = async (req, res, next) => {
+    try {
+        console.log("Llegó al método");
+        const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, req.params.id_mesa);
+        const {notasById} = req.body;
+        console.log(req.body);
+        if (!notasById || !Array.isArray(notasById)) {
+            throw new AppError('Formato incorrecto de datos', 400);
+        }
+        
+        await MesaAlumnoService.updateNotasAlumnos(mesa.id_mesa, notasById);
+        
+        res.status(200).json({ message: 'Notas de los alumnos actualizadas correctamente' });
+    } catch (error) {
+        next(error instanceof AppError ? error : new AppError('Error al actualizar la nota del alumno', 500, error.message));
+    }
+};
+
 module.exports = {
     getAllMesas,
     getMesaById,
@@ -110,5 +128,6 @@ module.exports = {
     deleteMesa,
     getMesaByProfesor,
     updateAlumnoMesa,
-    updateDatosAlumnoMesa
+    updateDatosAlumnoMesa,
+    updateNotasAlumnos
 };

@@ -24,13 +24,13 @@ const getAlumnoById = async (req, res, next) => {
 const getAlumnosByIdMesaExamen = async (req, res, next) => {
     try {
         const idMesa = req.params.id;
+        /*
         await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, idMesa);
-
         const mesaAlumnosData = await AlumnoService.findAlumnosDataFromMesaAlumno(idMesa);
         const estudiantesIds = mesaAlumnosData.map((ed) => ed.id_estudiante);
         const alumnos = await AlumnoService.findAllAlumnos(estudiantesIds);
-        const result = await AlumnoService.mapAlumnosDataWithMesaAlumnos(alumnos, mesaAlumnosData);
-
+        const result = await AlumnoService.mapAlumnosDataWithMesaAlumnos(alumnos, mesaAlumnosData);*/
+        const result = await AlumnoService.getAlumnosByIdMesaExamen(idMesa, req.profesor.id_profesor);
         res.status(200).json(result);
     } catch (error) {
         console.log('AppError:', AppError);
@@ -65,7 +65,11 @@ const assignAlumnoToMesa = async (req, res, next) => {
             return res.status(201).json({ message: 'Alumno creado y asignado a la mesa', alumno });
         }
 
-        await MesaAlumnoService.verifyMesaWithoutAlumno(id_mesa, alumno.id_estudiante);
+        let isInMesa =  await MesaAlumnoService.verifyAlumnoIsInMesa(id_mesa, alumno.id_estudiante);
+        if(isInMesa){
+            throw new AppError('El alumno ya está asignado a esta mesa', 409);
+        }
+        
         await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto);
 
         res.status(200).json({ message: 'Alumno asignado a la mesa correctamente', alumno });

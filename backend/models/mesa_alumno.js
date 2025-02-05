@@ -41,6 +41,11 @@ const MesaAlumno = sequelize.define('mesa_alumno', {
     allowNull: false,
     defaultValue: true,
   },
+  nota: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: "-",
+  },
 }, {
   tableName: 'mesa_alumno',
   timestamps: false,
