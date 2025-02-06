@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+require('./services/cleanup');
 const port = 3000;
 const { errorMiddleware } = require('./middlewares/errorMiddleware'); // Importar el middleware de manejo de errores
 
