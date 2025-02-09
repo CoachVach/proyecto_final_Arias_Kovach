@@ -103,6 +103,7 @@ const MesasDetailPage = () => {
   return (
     <div className="table-container">
       <h1>Alumnos de la Mesa</h1>
+      <button onClick={fetchAlumnos} className="refresh-button">Actualizar Alumnos</button>
       {alumnos.length > 0 ? (
         <AlumnosTable alumnos={alumnos} openModal={openModal} mesa={mesa} />
       ) : (
