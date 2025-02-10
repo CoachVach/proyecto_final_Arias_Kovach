@@ -11,11 +11,13 @@ const CrearMesaPage = () => {
   const [formData, setFormData] = useState({
     fecha: '',
     materia: '',
+    listaColaboradores:[],
     alumnos: [],
     error: null,
   });
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -78,6 +80,7 @@ const CrearMesaPage = () => {
       const mesa = await createMesa({
         fecha: formData.fecha,
         materia: formData.materia,
+        listaColaboradores: formData.listaColaboradores,
       });
 
       mesaId = mesa.id_mesa;
@@ -99,7 +102,7 @@ const CrearMesaPage = () => {
       navigate('/mesas');
     } catch (error) {
       setFormData((prevData) => ({ ...prevData, error: error.message }));
-
+      formData.listaColaboradores = [];
       if (mesaId) {
         try {
           await deleteMesa(mesaId);
@@ -109,8 +112,22 @@ const CrearMesaPage = () => {
         }
       }
     }
-
+    formData.listaColaboradores = [];
     setShowConfirm(false);
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const addEmail = () => {
+    if (email && !formData.listaColaboradores.includes(email)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        listaColaboradores: [...prevData.listaColaboradores, email],
+      }));
+      setEmail(''); // Limpiar el input después de agregar
+    }
   };
 
   return (
@@ -136,6 +153,20 @@ const CrearMesaPage = () => {
           required
         />
         <FileUpload onFileChange={handleFileUpload} />
+        <div className="email-input-container">
+          <input
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            placeholder="Agregar correo"
+          />
+          <button type="button" onClick={addEmail}>Agregar</button>
+        </div>
+        <div className="email-list">
+          {formData.listaColaboradores.map((correo, index) => (
+            <span key={index} className="email-item">{correo}</span>
+          ))}
+        </div>
         <button type="submit" className="submit-button">
           Crear
         </button>

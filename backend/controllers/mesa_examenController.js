@@ -1,6 +1,7 @@
 const AlumnoService = require('../services/alumnoService');
 const MesaExamenService = require('../services/mesaExamenService');
 const MesaAlumnoService = require('../services/mesaAlumnoService');
+const ColaboradorMesaService = require('../services/colaboradorMesaService');
 const AppError  = require('../structure/AppError');
 
 const getAllMesas = async (req, res, next) => {
@@ -23,12 +24,17 @@ const getMesaById = async (req, res, next) => {
 
 const createMesa = async (req, res, next) => {
     try {
-        const { fecha, materia } = req.body;
+        const { fecha, materia, listaColaboradores } = req.body;
         if (!fecha || !materia) {
             throw new AppError('Fecha y materia son requeridos', 400);
         }
-
         const newMesa = await MesaExamenService.createMesaExamen(fecha, materia, req.profesor.id_profesor);
+        if (!listaColaboradores || !Array.isArray(listaColaboradores)) {
+            throw new AppError('Formato incorrecto de datos', 400);
+        }
+        await ColaboradorMesaService.addColaborador(listaColaboradores, newMesa.id_mesa);
+        // Emitir evento de actualización a todos los clientes
+        req.io.emit('mesasParaColabActualizadas', { id_mesa: newMesa.id_mesa });
         res.status(201).json(newMesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al crear la mesa de examen', 500, error.message));
@@ -54,6 +60,8 @@ const updateAlumnoMesa = async (req, res, next) => {
         const { presente } = req.body;
 
         await MesaAlumnoService.updatePresentAlumno(alumno.id_estudiante, mesa.id_mesa, presente);
+        // Emitir evento de actualización a todos los clientes
+        req.io.emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
         res.status(200).json(mesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al actualizar la mesa de examen', 400, error.message));
@@ -76,7 +84,8 @@ const updateDatosAlumnoMesa = async (req, res, next) => {
             codigo,
             calidad
         );
-
+        // Emitir evento de actualización a todos los clientes
+        req.io.emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
         res.status(200).json(mesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al actualizar la mesa de examen', 400, error.message));
@@ -102,18 +111,27 @@ const getMesaByProfesor = async (req, res, next) => {
     }
 };
 
+const getMesaByColaborador = async (req, res, next) => {
+    try {
+        const mesas = await ColaboradorMesaService.findMesasByColaborador(req.profesor.id_profesor);
+        res.status(200).json(mesas);
+    } catch (error) {
+        next(error instanceof AppError ? error : new AppError('Error al obtener las mesas de examen', 500, error.message));
+    }
+};
+
+
 const updateNotasAlumnos = async (req, res, next) => {
     try {
-        console.log("Llegó al método");
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, req.params.id_mesa);
         const {notasById} = req.body;
-        console.log(req.body);
         if (!notasById || !Array.isArray(notasById)) {
             throw new AppError('Formato incorrecto de datos', 400);
         }
         
         await MesaAlumnoService.updateNotasAlumnos(mesa.id_mesa, notasById);
-        
+        // Emitir evento de actualización a todos los clientes
+        req.io.emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
         res.status(200).json({ message: 'Notas de los alumnos actualizadas correctamente' });
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al actualizar la nota del alumno', 500, error.message));
@@ -129,5 +147,6 @@ module.exports = {
     getMesaByProfesor,
     updateAlumnoMesa,
     updateDatosAlumnoMesa,
-    updateNotasAlumnos
+    updateNotasAlumnos,
+    getMesaByColaborador
 };

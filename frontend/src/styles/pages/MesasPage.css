@@ -18,11 +18,13 @@
 
 .mesas-container {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
-  width: 100%;
-  max-width: 800px;
+  flex-wrap: wrap;  /* Permite que las tarjetas pasen a la siguiente línea si no caben */
+  gap: 1rem;  /* Espacio entre las tarjetas */
+  justify-content: center;  /* Centra las tarjetas en el contenedor */
+  align-items: center;  /* Alineación vertical */
+  width: 90%;  /* No ocupa todo el ancho de la página */
+  max-width: 1000px;  /* Ajusta el tamaño máximo */
+  margin: 0 auto;  /* Centra el contenedor */
 }
 
 .mesa-box {

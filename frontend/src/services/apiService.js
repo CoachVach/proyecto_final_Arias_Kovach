@@ -62,6 +62,18 @@ export const getAllMesas = async () => {
   }
 };
 
+
+// Obtener todas las mesas de examen para un colaborador
+export const getAllMesasByColaborador = async () => {
+  try {
+    const mesas = await fetchWithAuth('/mesas/colaborador');
+    return mesas;
+  } catch (error) {
+    console.error('Error al obtener las mesas:', error);
+    throw new Error('No se pudieron obtener las mesas de examen.');
+  }
+};
+
 // Obtener detalles de una mesa de examen específica
 export const getMesaDetails = async (mesaId) => {
   try {

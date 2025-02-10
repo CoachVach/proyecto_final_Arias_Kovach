@@ -2,6 +2,7 @@ const Alumno = require('../models/alumno');
 const MesaAlumno = require('../models/mesa_alumno');
 const MesaExamen = require('../models/mesa_examen');
 const AppError  = require('../structure/AppError');
+const ColaboradorMesa = require('../models/colaborador_mesa');
 
 class MesaExamenService{
 
@@ -24,10 +25,22 @@ class MesaExamenService{
         await mesa.addAlumno(alumno, { through: {carrera, calidad, codigo, plan, presente, inscripto } });
     }
 
-    static async validateProfesorMesa(profesorId, mesaId) {
+    /*static async validateProfesorMesa(profesorId, mesaId) {
         const mesa = await MesaExamen.findByPk(mesaId);
         if (mesa.id_profesor !== profesorId) {
             throw new AppError('La mesa no pertenece al profesor.', 403);
+        }
+        if (!mesa) {
+            throw new AppError('Mesa de examen no encontrada', 404);
+        }
+        return mesa;
+    }*/
+
+    static async validateProfesorMesa(profesorId, mesaId) {
+        let mesa = await MesaExamen.findByPk(mesaId);
+        if (mesa.id_profesor !== profesorId) {
+            let colaboradorMesa = await ColaboradorMesa.findOne({ where: { id_mesa:mesaId, id_profesor: profesorId } });
+            if(!colaboradorMesa) throw new AppError('La mesa no pertenece al profesor y tampoco a un colaborador con esta sesión', 403);
         }
         if (!mesa) {
             throw new AppError('Mesa de examen no encontrada', 404);
@@ -44,12 +57,11 @@ class MesaExamenService{
     }
 
     static async findMesasByProfesor(id_profesor){
-        const mesas = await MesaExamen.findAll({ where: { id_profesor: id_profesor } });
-        if (!mesas.length) {
-            throw new AppError('No se encontraron mesas de examen para este profesor', 404);
-        }
+        let mesas = [];
+        mesas = await MesaExamen.findAll({ where: { id_profesor: id_profesor } });
         return mesas;
     }
+           
 }
 
 module.exports =  MesaExamenService;

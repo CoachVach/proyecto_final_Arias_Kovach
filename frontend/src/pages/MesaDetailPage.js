@@ -7,7 +7,7 @@ import AlumnosTable from '../components/AlumnosTable';
 import ActionButtons from '../components/ActionButtons';
 import { getAlumnos, updateAlumno, createAlumno } from '../services/apiService';
 import ModalWrapper from '../components/ModalWrapper';
-
+import socket from "../socket"; // Importamos la instancia de WebSockets
 const MesasDetailPage = () => {
   const [alumnos, setAlumnos] = useState([]);
   const location = useLocation();
@@ -92,7 +92,20 @@ const MesasDetailPage = () => {
   };
 
   useEffect(() => {
-    if (mesa) fetchAlumnos();
+    if (mesa){ 
+      fetchAlumnos();
+      // Escuchar el evento de WebSocket
+      socket.on("datosAlumnosActualizada", (data) => {
+        if (data.id_mesa === mesa.id_mesa) {
+          console.log("🔄 Se detectó un cambio en la mesa:", data);
+          fetchAlumnos(); // Recargar la lista de alumnos
+        }
+      });
+    // Limpiar la suscripción cuando el componente se desmonta
+    return () => {
+      socket.off("datosAlumnosActualizada");
+    };
+    }
   }, [mesa]);
 
 

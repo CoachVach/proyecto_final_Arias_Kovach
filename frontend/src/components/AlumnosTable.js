@@ -25,7 +25,6 @@ const AlumnosTable = ({ alumnos, openModal, mesa }) => {
       alert("No hay notas para enviar.");
       return;
     }
-
     try {
       await updateNotasMesa(mesa.id_mesa, datosNotas);
       alert("Notas guardadas correctamente");

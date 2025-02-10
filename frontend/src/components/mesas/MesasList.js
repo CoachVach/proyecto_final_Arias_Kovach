@@ -1,13 +1,19 @@
 import React from 'react';
 import MesaCard from './MesaCard';
 
-const MesasList = ({ mesas, onDelete }) => {
+const MesasList = ({ mesas, title }) => {
   return (
-    <div className="mesas-container">
-      {mesas.map((mesa) => (
-        <MesaCard key={mesa.id_mesa} mesa={mesa} onDelete={onDelete} />
-      ))}
-    </div>
+    <>
+      {mesas.length > 0 && (
+        <div><h2>{title}</h2>
+          <div className="mesas-container">
+            {mesas.map((mesa) => (
+              <MesaCard key={mesa.id_mesa} mesa={mesa} />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

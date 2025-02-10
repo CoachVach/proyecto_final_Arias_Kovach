@@ -3,6 +3,7 @@ const alumno = require('./alumno');
 const profesor = require('./profesor');
 const mesa_examen = require('./mesa_examen');
 const mesa_alumno = require('./mesa_alumno');
+const colaborador_mesa = require('./colaborador_mesa');
 
 // Relaciones
 profesor.hasMany(mesa_examen, {
@@ -25,10 +26,25 @@ alumno.belongsToMany(mesa_examen, {
   otherKey: 'id_mesa',
 });
 
+// Relación muchos a muchos entre mesa_examen y alumno
+mesa_examen.belongsToMany(profesor, {
+  through: colaborador_mesa,
+  foreignKey: 'id_mesa',
+  otherKey: 'id_profesor',
+});
+
+profesor.belongsToMany(mesa_examen, {
+  through: colaborador_mesa,
+  foreignKey: 'id_profesor',
+  otherKey: 'id_mesa',
+});
+
+
 module.exports = {
   sequelize,
   alumno,
   profesor,
   mesa_examen,
   mesa_alumno,
+  colaborador_mesa,
 };
