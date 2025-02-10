@@ -17,19 +17,24 @@ const MesasPage = () => {
 
   const fetchMesas = async () => {
     try {
-      setMesasProfesor(await getAllMesas());
-      setMesasColaborador(await getAllMesasByColaborador());
-      if (!mesasProfesor.length && !mesasColaborador.length ) {
-        setError('No se encontraron mesas disponibles para este usuario.');
+      const fetchedMesasProfesor = await getAllMesas();
+      const fetchedMesasColaborador = await getAllMesasByColaborador();
+  
+      if (!fetchedMesasProfesor.length && !fetchedMesasColaborador.length) {
+        setError("No se encontraron mesas disponibles para este usuario.");
       } else {
-        setError('');
+        setError(""); 
       }
+  
+      setMesasProfesor(fetchedMesasProfesor);
+      setMesasColaborador(fetchedMesasColaborador);
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchMesas();

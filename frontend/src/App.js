@@ -6,6 +6,7 @@ import Login from './components/auth/Login';
 import ProtectedRoute from './routes/ProtectedRoute';
 import UserPage from './pages/UserPage';
 import MesasPage from './pages/MesasPage';
+import AboutPage from './pages/AboutPage';
 import CrearMesaPage from './pages/CrearMesaPage';
 import MesaDetailPage from './pages/MesaDetailPage';
 import Navbar from './components/Navbar';
@@ -24,6 +25,7 @@ const App = () => {
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/" element={<Home />} />
       </Routes>
       <Footer />
