@@ -11,7 +11,7 @@ const CrearMesaPage = () => {
   const [formData, setFormData] = useState({
     fecha: '',
     materia: '',
-    listaColaboradores:[],
+    listaColaboradores: [],
     alumnos: [],
     error: null,
   });
@@ -70,19 +70,26 @@ const CrearMesaPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(formData.fecha);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      alert('La fecha ingresada ya ha pasado. Por favor, selecciona una fecha válida.');
+      return;
+    }
     setShowConfirm(true);
   };
 
   const confirmCreate = async () => {
     let mesaId = null;
-
     try {
       const mesa = await createMesa({
         fecha: formData.fecha,
         materia: formData.materia,
         listaColaboradores: formData.listaColaboradores,
       });
-
       mesaId = mesa.id_mesa;
 
       const alumnosConMesa = formData.alumnos.map((alumno) => ({
@@ -102,23 +109,14 @@ const CrearMesaPage = () => {
       navigate('/mesas');
     } catch (error) {
       setFormData((prevData) => ({ ...prevData, error: error.message }));
-      formData.listaColaboradores = [];
       if (mesaId) {
-        try {
-          await deleteMesa(mesaId);
-          console.log('Mesa eliminada debido a un error al crear alumnos.');
-        } catch (deleteError) {
-          console.error('Error al intentar eliminar la mesa:', deleteError.message);
-        }
+        await deleteMesa(mesaId);
       }
     }
-    formData.listaColaboradores = [];
     setShowConfirm(false);
   };
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+  const handleEmailChange = (e) => setEmail(e.target.value);
 
   const addEmail = () => {
     if (email && !formData.listaColaboradores.includes(email)) {
@@ -126,52 +124,38 @@ const CrearMesaPage = () => {
         ...prevData,
         listaColaboradores: [...prevData.listaColaboradores, email],
       }));
-      setEmail(''); // Limpiar el input después de agregar
+      setEmail('');
     }
+  };
+
+  const removeEmail = (correo) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      listaColaboradores: prevData.listaColaboradores.filter((email) => email !== correo),
+    }));
   };
 
   return (
     <div className="crear-mesa-page">
       <h1>Crear Mesa de Examen</h1>
       <form onSubmit={handleSubmit} className="crear-mesa-form">
-        <FormInput
-          label="Fecha:"
-          type="date"
-          id="fecha"
-          name="fecha"
-          value={formData.fecha}
-          onChange={handleInputChange}
-          required
-        />
-        <FormInput
-          label="Materia:"
-          type="text"
-          id="materia"
-          name="materia"
-          value={formData.materia}
-          onChange={handleInputChange}
-          required
-        />
+        <FormInput label="Fecha:" type="date" name="fecha" value={formData.fecha} onChange={handleInputChange} required />
+        <FormInput label="Materia:" type="text" name="materia" value={formData.materia} onChange={handleInputChange} required />
         <FileUpload onFileChange={handleFileUpload} />
         <div className="email-input-container">
-          <input
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="Agregar correo"
-          />
-          <button type="button" onClick={addEmail}>Agregar</button>
+          <input type="email" value={email} onChange={handleEmailChange} placeholder="Agregar correo" />
+          <button type="button" onClick={addEmail} className="add-email-button">Agregar</button>
         </div>
         <div className="email-list">
           {formData.listaColaboradores.map((correo, index) => (
-            <span key={index} className="email-item">{correo}</span>
+            <div key={index} className="email-item">
+              <span>{correo}</span>
+              <button className="delete-email-button" onClick={() => removeEmail(correo)}>-</button>
+            </div>
           ))}
         </div>
-        <button type="submit" className="submit-button">
-          Crear
-        </button>
+        <button type="submit" className="submit-button">Crear</button>
       </form>
-
       {showConfirm && (
         <div className="confirm-popup">
           <p>¿Estás seguro de que deseas crear esta mesa?</p>
@@ -179,7 +163,6 @@ const CrearMesaPage = () => {
           <button onClick={() => setShowConfirm(false)} className="cancel-button">No</button>
         </div>
       )}
-
       <ErrorMessage error={formData.error} />
     </div>
   );
