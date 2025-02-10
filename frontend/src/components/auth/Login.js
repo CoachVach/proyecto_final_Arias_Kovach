@@ -18,6 +18,7 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('email', email);
         navigate('/'); 
         window.location.reload()
       } else {

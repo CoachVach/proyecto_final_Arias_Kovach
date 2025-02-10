@@ -6,11 +6,13 @@ import Loading from '../components/common/Loading'; // Importar el componente de
 import ErrorMessage from '../components/common/ErrorMessage'; // Importar el componente de mensaje de error
 import '../styles/pages/MesasPage.css';
 import socket from '../socket.js';
+
 const MesasPage = () => {
   const [mesasProfesor, setMesasProfesor] = useState([]);
   const [mesasColaborador, setMesasColaborador] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const email = localStorage.getItem('email');
   const navigate = useNavigate();
 
   const fetchMesas = async () => {
@@ -31,8 +33,9 @@ const MesasPage = () => {
 
   useEffect(() => {
     fetchMesas();
-     // Escuchar el evento de WebSocket
-     socket.on("mesasParaColabActualizadas", (data) => {
+    socket.emit("joinProfesor", email); // Unirse a la sala de profesor
+    // Escuchar el evento de WebSocket
+    socket.on("mesasParaColabActualizadas", (data) => {
       console.log("🔄 Se detectó un cambio en las mesasa:", data);
       fetchMesas(); // Recargar la lista de mesas
     });

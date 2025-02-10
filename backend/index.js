@@ -60,6 +60,18 @@ io.on('connection', (socket) => {
   socket.on('updateDetaisAlumnos', (data) => {
     io.emit('datosAlumnosActualizada', data); // Enviar actualización a todos los clientes conectados
   });
+  
+  // Unir a una sala específica cuando un usuario entra a una mesa
+  socket.on("joinMesa", (id_mesa) => {
+    console.log(`📌 Usuario ${socket.id} se unió a la mesa ${id_mesa}`);
+    socket.join(`mesa_${id_mesa}`); // El usuario se une a la sala de la mesa específica
+  });
+  
+  // 🔥 Unir profesor a su sala personal
+  socket.on("joinProfesor", (email) => {
+    socket.join(`profesor_${email}`);
+    console.log(`👨‍🏫 Profesor ${email} unido a su sala`);
+  });
 
   // Escuchar eventos de actualización de mesas
   socket.on('updateMesasColaboradores', (data) => {

@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 
 class ColaboradorMesaService{
 
-    static async addColaborador(listaColaboradores, mesaID){
+    static async addColaborador(listaColaboradores, mesaID, io){
         for (const colab of listaColaboradores ){
             let profesor = await ProfesorService.verifyProfessor(colab);
             if (!profesor) {
@@ -16,6 +16,8 @@ class ColaboradorMesaService{
                 id_profesor: profesor.id_profesor,
                 id_mesa: mesaID
             });
+            // Emitir evento de actualización a todos los clientes
+            io.to(`profesor_${profesor.email}`).emit('mesasParaColabActualizadas', { id_mesa: mesaID });
         }
     }
 

@@ -32,9 +32,7 @@ const createMesa = async (req, res, next) => {
         if (!listaColaboradores || !Array.isArray(listaColaboradores)) {
             throw new AppError('Formato incorrecto de datos', 400);
         }
-        await ColaboradorMesaService.addColaborador(listaColaboradores, newMesa.id_mesa);
-        // Emitir evento de actualización a todos los clientes
-        req.io.emit('mesasParaColabActualizadas', { id_mesa: newMesa.id_mesa });
+        await ColaboradorMesaService.addColaborador(listaColaboradores, newMesa.id_mesa,req.io);
         res.status(201).json(newMesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al crear la mesa de examen', 500, error.message));
@@ -61,7 +59,8 @@ const updateAlumnoMesa = async (req, res, next) => {
 
         await MesaAlumnoService.updatePresentAlumno(alumno.id_estudiante, mesa.id_mesa, presente);
         // Emitir evento de actualización a todos los clientes
-        req.io.emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
+        const sala = `mesa_${mesa.id_mesa}`;
+        req.io.to(sala).emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
         res.status(200).json(mesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al actualizar la mesa de examen', 400, error.message));
@@ -85,7 +84,8 @@ const updateDatosAlumnoMesa = async (req, res, next) => {
             calidad
         );
         // Emitir evento de actualización a todos los clientes
-        req.io.emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
+        const sala = `mesa_${mesa.id_mesa}`;
+        req.io.to(sala).emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
         res.status(200).json(mesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al actualizar la mesa de examen', 400, error.message));
@@ -131,7 +131,8 @@ const updateNotasAlumnos = async (req, res, next) => {
         
         await MesaAlumnoService.updateNotasAlumnos(mesa.id_mesa, notasById);
         // Emitir evento de actualización a todos los clientes
-        req.io.emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
+        const sala = `mesa_${mesa.id_mesa}`;
+        req.io.to(sala).emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
         res.status(200).json({ message: 'Notas de los alumnos actualizadas correctamente' });
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al actualizar la nota del alumno', 500, error.message));

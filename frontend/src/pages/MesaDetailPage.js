@@ -94,8 +94,12 @@ const MesasDetailPage = () => {
   useEffect(() => {
     if (mesa){ 
       fetchAlumnos();
+       // Unirse a la sala específica de la mesa de examen
+       socket.emit("joinMesa", mesa.id_mesa);
+
       // Escuchar el evento de WebSocket
-      socket.on("datosAlumnosActualizada", (data) => {
+      socket.on("datosAlumnosActualizada", (data) => {  
+        console.log("🔄 Se detectó un cambio en la mesa:", data);
         if (data.id_mesa === mesa.id_mesa) {
           console.log("🔄 Se detectó un cambio en la mesa:", data);
           fetchAlumnos(); // Recargar la lista de alumnos

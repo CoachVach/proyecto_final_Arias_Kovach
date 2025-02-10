@@ -4,7 +4,6 @@ const API_BASE_URL = 'http://localhost:3000/api';
 const fetchWithAuth = async (url, options = {}) => {
   
   const token = localStorage.getItem('token');
-  console.log(token);
   if (!token) {
     throw new Error('Token de autenticación no encontrado');
   }
