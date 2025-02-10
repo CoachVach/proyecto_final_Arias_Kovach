@@ -9,18 +9,10 @@ const Footer = () => {
         <div className="footer-logo">
           Asistencia<span>UNS</span>
         </div>
+        <p>Desarrollado por Erik Kovach y Federico Arias para la UNS, bajo la supervisión de Dr. Martín Larrea y Dr. Luciano Tamargo.</p>
         <ul className="footer-links">
           <li>
             <Link to="/about">Sobre Nosotros</Link>
-          </li>
-          <li>
-            <Link to="/contact">Contacto</Link>
-          </li>
-          <li>
-            <Link to="/privacy">Política de Privacidad</Link>
-          </li>
-          <li>
-            <Link to="/terms">Términos de Servicio</Link>
           </li>
         </ul>
       </div>
