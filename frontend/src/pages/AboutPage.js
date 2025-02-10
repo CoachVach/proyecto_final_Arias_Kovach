@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/pages/About.css';
 
 const AboutPage = () => {
-  const navigate = useNavigate();
 
   return (
     <div className="about-container">
