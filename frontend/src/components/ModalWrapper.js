@@ -16,7 +16,7 @@ const ModalWrapper = ({ modalState, closeModal, handleQRCodeScanned, alumnos, me
           <QRScanner onQRCodeScanned={handleQRCodeScanned} alumnoInscripto={alumnoInscripto} />      
           <button onClick={closeModal}>Cerrar</button>
         </>      )}
-        {modalState.type === 'FileModal' && (
+        {modalState.type === 'fileGenerator' && (
         <FileModal
           alumnos={alumnos}
           onClose={closeModal}
