@@ -15,7 +15,6 @@ const CrearMesaPage = () => {
     alumnos: [],
     error: null,
   });
-  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
 
@@ -79,18 +78,14 @@ const CrearMesaPage = () => {
       alert('La fecha ingresada ya ha pasado. Por favor, selecciona una fecha válida.');
       return;
     }
-    setShowConfirm(true);
-  };
 
-  const confirmCreate = async () => {
-    let mesaId = null;
     try {
       const mesa = await createMesa({
         fecha: formData.fecha,
         materia: formData.materia,
         listaColaboradores: formData.listaColaboradores,
       });
-      mesaId = mesa.id_mesa;
+      const mesaId = mesa.id_mesa;
 
       const alumnosConMesa = formData.alumnos.map((alumno) => ({
         ...alumno,
@@ -109,11 +104,7 @@ const CrearMesaPage = () => {
       navigate('/mesas');
     } catch (error) {
       setFormData((prevData) => ({ ...prevData, error: error.message }));
-      if (mesaId) {
-        await deleteMesa(mesaId);
-      }
     }
-    setShowConfirm(false);
   };
 
   const handleEmailChange = (e) => setEmail(e.target.value);
@@ -156,13 +147,6 @@ const CrearMesaPage = () => {
         </div>
         <button type="submit" className="submit-button">Crear</button>
       </form>
-      {showConfirm && (
-        <div className="confirm-popup">
-          <p>¿Estás seguro de que deseas crear esta mesa?</p>
-          <button onClick={confirmCreate} className="confirm-button">Sí</button>
-          <button onClick={() => setShowConfirm(false)} className="cancel-button">No</button>
-        </div>
-      )}
       <ErrorMessage error={formData.error} />
     </div>
   );
