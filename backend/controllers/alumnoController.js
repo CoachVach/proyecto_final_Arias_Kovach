@@ -101,7 +101,7 @@ const assignAlumnosToMesa = async (req, res, next) => {
         // Validate the mesa once
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
 
-        // Validate and log incoming data
+        // Log the incoming data for debugging
         console.log('Received alumnos:', JSON.stringify(alumnos, null, 2));
 
         // Ensure all data for required fields is present
@@ -111,9 +111,12 @@ const assignAlumnosToMesa = async (req, res, next) => {
             }
         });
 
+        const nroIdentidades = alumnos.map(alumno => alumno.nro_identidad.toString());
+
+        // Filter out existing students to avoid duplicates
         const existingAlumnos = await Alumno.findAll({
             where: {
-                nro_identidad: alumnos.map(alumno => alumno.nro_identidad.toString())
+                nro_identidad: nroIdentidades
             }
         });
 
@@ -137,12 +140,14 @@ const assignAlumnosToMesa = async (req, res, next) => {
         }
 
         // Now assign all students (both new and existing) to the mesa
-        const allAlumnosIds = await Alumno.findAll({
+        const allAlumnos = await Alumno.findAll({
             attributes: ['id_estudiante'],
             where: {
-                nro_identidad: alumnos.map(alumno => alumno.nro_identidad.toString())
+                nro_identidad: nroIdentidades
             }
-        }).map(alumno => alumno.id_estudiante);
+        });
+
+        const allAlumnosIds = allAlumnos.map(alumno => alumno.id_estudiante);
 
         const mesaAlumnoData = allAlumnosIds.map(id_estudiante => ({
             id_estudiante,
