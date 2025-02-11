@@ -125,6 +125,7 @@ const CrearMesaPage = () => {
       }));
 
       // Send a single API call with all alumnos
+      console.log(alumnosConMesa);
       await createAlumnos(alumnosConMesa);
 
       alert('Mesa y alumnos creados correctamente');
