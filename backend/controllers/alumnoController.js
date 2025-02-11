@@ -84,6 +84,46 @@ const assignAlumnoToMesa = async (req, res, next) => {
     }
 };
 
+const assignAlumnosToMesa = async (req, res, next) => {
+    try {
+      const alumnos = req.body;
+  
+      if (!Array.isArray(alumnos) || alumnos.length === 0) {
+        throw new AppError('La lista de alumnos está vacía o no es válida', 400);
+      }
+  
+      const results = [];
+      for (const alumnoData of alumnos) {
+        const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa } = alumnoData;
+  
+        if (!nro_identidad || !id_mesa) {
+          throw new AppError('El DNI y el ID de la mesa son obligatorios', 400);
+        }
+  
+        const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
+  
+        let alumno = await AlumnoService.findAlumnoByNroIden(nro_identidad);
+  
+        if (!alumno) {
+          alumno = await AlumnoService.createAlumno(doc, nro_identidad, lu, nombre_completo);
+          await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
+          results.push({ message: 'Alumno creado y asignado a la mesa', alumno });
+        } else {
+          let isInMesa = await MesaAlumnoService.verifyAlumnoIsInMesa(id_mesa, alumno.id_estudiante);
+          if (isInMesa) {
+            throw new AppError('El alumno ya está asignado a esta mesa', 409);
+          }
+          await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
+          results.push({ message: 'Alumno asignado a la mesa correctamente', alumno });
+        }
+      }
+  
+      res.status(200).json(results);
+    } catch (error) {
+      next(error instanceof AppError ? error : new AppError('Error al asignar los alumnos a la mesa', 500, error.message));
+    }
+  };
+
 const updateAlumno = async (req, res, next) => {
     try {
         const alumno = await AlumnoService.findAlumnoById(req.params.id);
@@ -113,6 +153,7 @@ module.exports = {
     getAlumnosByIdMesaExamen,
     createAlumno,
     assignAlumnoToMesa,
+    assignAlumnosToMesa,
     updateAlumno,
     deleteAlumno,
 };

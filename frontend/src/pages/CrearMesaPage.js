@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import '../styles/pages/CrearMesaPage.css';
-import { createMesa, createAlumno, deleteMesa } from '../services/apiService';
+import { createMesa, createAlumnos, deleteMesa } from '../services/apiService'; // Update import
 import FormInput from '../components/FormInput';
 import FileUpload from '../components/FileUpload';
 import ErrorMessage from '../components/common/ErrorMessage';
@@ -48,7 +48,7 @@ const CrearMesaPage = () => {
           );
           planilla_examen = false;
         }
-          
+
         if (startRowIndex === -1) {
           console.error('No se encontró la tabla en la hoja de cálculo.');
           return;
@@ -61,7 +61,7 @@ const CrearMesaPage = () => {
         const actualEndIndex =
           endRowIndex === -1 ? jsonData.length : startRowIndex + 1 + endRowIndex;
         let formattedData;
-        if(planilla_examen){
+        if (planilla_examen) {
           formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
             doc: row[2],
             nro_identidad: row[3],
@@ -72,7 +72,7 @@ const CrearMesaPage = () => {
             codigo: row[5],
             plan: row[7],
           }));
-        } else{
+        } else {
           formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
             doc: row[2],
             nro_identidad: row[3],
@@ -113,7 +113,7 @@ const CrearMesaPage = () => {
       });
       mesaId = mesa.id_mesa;
 
-      if (!formData.alumnos.length){
+      if (!formData.alumnos.length) {
         throw new Error('Archivo Invalido');
       }
 
@@ -122,14 +122,10 @@ const CrearMesaPage = () => {
         presente: false,
         inscripto: true,
         id_mesa: mesaId,
-        actualizar_socket: false,
       }));
 
-      for (const alumno of alumnosConMesa) {
-        if (alumno.nro_identidad) {
-          await createAlumno(alumno);
-        }
-      }
+      // Send a single API call with all alumnos
+      await createAlumnos(alumnosConMesa);
 
       alert('Mesa y alumnos creados correctamente');
       navigate('/mesas');

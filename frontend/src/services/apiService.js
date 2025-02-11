@@ -149,6 +149,19 @@ export const createAlumno = async (data) => {
   }
 };
 
+export const createAlumnos = async (data) => {
+  try {
+    const nuevosAlumnos = await fetchWithAuth('/alumnos/batch', { // New endpoint
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return nuevosAlumnos;
+  } catch (error) {
+    console.error('Error al crear los alumnos:', error);
+    throw new Error('No se pudieron crear los alumnos.');
+  }
+};
+
 // Actualizar la información de una mesa de examen
 export const updateMesa = async (mesaId, data) => {
   try {
@@ -174,7 +187,7 @@ export const  updateNotasMesa = async (mesaId, dataNotas) => {
     });
     return mesaActualizada;
   } catch (error) {
-    console.error(`Error al actualizar la mesaddddddd ${mesaId}:`, error);
+    console.error(`Error al actualizar la mesa ${mesaId}:`, error);
     throw new Error('No se pudo actualizar la mesa de examen.');
   }
 };
