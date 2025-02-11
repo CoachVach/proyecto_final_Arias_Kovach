@@ -27,6 +27,7 @@ const io = new Server(server, {
   cors: {
     origin: 'https://frontend-asistenciauns.vercel.app', // Permitir conexiones WebSocket desde tu frontend
     methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
   },
 });
 
@@ -38,11 +39,11 @@ const corsOptions = {
 
 // Middleware de Express
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Conectar a la base de datos
 sequelize
-  .authenticate()
+  .authenticate()S
   .then(() => {
     console.log('Conexión exitosa con la base de datos.');
     return sequelize.sync({ force: false }); // Cambia a `true` si necesitas reiniciar las tablas
