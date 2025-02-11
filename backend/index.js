@@ -25,25 +25,26 @@ const server = http.createServer(app); // Crear servidor HTTP
 // Configurar Socket.io
 const io = new Server(server, {
   cors: {
-    origin: 'https://frontend-asistenciauns.vercel.app', // Permitir conexiones WebSocket desde tu frontend
+    origin: '*', // 🔥 Permite TODO
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: '*',
   },
 });
 
-const corsOptions = {
-  origin: '*', // Permitir todos los orígenes temporalmente para probar
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Agregar más métodos HTTP
-  allowedHeaders: ['Content-Type', 'Authorization'], // Asegurar que se permiten los headers necesarios
-  credentials: true, // Permitir cookies y credenciales si es necesario
-};
 
 
-// Middleware de Express
+app.use(cors({ origin: '*' }));
+
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // 🔥 Permite TODO
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', '*'); // 🔥 Permite TODOS los headers
+  next();
+});
+
+
 app.use(express.json());
-app.use(cors(corsOptions));
-
-app.options('*', cors(corsOptions));
 
 
 // Conectar a la base de datos
