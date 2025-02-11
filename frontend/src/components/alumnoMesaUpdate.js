@@ -19,7 +19,7 @@ const AlumnoMesaUpdate = ({onClose, alumno, id_mesa}) =>{
         }
         try{
             //Debemos hacer la llamada con todos los datos a actualizar. 
-           const alumnoMesaUpdate = await fetch(`http://localhost:3000/api/mesas/update-alumno//${id_mesa}/${alumno.id_estudiante}`, {
+           const alumnoMesaUpdate = await fetch(`https://backend-asistenciauns-r8y7sf6v0-coachvachs-projects.vercel.app/api/mesas/update-alumno//${id_mesa}/${alumno.id_estudiante}`, {
                 method: 'POST',
                 headers: {
                   Authorization: `Bearer ${token}`,
