@@ -88,8 +88,6 @@ const assignAlumnoToMesa = async (req, res, next) => {
 const assignAlumnosToMesa = async (req, res, next) => {
     try {
         const { alumnos, id_mesa } = req.body;
-        console.log("ANASHE");
-        console.log(alumnos.length);
 
         if (!Array.isArray(alumnos) || alumnos.length === 0) {
             throw new AppError('La lista de alumnos está vacía o no es válida', 400);
@@ -99,36 +97,36 @@ const assignAlumnosToMesa = async (req, res, next) => {
             throw new AppError('El ID de la mesa es obligatorio', 400);
         }
 
-        console.log("Validar mesa");
+        // Validate the mesa once
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
+
+        // Convert all nro_identidad to strings to ensure consistent data types
+        const nroIdentidades = alumnos.map(alumno => alumno.nro_identidad.toString());
 
         // Filter out existing students to avoid duplicates
         const existingAlumnos = await Alumno.findAll({
             where: {
-                nro_identidad: alumnos.map(alumno => alumno.nro_identidad)
+                nro_identidad: nroIdentidades
             }
         });
-        console.log(existingAlumnos.length);
 
         const existingNroIdentidad = existingAlumnos.map(alumno => alumno.nro_identidad);
-        const newAlumnos = alumnos.filter(alumno => !existingNroIdentidad.includes(alumno.nro_identidad));
+        const newAlumnos = alumnos.filter(alumno => !existingNroIdentidad.includes(alumno.nro_identidad.toString()));
 
         // Bulk insert new students
         if (newAlumnos.length > 0) {
-            console.log("CREAR");
             await Alumno.bulkCreate(newAlumnos.map(alumno => ({
                 doc: alumno.doc,
-                nro_identidad: alumno.nro_identidad,
+                nro_identidad: alumno.nro_identidad.toString(), // Ensure this is a string
                 lu: alumno.lu,
                 nombre_completo: alumno.nombre_completo
             })));
         }
 
         // Assign all students to the mesa
-        console.log("TODOS");
         const allAlumnos = await Alumno.findAll({
             where: {
-                nro_identidad: alumnos.map(alumno => alumno.nro_identidad)
+                nro_identidad: nroIdentidades
             }
         });
 
