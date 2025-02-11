@@ -1,16 +1,23 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config(); // Para cargar las variables de entorno desde .env
+const { Sequelize } = require("sequelize");
+require("dotenv").config(); // Cargar variables de entorno
 
-// Configuración de Sequelize con PostgreSQL
+// Configuración de Sequelize con PostgreSQL en Supabase
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
     host: process.env.DB_HOST,
-    dialect: 'postgres', // Especifica que usarás PostgreSQL
-    logging: false, // Cambia a true si deseas ver las consultas SQL en la consola
+    port: process.env.DB_PORT,
+    dialect: "postgres",
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false, // Necesario para evitar errores con SSL
+        },
+    },
+    logging: false, // Cambia a true para ver las consultas SQL en consola
     pool: {
-        max: 5, // Número máximo de conexiones en el pool
-        min: 0, // Número mínimo de conexiones en el pool
-        acquire: 30000, // Tiempo máximo en ms para intentar conectar antes de lanzar error
-        idle: 10000, // Tiempo máximo que una conexión puede estar inactiva antes de ser liberada
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000,
     },
 });
 
@@ -18,9 +25,9 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
 const testConnection = async () => {
     try {
         await sequelize.authenticate();
-        console.log('Conexión exitosa a PostgreSQL con Sequelize2');
+        console.log("✅ Conexión exitosa a Supabase con Sequelize");
     } catch (error) {
-        console.error('No se pudo conectar a la base de datos:', error);
+        console.error("❌ No se pudo conectar a Supabase:", error);
     }
 };
 
