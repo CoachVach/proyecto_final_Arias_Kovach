@@ -1,4 +1,5 @@
 const AlumnoService = require('../services/alumnoService');
+const Alumno = require('../models/alumno');
 const MesaExamenService = require('../services/mesaExamenService');
 const MesaAlumnoService = require('../services/mesaAlumnoService');
 const AppError  = require('../structure/AppError');
@@ -86,47 +87,67 @@ const assignAlumnoToMesa = async (req, res, next) => {
 
 const assignAlumnosToMesa = async (req, res, next) => {
     try {
-      const alumnos = req.body;
-  
-      if (!Array.isArray(alumnos) || alumnos.length === 0) {
-        throw new AppError('La lista de alumnos está vacía o no es válida', 400);
-      }
-  
-      const results = [];
-      console.log(alumnos);
-      for (const alumnoData of alumnos) {
-        console.log(alumnoData);
-        const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa } = alumnoData;
-  
-        if (!nro_identidad ) {
-          throw new AppError('El DNI es obligatorio', 400);
-        } else if (!id_mesa){
-            throw new AppError('El ID Mesa es obligatorio', 400);
+        const { alumnos, id_mesa } = req.body;
+        console.log("ANASHE");
+        console.log(alumnos);
+
+        if (!Array.isArray(alumnos) || alumnos.length === 0) {
+            throw new AppError('La lista de alumnos está vacía o no es válida', 400);
         }
-  
+
+        if (!id_mesa) {
+            throw new AppError('El ID de la mesa es obligatorio', 400);
+        }
+
+        // Validate the mesa once
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
-  
-        let alumno = await AlumnoService.findAlumnoByNroIden(nro_identidad);
-  
-        if (!alumno) {
-          alumno = await AlumnoService.createAlumno(doc, nro_identidad, lu, nombre_completo);
-          await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
-          results.push({ message: 'Alumno creado y asignado a la mesa', alumno });
-        } else {
-          let isInMesa = await MesaAlumnoService.verifyAlumnoIsInMesa(id_mesa, alumno.id_estudiante);
-          if (isInMesa) {
-            throw new AppError('El alumno ya está asignado a esta mesa', 409);
-          }
-          await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
-          results.push({ message: 'Alumno asignado a la mesa correctamente', alumno });
+
+        // Filter out existing students to avoid duplicates
+        const existingAlumnos = await Alumno.findAll({
+            where: {
+                nro_identidad: alumnos.map(alumno => alumno.nro_identidad)
+            }
+        });
+
+        const existingNroIdentidad = existingAlumnos.map(alumno => alumno.nro_identidad);
+        const newAlumnos = alumnos.filter(alumno => !existingNroIdentidad.includes(alumno.nro_identidad));
+
+        // Bulk insert new students
+        if (newAlumnos.length > 0) {
+            await Alumno.bulkCreate(newAlumnos.map(alumno => ({
+                doc: alumno.doc,
+                nro_identidad: alumno.nro_identidad,
+                lu: alumno.lu,
+                nombre_completo: alumno.nombre_completo
+            })));
         }
-      }
-  
-      res.status(200).json(results);
+
+        // Assign all students to the mesa
+        const allAlumnos = await Alumno.findAll({
+            where: {
+                nro_identidad: alumnos.map(alumno => alumno.nro_identidad)
+            }
+        });
+
+        const mesaAlumnoData = allAlumnos.map(alumno => ({
+            id_estudiante: alumno.id_estudiante,
+            id_mesa: id_mesa,
+            carrera: alumno.carrera,
+            calidad: alumno.calidad,
+            codigo: alumno.codigo,
+            plan: alumno.plan,
+            presente: alumno.presente,
+            inscripto: alumno.inscripto
+        }));
+
+        // Bulk insert into MesaAlumno
+        await MesaAlumno.bulkCreate(mesaAlumnoData);
+
+        res.status(200).json({ message: 'Alumnos asignados a la mesa correctamente' });
     } catch (error) {
-      next(error instanceof AppError ? error : new AppError('Error al asignar los alumnos a la mesa', 500, error.message));
+        next(error instanceof AppError ? error : new AppError('Error al asignar los alumnos a la mesa', 500, error.message));
     }
-  };
+};
 
 const updateAlumno = async (req, res, next) => {
     try {
