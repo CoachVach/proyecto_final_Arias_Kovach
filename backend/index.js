@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 const { Server } = require('socket.io');
 const http = require('http'); // Necesario para WebSockets
 const { errorMiddleware } = require('./middlewares/errorMiddleware'); // Middleware de manejo de errores
@@ -31,28 +30,18 @@ const io = new Server(server, {
   },
 });
 
-
-
-app.use(cors({ origin: '*' }));
-
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // 🔥 Permite TODO
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', '*'); // 🔥 Permite TODOS los headers
-  next();
-});
-
+// Elimina cualquier middleware relacionado con CORS
+// app.use(cors({ origin: '*' }));
+// Elimina los headers manuales, ya no es necesario.
 
 app.use(express.json());
-
 
 // Conectar a la base de datos
 sequelize
   .authenticate()
   .then(() => {
     console.log('Conexión exitosa con la base de datos.');
-    return sequelize.sync({ force: false }); // Cambia a `true` si necesitas reiniciar las tablas
+    return sequelize.sync({ force: false });
   })
   .then(() => {
     console.log('Tablas sincronizadas correctamente.');
@@ -75,21 +64,18 @@ io.on('connection', (socket) => {
     io.emit('datosAlumnosActualizada', data); // Enviar actualización a todos los clientes conectados
   });
   
-  // Unir a una sala específica cuando un usuario entra a una mesa
   socket.on("joinMesa", (id_mesa) => {
     console.log(`📌 Usuario ${socket.id} se unió a la mesa ${id_mesa}`);
-    socket.join(`mesa_${id_mesa}`); // El usuario se une a la sala de la mesa específica
+    socket.join(`mesa_${id_mesa}`);
   });
   
-  // 🔥 Unir profesor a su sala personal
   socket.on("joinProfesor", (email) => {
     socket.join(`profesor_${email}`);
     console.log(`👨‍🏫 Profesor ${email} unido a su sala`);
   });
 
-  // Escuchar eventos de actualización de mesas
   socket.on('updateListaMesas', (data) => {
-    io.emit('mesasActualizadas', data); // Enviar actualización a todos los clientes conectados
+    io.emit('mesasActualizadas', data);
   });
 
   socket.on('disconnect', () => {
@@ -99,22 +85,21 @@ io.on('connection', (socket) => {
 
 // Pasar la instancia de `io` a las rutas
 app.use('/api/alumnos', (req, res, next) => {
-  req.io = io; // Agregar `io` a la request
+  req.io = io;
   next();
 }, verifyToken, alumnoRoutes);
 app.use('/api/profesores', verifyToken, profesorRoutes);
 app.use('/api/mesas', (req, res, next) => {
-  req.io = io; // Agregar `io` a la request
+  req.io = io;
   next();
 }, verifyToken, mesa_examenRoutes);
 
-
 app.use('/api/login/', authRoutes);
 
-// Middleware de manejo de errores (debe ir al final)
+// Middleware de manejo de errores
 app.use(errorMiddleware);
 
-// Iniciar el servidor en el puerto definido
+// Iniciar el servidor
 server.listen(port, () => {
   console.log(`Servidor ejecutándose en ${port}`);
 });
