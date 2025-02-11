@@ -93,7 +93,9 @@ const assignAlumnosToMesa = async (req, res, next) => {
       }
   
       const results = [];
+      console.log(alumnos);
       for (const alumnoData of alumnos) {
+        console.log(alumnoData);
         const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa } = alumnoData;
   
         if (!nro_identidad ) {
