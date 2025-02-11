@@ -104,10 +104,13 @@ const assignAlumnosToMesa = async (req, res, next) => {
         // Log the incoming data for debugging
         console.log('Received alumnos:', alumnos);
 
-        // Convert all nro_identidad to strings to ensure consistent data types
+        // Validate and prepare data
         const nroIdentidades = alumnos.map(alumno => {
             if (!alumno.nro_identidad) {
                 throw new AppError('El DNI es obligatorio para cada alumno', 400);
+            }
+            if (!alumno.doc) {
+                throw new AppError('El documento es obligatorio para cada alumno', 400);
             }
             return alumno.nro_identidad.toString();
         });
@@ -121,8 +124,8 @@ const assignAlumnosToMesa = async (req, res, next) => {
 
         const existingNroIdentidad = existingAlumnos.map(alumno => alumno.nro_identidad);
         const newAlumnos = alumnos.filter(alumno => {
-            if (!alumno.nro_identidad) {
-                console.warn('Alumno sin nro_identidad:', alumno);
+            if (!alumno.nro_identidad || !alumno.doc) {
+                console.warn('Alumno con datos incompletos:', alumno);
                 return false;
             }
             return !existingNroIdentidad.includes(alumno.nro_identidad.toString());
@@ -132,7 +135,7 @@ const assignAlumnosToMesa = async (req, res, next) => {
         if (newAlumnos.length > 0) {
             await Alumno.bulkCreate(newAlumnos.map(alumno => ({
                 doc: alumno.doc,
-                nro_identidad: alumno.nro_identidad.toString(), // Ensure this is a string
+                nro_identidad: alumno.nro_identidad.toString(),
                 lu: alumno.lu,
                 nombre_completo: alumno.nombre_completo
             })));
@@ -164,7 +167,6 @@ const assignAlumnosToMesa = async (req, res, next) => {
         next(error instanceof AppError ? error : new AppError('Error al asignar los alumnos a la mesa', 500, error.message));
     }
 };
-
 const updateAlumno = async (req, res, next) => {
     try {
         const alumno = await AlumnoService.findAlumnoById(req.params.id);
