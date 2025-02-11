@@ -8,6 +8,7 @@
   max-width: 1200px;
   width: 100%;
   overflow: hidden;
+  transform: scale(0.9);
 }
 
 .table-header {

@@ -32,6 +32,21 @@ const Navbar = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const menu = document.querySelector('.navbar-links');
+      const toggleButton = document.querySelector('.navbar-toggle');
+      if (menu && !menu.contains(event.target) && !toggleButton.contains(event.target)) {
+        setMobileMenuOpen(false); // Cerrar el menú si se hace clic fuera
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   const toggleMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };

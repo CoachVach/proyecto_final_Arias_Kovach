@@ -14,6 +14,8 @@
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+    transform: scale(0.9);
+    transform-origin: top center; /* Mantiene el contenido centrado */
   }
   
   /* Diseño del logo para desktop */
@@ -47,6 +49,10 @@
     background: none;
     border: none;
     cursor: pointer;
+    position: absolute; /* Mantener la posición absoluta */
+    right: 20px; /* Espacio desde la derecha */
+    top: 10px; /* Espacio desde la parte superior */
+    z-index: 1001; /* Asegurarse de que esté por encima de otros elementos */
   }
   
   .navbar-links {

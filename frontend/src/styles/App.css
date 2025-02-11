@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 25vmin; /* Reducimos más el tamaño del logo */
   pointer-events: none;
 }
 
@@ -20,8 +20,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(7px + 1.2vmin); /* Reducimos más el tamaño del texto */
   color: white;
+  transform: scale(0.5); /* Hacemos un zoom out más fuerte */
 }
 
 .App-link {
@@ -34,5 +35,12 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Ajustes para pantallas grandes */
+@media (min-width: 1024px) {
+  .App-header {
+    transform: scale(0.4); /* Zoom out aún más fuerte en pantallas grandes */
   }
 }

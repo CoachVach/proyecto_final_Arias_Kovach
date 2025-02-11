@@ -17,6 +17,8 @@ body {
   height: calc(100vh - 60px); /* Ajusta al navbar */
   padding: 20px;
   text-align: center;
+  transform: scale(0.6);
+  transform-origin:center; /* Mantiene el contenido centrado */
 }
 
 h1 {
