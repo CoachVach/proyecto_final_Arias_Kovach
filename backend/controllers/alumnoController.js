@@ -100,8 +100,16 @@ const assignAlumnosToMesa = async (req, res, next) => {
         // Validate the mesa once
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
 
+        // Log the incoming data for debugging
+        console.log('Received alumnos:', alumnos);
+
         // Convert all nro_identidad to strings to ensure consistent data types
-        const nroIdentidades = alumnos.map(alumno => alumno.nro_identidad.toString());
+        const nroIdentidades = alumnos.map(alumno => {
+            if (!alumno.nro_identidad) {
+                throw new AppError('El DNI es obligatorio para cada alumno', 400);
+            }
+            return alumno.nro_identidad.toString();
+        });
 
         // Filter out existing students to avoid duplicates
         const existingAlumnos = await Alumno.findAll({
@@ -111,7 +119,13 @@ const assignAlumnosToMesa = async (req, res, next) => {
         });
 
         const existingNroIdentidad = existingAlumnos.map(alumno => alumno.nro_identidad);
-        const newAlumnos = alumnos.filter(alumno => !existingNroIdentidad.includes(alumno.nro_identidad.toString()));
+        const newAlumnos = alumnos.filter(alumno => {
+            if (!alumno.nro_identidad) {
+                console.warn('Alumno sin nro_identidad:', alumno);
+                return false;
+            }
+            return !existingNroIdentidad.includes(alumno.nro_identidad.toString());
+        });
 
         // Bulk insert new students
         if (newAlumnos.length > 0) {
