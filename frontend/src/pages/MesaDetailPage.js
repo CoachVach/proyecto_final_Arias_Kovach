@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from '@zxing/library';
 import '../styles/pages/MesaDetailPage.css';
 import '../styles/components/QRScanner.css';
 import AlumnosTable from '../components/AlumnosTable';
@@ -8,12 +7,15 @@ import ActionButtons from '../components/ActionButtons';
 import { getAlumnos, updateAlumno, createAlumno } from '../services/apiService';
 import ModalWrapper from '../components/ModalWrapper';
 import socket from "../socket"; // Importamos la instancia de WebSockets
+import { updateNotasMesa } from "../services/apiService";
+
 const MesasDetailPage = () => {
   const [alumnos, setAlumnos] = useState([]);
   const location = useLocation();
   const { mesa } = location.state || {};
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notas, setNotas] = useState({});
   const [modalState, setModalState] = useState({
     type: null,
     data: null,
@@ -81,6 +83,34 @@ const MesasDetailPage = () => {
     }
   };
 
+  const handleNotaChange = (id_estudiante, valor) => {
+    setNotas((prev) => ({
+      ...prev,
+      [id_estudiante]: valor,
+    }));
+  };
+
+  const guardarNotas = async () => {
+    const datosNotas = alumnos
+      .filter((alumno) => notas[alumno.id_estudiante] !== undefined)
+      .map((alumno) => ({
+        id_estudiante: alumno.id_estudiante,
+        nota: notas[alumno.id_estudiante],
+      }));
+
+    if (datosNotas.length === 0) {
+      alert("No hay notas para enviar.");
+      return;
+    }
+    try {
+      await updateNotasMesa(mesa.id_mesa, datosNotas);
+      alert("Notas guardadas correctamente");
+    } catch (error) {
+      console.error("Error al enviar las notas:", error);
+      alert("Hubo un problema al conectar con el servidor.");
+    }
+  };
+
   const fetchAlumnos = async () => {
     try {
       const data = await getAlumnos(mesa.id_mesa);
@@ -122,11 +152,11 @@ const MesasDetailPage = () => {
     <div className="table-container">
       <h1>Alumnos de la Mesa</h1>
       {alumnos.length > 0 ? (
-        <AlumnosTable alumnos={alumnos} openModal={openModal} mesa={mesa} />
+        <AlumnosTable alumnos={alumnos} openModal={openModal} mesa={mesa} notas = {notas} handleNotaChange = {handleNotaChange} />
       ) : (
         <p>No hay alumnos registrados en esta mesa.</p>
       )}
-      <ActionButtons openModal={openModal} />
+      <ActionButtons openModal={openModal} guardarNotas={guardarNotas}/>
 
       <ModalWrapper
         modalState={modalState}
