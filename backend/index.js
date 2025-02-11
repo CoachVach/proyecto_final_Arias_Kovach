@@ -43,7 +43,7 @@ app.use(cors());
 
 // Conectar a la base de datos
 sequelize
-  .authenticate()S
+  .authenticate()
   .then(() => {
     console.log('Conexión exitosa con la base de datos.');
     return sequelize.sync({ force: false }); // Cambia a `true` si necesitas reiniciar las tablas
