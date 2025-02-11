@@ -101,71 +101,32 @@ const assignAlumnosToMesa = async (req, res, next) => {
         // Validate the mesa once
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
 
-        // Log the incoming data for debugging
-        console.log('Received alumnos:', JSON.stringify(alumnos, null, 2));
+        const results = [];
+        for (const alumnoData of alumnos) {
+            const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto } = alumnoData;
 
-        // Ensure all data for required fields is present
-        alumnos.forEach(alumno => {
-            if (!alumno.nro_identidad || !alumno.doc || !alumno.nombre_completo) {
-                throw new AppError('Faltan campos obligatorios en algunos alumnos', 400);
+            if (!nro_identidad) {
+                throw new AppError('El DNI es obligatorio para cada alumno', 400);
             }
-        });
 
-        const nroIdentidades = alumnos.map(alumno => alumno.nro_identidad.toString());
+            let alumno = await AlumnoService.findAlumnoByNroIden(nro_identidad);
 
-        // Filter out existing students to avoid duplicates
-        const existingAlumnos = await Alumno.findAll({
-            where: {
-                nro_identidad: nroIdentidades
+            if (!alumno) {
+                alumno = await AlumnoService.createAlumno(doc, nro_identidad, lu, nombre_completo);
+                await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
+                results.push({ message: 'Alumno creado y asignado a la mesa', alumno });
+            } else {
+                let isInMesa = await MesaAlumnoService.verifyAlumnoIsInMesa(id_mesa, alumno.id_estudiante);
+                if (isInMesa) {
+                    throw new AppError('El alumno ya está asignado a esta mesa', 409);
+                }
+                await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
+                results.push({ message: 'Alumno asignado a la mesa correctamente', alumno });
             }
-        });
-
-        const existingNroIdentidad = existingAlumnos.map(alumno => alumno.nro_identidad);
-
-        const newAlumnos = alumnos.filter(alumno => 
-            !existingNroIdentidad.includes(alumno.nro_identidad.toString())
-        );
-
-        // Log newAlumnos to ensure they have valid data
-        console.log('New alumnos to be inserted:', JSON.stringify(newAlumnos, null, 2));
-
-        // Bulk insert new students
-        if (newAlumnos.length > 0) {
-            await Alumno.bulkCreate(newAlumnos.map(alumno => ({
-                doc: alumno.doc,
-                nro_identidad: alumno.nro_identidad.toString(),
-                lu: alumno.lu,
-                nombre_completo: alumno.nombre_completo
-            })));
         }
 
-        // Now assign all students (both new and existing) to the mesa
-        const allAlumnos = await Alumno.findAll({
-            attributes: ['id_estudiante'],
-            where: {
-                nro_identidad: nroIdentidades
-            }
-        });
-
-        const allAlumnosIds = allAlumnos.map(alumno => alumno.id_estudiante);
-
-        const mesaAlumnoData = allAlumnosIds.map(id_estudiante => ({
-            id_estudiante,
-            id_mesa: id_mesa,
-            carrera: null,  // Adapt based on incoming data
-            calidad: null,
-            codigo: null,
-            plan: null,     // Adjust based on alumno's specific plan if available in input
-            presente: false,
-            inscripto: true
-        }));
-
-        // Bulk insert into MesaAlumno
-        await MesaAlumno.bulkCreate(mesaAlumnoData, { ignoreDuplicates: true });
-
-        res.status(200).json({ message: 'Alumnos asignados a la mesa correctamente' });
+        res.status(200).json(results);
     } catch (error) {
-        console.error('Error during processing:', error);
         next(error instanceof AppError ? error : new AppError('Error al asignar los alumnos a la mesa', 500, error.message));
     }
 };
