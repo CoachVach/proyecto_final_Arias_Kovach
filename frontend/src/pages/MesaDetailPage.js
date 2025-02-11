@@ -139,7 +139,7 @@ const MesasDetailPage = () => {
       socket.off("datosAlumnosActualizada");
     };
     }
-  }, [mesa, fetchAlumnos]);
+  });
 
 
   if (!mesa) return <p>No se encontró información de la mesa.</p>;

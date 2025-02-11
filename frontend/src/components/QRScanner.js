@@ -87,7 +87,7 @@ const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
     };
-  }, [isFront, handleScan]);
+  });
 
   const toggleCamera = () => {
     setIsFront(!isFront);
