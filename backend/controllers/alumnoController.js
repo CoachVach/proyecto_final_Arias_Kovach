@@ -1,5 +1,6 @@
 const AlumnoService = require('../services/alumnoService');
 const Alumno = require('../models/alumno');
+const MesaAlumno = require('../models/alumno');
 const MesaExamenService = require('../services/mesaExamenService');
 const MesaAlumnoService = require('../services/mesaAlumnoService');
 const AppError  = require('../structure/AppError');
