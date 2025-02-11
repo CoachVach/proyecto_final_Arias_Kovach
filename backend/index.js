@@ -1,81 +1,83 @@
 const express = require('express');
+const cors = require('cors'); // ✅ Import the cors module
 const { Server } = require('socket.io');
-const http = require('http'); // Necesario para WebSockets
-const { errorMiddleware } = require('./middlewares/errorMiddleware'); // Middleware de manejo de errores
+const http = require('http'); // Necessary for WebSockets
+const { errorMiddleware } = require('./middlewares/errorMiddleware'); // Error handling middleware
 
-// Importar Sequelize y modelos desde el archivo central
+// Import Sequelize and models from the central file
 const { sequelize } = require('./models');
 
-// Importar rutas de la API
+// Import API routes
 const alumnoRoutes = require('./routes/alumnoRoutes');
 const mesa_examenRoutes = require('./routes/mesa_examenRoutes');
 const profesorRoutes = require('./routes/profesorRoutes');
 const authRoutes = require('./routes/authRoutes');
 
-// Importar middlewares
+// Import middlewares
 const { verifyToken } = require('./middlewares/authMiddleware');
 
-// Crear aplicación Express
+// Create Express application
 const app = express();
-const port = process.env.DB_PORT;
+const port = process.env.PORT || 3000; // Use the PORT environment variable or default to 3000
 
-const server = http.createServer(app); // Crear servidor HTTP
+const server = http.createServer(app); // Create HTTP server
 
-// Configurar Socket.io
+// Configure Socket.io
 const io = new Server(server, {
   cors: {
-    origin: '*', // 🔥 Permite TODO
+    origin: '*', // Allow all origins
     methods: ['GET', 'POST'],
     allowedHeaders: '*',
   },
 });
 
-// Elimina cualquier middleware relacionado con CORS
-// app.use(cors({ origin: '*' }));
-// Elimina los headers manuales, ya no es necesario.
-
+// Middleware setup
 app.use(express.json());
+app.use(cors()); // ✅ Enable CORS middleware
 
-// Conectar a la base de datos
+// Connect to the database
 sequelize
   .authenticate()
   .then(() => {
-    console.log('Conexión exitosa con la base de datos.');
-    return sequelize.sync({ force: false });
+    console.log('✅ Conexión exitosa con la base de datos.');
+    return sequelize.sync({ force: false }); // Change to `true` if you need to reset the tables
   })
   .then(() => {
-    console.log('Tablas sincronizadas correctamente.');
+    console.log('✅ Tablas sincronizadas correctamente.');
   })
   .catch((err) => {
-    console.error('Error al conectar o sincronizar la base de datos:', err);
+    console.error('❌ Error al conectar o sincronizar la base de datos:', err);
   });
 
-// Rutas básicas de prueba
+// Basic test route
 app.get('/', (req, res) => {
   res.send('¡Hola, mundo desde Express con WebSockets!');
 });
 
-// Configurar Socket.io para manejar conexiones
+// Configure Socket.io to handle connections
 io.on('connection', (socket) => {
   console.log(`Usuario conectado: ${socket.id}`);
 
-  // Escuchar eventos de actualización de mesas
+  // Listen for events to update student details
   socket.on('updateDetailsAlumnos', (data) => {
-    io.emit('datosAlumnosActualizada', data); // Enviar actualización a todos los clientes conectados
+    io.emit('datosAlumnosActualizada', data); // Send update to all connected clients
   });
-  
-  socket.on("joinMesa", (id_mesa) => {
+
+  // Join a specific room when a user enters a table
+  socket.on('joinMesa', (id_mesa) => {
     console.log(`📌 Usuario ${socket.id} se unió a la mesa ${id_mesa}`);
-    socket.join(`mesa_${id_mesa}`);
+    socket.join(`mesa_${id_mesa}`); // The user joins the specific table room
   });
-  
-  socket.on("joinProfesor", (email) => {
+
+  // Join professor to their personal room
+  socket.on('joinProfesor', (email) => {
     socket.join(`profesor_${email}`);
     console.log(`👨‍🏫 Profesor ${email} unido a su sala`);
   });
 
+  // Listen for events to update the list of tables
   socket.on('updateListaMesas', (data) => {
-    io.emit('mesasActualizadas', data);
+    io.emit('mesasActualizadas', data); // Send update to all connected clients
   });
 
   socket.on('disconnect', () => {
@@ -83,23 +85,25 @@ io.on('connection', (socket) => {
   });
 });
 
-// Pasar la instancia de `io` a las rutas
+// Pass the `io` instance to the routes if needed
 app.use('/api/alumnos', (req, res, next) => {
-  req.io = io;
+  req.io = io; // Add `io` to the request
   next();
 }, verifyToken, alumnoRoutes);
+
 app.use('/api/profesores', verifyToken, profesorRoutes);
+
 app.use('/api/mesas', (req, res, next) => {
-  req.io = io;
+  req.io = io; // Add `io` to the request
   next();
 }, verifyToken, mesa_examenRoutes);
 
 app.use('/api/login/', authRoutes);
 
-// Middleware de manejo de errores
+// Error handling middleware (should go at the end)
 app.use(errorMiddleware);
 
-// Iniciar el servidor
+// Start the server on the defined port
 server.listen(port, () => {
-  console.log(`Servidor ejecutándose en ${port}`);
+  console.log(`🚀 Servidor ejecutándose en el puerto ${port}`);
 });
