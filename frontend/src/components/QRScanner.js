@@ -119,6 +119,7 @@ useEffect(() => {
           width: { ideal: 1280 },
           height: { ideal: 720 },
           facingMode: isFront ? 'user' : 'environment',
+          focusMode: 'auto',
         },
       });
 
