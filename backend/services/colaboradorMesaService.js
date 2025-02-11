@@ -19,7 +19,7 @@ class ColaboradorMesaService{
                 id_mesa: mesaID
             });
             // Emitir evento de actualización a todos los clientes
-            io.to(`profesor_${profesor.email}`).emit('mesasParaColabActualizadas', { id_mesa: mesaID });
+            io.to(`profesor_${profesor.email}`).emit('mesasActualizadas', { id_mesa: mesaID });
         }
     }
 

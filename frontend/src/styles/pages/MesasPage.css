@@ -18,12 +18,12 @@
 
 .mesas-container {
   display: flex;
-  flex-wrap: wrap;  /* Permite que las tarjetas pasen a la siguiente línea si no caben */
+  flex-wrap: wrap;  /* Contenido se va acomodando hacia abajo */
+  flex-direction: row;  /* Orientación horizontal */
   gap: 1rem;  /* Espacio entre las tarjetas */
   justify-content: center;  /* Centra las tarjetas en el contenedor */
   align-items: center;  /* Alineación vertical */
-  width: 90%;  /* No ocupa todo el ancho de la página */
-  max-width: 1000px;  /* Ajusta el tamaño máximo */
+  width: 90%;  /* Ocupa el 90% del ancho de la página */
   margin: 0 auto;  /* Centra el contenedor */
 }
 

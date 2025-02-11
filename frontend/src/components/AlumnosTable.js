@@ -52,6 +52,7 @@ const AlumnosTable = ({ alumnos, openModal, mesa }) => {
               <th>Calidad</th>
               <th>Update</th>
               <th>Nota</th>
+              <th>Nota Prueba</th>
             </tr>
           </thead>
           <tbody>
@@ -84,10 +85,11 @@ const AlumnosTable = ({ alumnos, openModal, mesa }) => {
                   <td>
                     <input
                       type="text"
-                      defaultValue={alumno.nota ? alumno.nota : "-"}
+                      value={notas[alumno.id_estudiante] ?? alumno.nota ?? "-"}
                       onChange={(e) => handleNotaChange(alumno.id_estudiante, e.target.value)}
                     />
                   </td>
+                  <td>{alumno.nota}</td>
                 </tr>
               );
             })}

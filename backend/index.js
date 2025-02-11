@@ -74,8 +74,8 @@ io.on('connection', (socket) => {
   });
 
   // Escuchar eventos de actualización de mesas
-  socket.on('updateMesasColaboradores', (data) => {
-    io.emit('mesasParaColabActualizadas', data); // Enviar actualización a todos los clientes conectados
+  socket.on('updateListaMesas', (data) => {
+    io.emit('mesasActualizadas', data); // Enviar actualización a todos los clientes conectados
   });
 
   socket.on('disconnect', () => {

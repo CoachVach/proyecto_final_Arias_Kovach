@@ -40,13 +40,13 @@ const MesasPage = () => {
     fetchMesas();
     socket.emit("joinProfesor", email); // Unirse a la sala de profesor
     // Escuchar el evento de WebSocket
-    socket.on("mesasParaColabActualizadas", (data) => {
+    socket.on("mesasActualizadas", (data) => {
       console.log("🔄 Se detectó un cambio en las mesasa:", data);
       fetchMesas(); // Recargar la lista de mesas
     });
     // Limpiar la suscripción cuando el componente se desmonta
     return () => {
-      socket.off("mesasParaColabActualizadas");
+      socket.off("mesasActualizadas");
     };
   }, []);
 

@@ -33,6 +33,7 @@ const createMesa = async (req, res, next) => {
             await MesaExamenService.deleteMesa(newMesa);
             throw new AppError('Formato incorrecto de datos', 400);
         }
+        req.io.to(`profesor_${req.profesor.email}`).emit('mesasActualizadas', { id_mesa: newMesa.id_mesa });
         await ColaboradorMesaService.addColaborador(listaColaboradores, newMesa.id_mesa,req.io);
         res.status(201).json(newMesa);
     } catch (error) {
