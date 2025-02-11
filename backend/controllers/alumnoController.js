@@ -116,10 +116,6 @@ const assignAlumnosToMesa = async (req, res, next) => {
                 await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
                 results.push({ message: 'Alumno creado y asignado a la mesa', alumno });
             } else {
-                let isInMesa = await MesaAlumnoService.verifyAlumnoIsInMesa(id_mesa, alumno.id_estudiante);
-                if (isInMesa) {
-                    throw new AppError('El alumno ya está asignado a esta mesa', 409);
-                }
                 await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, false);
                 results.push({ message: 'Alumno asignado a la mesa correctamente', alumno });
             }
