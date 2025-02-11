@@ -18,7 +18,8 @@ const { verifyToken } = require('./middlewares/authMiddleware');
 
 // Crear aplicación Express
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
 const server = http.createServer(app); // Crear servidor HTTP
 
 // Configurar Socket.io
@@ -102,5 +103,5 @@ app.use(errorMiddleware);
 
 // Iniciar el servidor en el puerto definido
 server.listen(port, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${port}`);
+  console.log(`Servidor ejecutándose en ${port}`);
 });
