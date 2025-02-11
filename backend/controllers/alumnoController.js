@@ -96,8 +96,10 @@ const assignAlumnosToMesa = async (req, res, next) => {
       for (const alumnoData of alumnos) {
         const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa } = alumnoData;
   
-        if (!nro_identidad || !id_mesa) {
-          throw new AppError('El DNI y el ID de la mesa son obligatorios', 400);
+        if (!nro_identidad ) {
+          throw new AppError('El DNI es obligatorio', 400);
+        } else if (!id_mesa){
+            throw new AppError('El ID Mesa es obligatorio', 400);
         }
   
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);

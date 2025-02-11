@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from './common/Modal';
 import FileModal from './FileModal';
-import AlumnoMesaUpdate from './alumnoMesaUpdate';
+import AlumnoMesaUpdate from './AlumnoMesaUpdate';
 import QRScanner from './QRScanner';
 import '../styles/components/QRScanner.css';
 
