@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
   console.log(`Usuario conectado: ${socket.id}`);
 
   // Escuchar eventos de actualización de mesas
-  socket.on('updateDetaisAlumnos', (data) => {
+  socket.on('updateDetailsAlumnos', (data) => {
     io.emit('datosAlumnosActualizada', data); // Enviar actualización a todos los clientes conectados
   });
   
@@ -84,7 +84,10 @@ io.on('connection', (socket) => {
 });
 
 // Pasar la instancia de `io` a las rutas
-app.use('/api/alumnos', verifyToken, alumnoRoutes);
+app.use('/api/alumnos', (req, res, next) => {
+  req.io = io; // Agregar `io` a la request
+  next();
+}, verifyToken, alumnoRoutes);
 app.use('/api/profesores', verifyToken, profesorRoutes);
 app.use('/api/mesas', (req, res, next) => {
   req.io = io; // Agregar `io` a la request

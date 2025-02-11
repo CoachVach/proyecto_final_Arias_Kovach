@@ -1,5 +1,6 @@
 const ColaboradorMesa = require('../models/colaborador_mesa');
 const ProfesorService = require('../services/profesorService'); 
+const MesaExamenService = require('../services/mesaExamenService');
 const AppError = require('../structure/AppError');
 const MesaExamen = require('../models/mesa_examen');
 const { Op } = require('sequelize');
@@ -10,6 +11,7 @@ class ColaboradorMesaService{
         for (const colab of listaColaboradores ){
             let profesor = await ProfesorService.verifyProfessor(colab);
             if (!profesor) {
+                await MesaExamenService.deleteMesa(newMesa);
                 throw new AppError('Uno de los mails proporcionados no pertenecen a un profesor registrado', 404);
             }
             await ColaboradorMesa.create({

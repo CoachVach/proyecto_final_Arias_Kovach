@@ -50,7 +50,7 @@ const createAlumno = async (req, res, next) => {
 
 const assignAlumnoToMesa = async (req, res, next) => {
     try {
-        const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa } = req.body;
+        const { doc, nro_identidad, lu, nombre_completo, carrera, calidad, codigo, plan, presente, inscripto, id_mesa, actualizar_socket } = req.body;
 
         if (!nro_identidad || !id_mesa) {
             throw new AppError('El DNI y el ID de la mesa son obligatorios', 400);
@@ -59,9 +59,15 @@ const assignAlumnoToMesa = async (req, res, next) => {
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
 
         let alumno = await AlumnoService.findAlumnoByNroIden(nro_identidad);
+        console.log(actualizar_socket);
+        if(actualizar_socket){
+            const sala = `mesa_${mesa.id_mesa}`
+            req.io.to(sala).emit('datosAlumnosActualizada', { id_mesa: mesa.id_mesa });
+        }
+
         if (!alumno) {
             alumno = await AlumnoService.createAlumno(doc, nro_identidad, lu, nombre_completo);
-            await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto);
+            await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, actualizar_socket);
             return res.status(201).json({ message: 'Alumno creado y asignado a la mesa', alumno });
         }
 
@@ -70,7 +76,7 @@ const assignAlumnoToMesa = async (req, res, next) => {
             throw new AppError('El alumno ya está asignado a esta mesa', 409);
         }
         
-        await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto);
+        await MesaExamenService.assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, actualizar_socket);
 
         res.status(200).json({ message: 'Alumno asignado a la mesa correctamente', alumno });
     } catch (error) {

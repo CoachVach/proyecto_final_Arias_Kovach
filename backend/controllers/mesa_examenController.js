@@ -30,6 +30,7 @@ const createMesa = async (req, res, next) => {
         }
         const newMesa = await MesaExamenService.createMesaExamen(fecha, materia, req.profesor.id_profesor);
         if (!listaColaboradores || !Array.isArray(listaColaboradores)) {
+            await MesaExamenService.deleteMesa(newMesa);
             throw new AppError('Formato incorrecto de datos', 400);
         }
         await ColaboradorMesaService.addColaborador(listaColaboradores, newMesa.id_mesa,req.io);

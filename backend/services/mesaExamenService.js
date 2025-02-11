@@ -21,7 +21,7 @@ class MesaExamenService{
         return await MesaExamen.findAll({ include: { model: Alumno, through: MesaAlumno } });
     }
 
-    static async assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto ){
+    static async assingAlumnoToMesa(alumno, mesa, carrera, calidad, codigo, plan, presente, inscripto, actualizar_socket){
         await mesa.addAlumno(alumno, { through: {carrera, calidad, codigo, plan, presente, inscripto } });
     }
 

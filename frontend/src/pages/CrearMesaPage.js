@@ -34,11 +34,21 @@ const CrearMesaPage = () => {
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const startRowIndex = jsonData.findIndex(
+        let planilla_examen = true;
+
+        let startRowIndex = jsonData.findIndex(
           (row) =>
             row[0] === 'Legajo' && row[1] === 'Nombre' && row[2] === 'Doc' && row[3] === 'Número'
         );
 
+        if (startRowIndex === -1) {
+          startRowIndex = jsonData.findIndex(
+            (row) =>
+              row[0] === 'Legajo' && row[1] === 'Alumno' && row[2] === 'Doc' && row[3] === 'Número'
+          );
+          planilla_examen = false;
+        }
+          
         if (startRowIndex === -1) {
           console.error('No se encontró la tabla en la hoja de cálculo.');
           return;
@@ -50,16 +60,30 @@ const CrearMesaPage = () => {
 
         const actualEndIndex =
           endRowIndex === -1 ? jsonData.length : startRowIndex + 1 + endRowIndex;
-        const formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
-          doc: row[2],
-          nro_identidad: row[3],
-          lu: row[0],
-          nombre_completo: row[1],
-          carrera: row[6],
-          calidad: row[4],
-          codigo: row[5],
-          plan: row[7],
-        }));
+        let formattedData;
+        if(planilla_examen){
+          formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
+            doc: row[2],
+            nro_identidad: row[3],
+            lu: row[0],
+            nombre_completo: row[1],
+            carrera: row[6],
+            calidad: row[4],
+            codigo: row[5],
+            plan: row[7],
+          }));
+        } else{
+          formattedData = jsonData.slice(startRowIndex + 1, actualEndIndex).map((row) => ({
+            doc: row[2],
+            nro_identidad: row[3],
+            lu: row[0],
+            nombre_completo: row[1],
+            carrera: null,
+            calidad: null,
+            codigo: null,
+            plan: null,
+          }));
+        }
 
         setFormData((prevData) => ({ ...prevData, alumnos: formattedData }));
       };
@@ -79,19 +103,26 @@ const CrearMesaPage = () => {
       return;
     }
 
+    let mesaId = null;
+
     try {
       const mesa = await createMesa({
         fecha: formData.fecha,
         materia: formData.materia,
         listaColaboradores: formData.listaColaboradores,
       });
-      const mesaId = mesa.id_mesa;
+      mesaId = mesa.id_mesa;
+
+      if (!formData.alumnos.length){
+        throw new Error('Archivo Invalido');
+      }
 
       const alumnosConMesa = formData.alumnos.map((alumno) => ({
         ...alumno,
         presente: false,
         inscripto: true,
         id_mesa: mesaId,
+        actualizar_socket: false,
       }));
 
       for (const alumno of alumnosConMesa) {
@@ -104,6 +135,15 @@ const CrearMesaPage = () => {
       navigate('/mesas');
     } catch (error) {
       setFormData((prevData) => ({ ...prevData, error: error.message }));
+
+      if (mesaId) {
+        try {
+          await deleteMesa(mesaId);
+          console.log('Mesa eliminada debido a un error al crear alumnos.');
+        } catch (deleteError) {
+          console.error('Error al intentar eliminar la mesa:', deleteError.message);
+        }
+      }
     }
   };
 
@@ -134,6 +174,7 @@ const CrearMesaPage = () => {
         <FormInput label="Materia:" type="text" name="materia" value={formData.materia} onChange={handleInputChange} required />
         <FileUpload onFileChange={handleFileUpload} />
         <div className="email-input-container">
+          <label>Colaboradores: </label>
           <input type="email" value={email} onChange={handleEmailChange} placeholder="Agregar correo" />
           <button type="button" onClick={addEmail} className="add-email-button">Agregar</button>
         </div>

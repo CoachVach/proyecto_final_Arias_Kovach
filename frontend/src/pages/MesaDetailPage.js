@@ -60,6 +60,7 @@ const MesasDetailPage = () => {
           presente: true,
           inscripto: false,
           id_mesa: mesa.id_mesa,
+          actualizar_socket: true,
         });
         message = 'El alumno no está inscripto';
       }
