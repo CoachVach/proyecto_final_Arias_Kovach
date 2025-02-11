@@ -25,14 +25,20 @@ const server = http.createServer(app); // Crear servidor HTTP
 // Configurar Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3001", // Ajusta esto según tu entorno
-    methods: ["GET", "POST"]
-  }
+    origin: 'https://frontend-asistenciauns.vercel.app', // Permitir conexiones WebSocket desde tu frontend
+    methods: ['GET', 'POST'],
+  },
 });
+
+const corsOptions = {
+  origin: 'https://frontend-asistenciauns.vercel.app', // Cambia a tu URL de frontend
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+};
 
 // Middleware de Express
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Conectar a la base de datos
 sequelize
