@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://backend-asistenciauns-r8y7sf6v0-coachvachs-projects.vercel.app/api';
+const API_BASE_URL = 'https://backend-asistenciauns.vercel.app/api';
 
 // Función para hacer peticiones a la API con autenticación
 const fetchWithAuth = async (url, options = {}) => {

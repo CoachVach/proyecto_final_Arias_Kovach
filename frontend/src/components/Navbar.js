@@ -9,7 +9,7 @@ const Navbar = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('https://backend-asistenciauns-r8y7sf6v0-coachvachs-projects.vercel.app/api/login/validate-token', {
+      fetch('https://backend-asistenciauns.vercel.app/api/login/validate-token', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

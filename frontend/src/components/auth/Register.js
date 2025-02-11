@@ -17,7 +17,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await fetch('https://backend-asistenciauns-r8y7sf6v0-coachvachs-projects.vercel.app/api/login/register', {
+      const response = await fetch('https://backend-asistenciauns.vercel.app/api/login/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, apellido, email, password, confirmPassword }),
