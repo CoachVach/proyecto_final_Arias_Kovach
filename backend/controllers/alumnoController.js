@@ -101,35 +101,30 @@ const assignAlumnosToMesa = async (req, res, next) => {
         // Validate the mesa once
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, id_mesa);
 
-        // Log the incoming data for debugging
-        console.log('Received alumnos:', alumnos);
+        // Validate and log incoming data
+        console.log('Received alumnos:', JSON.stringify(alumnos, null, 2));
 
-        // Validate and prepare data
-        const nroIdentidades = alumnos.map(alumno => {
-            if (!alumno.nro_identidad) {
-                throw new AppError('El DNI es obligatorio para cada alumno', 400);
+        // Ensure all data for required fields is present
+        alumnos.forEach(alumno => {
+            if (!alumno.nro_identidad || !alumno.doc || !alumno.nombre_completo) {
+                throw new AppError('Faltan campos obligatorios en algunos alumnos', 400);
             }
-            if (!alumno.doc) {
-                throw new AppError('El documento es obligatorio para cada alumno', 400);
-            }
-            return alumno.nro_identidad.toString();
         });
 
-        // Filter out existing students to avoid duplicates
         const existingAlumnos = await Alumno.findAll({
             where: {
-                nro_identidad: nroIdentidades
+                nro_identidad: alumnos.map(alumno => alumno.nro_identidad.toString())
             }
         });
 
         const existingNroIdentidad = existingAlumnos.map(alumno => alumno.nro_identidad);
-        const newAlumnos = alumnos.filter(alumno => {
-            if (!alumno.nro_identidad || !alumno.doc) {
-                console.warn('Alumno con datos incompletos:', alumno);
-                return false;
-            }
-            return !existingNroIdentidad.includes(alumno.nro_identidad.toString());
-        });
+
+        const newAlumnos = alumnos.filter(alumno => 
+            !existingNroIdentidad.includes(alumno.nro_identidad.toString())
+        );
+
+        // Log newAlumnos to ensure they have valid data
+        console.log('New alumnos to be inserted:', JSON.stringify(newAlumnos, null, 2));
 
         // Bulk insert new students
         if (newAlumnos.length > 0) {
@@ -141,29 +136,31 @@ const assignAlumnosToMesa = async (req, res, next) => {
             })));
         }
 
-        // Assign all students to the mesa
-        const allAlumnos = await Alumno.findAll({
+        // Now assign all students (both new and existing) to the mesa
+        const allAlumnosIds = await Alumno.findAll({
+            attributes: ['id_estudiante'],
             where: {
-                nro_identidad: nroIdentidades
+                nro_identidad: alumnos.map(alumno => alumno.nro_identidad.toString())
             }
-        });
+        }).map(alumno => alumno.id_estudiante);
 
-        const mesaAlumnoData = allAlumnos.map(alumno => ({
-            id_estudiante: alumno.id_estudiante,
+        const mesaAlumnoData = allAlumnosIds.map(id_estudiante => ({
+            id_estudiante,
             id_mesa: id_mesa,
-            carrera: alumno.carrera,
-            calidad: alumno.calidad,
-            codigo: alumno.codigo,
-            plan: alumno.plan,
-            presente: alumno.presente,
-            inscripto: alumno.inscripto
+            carrera: null,  // Adapt based on incoming data
+            calidad: null,
+            codigo: null,
+            plan: null,     // Adjust based on alumno's specific plan if available in input
+            presente: false,
+            inscripto: true
         }));
 
         // Bulk insert into MesaAlumno
-        await MesaAlumno.bulkCreate(mesaAlumnoData);
+        await MesaAlumno.bulkCreate(mesaAlumnoData, { ignoreDuplicates: true });
 
         res.status(200).json({ message: 'Alumnos asignados a la mesa correctamente' });
     } catch (error) {
+        console.error('Error during processing:', error);
         next(error instanceof AppError ? error : new AppError('Error al asignar los alumnos a la mesa', 500, error.message));
     }
 };
