@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://backend-asistenciauns.vercel.app/', 
+  baseURL: 'https://proyectofinalariaskovach-production.up.railway.app', 
 });
 
 export default api;

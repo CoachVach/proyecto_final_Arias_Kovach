@@ -25,14 +25,14 @@ const server = http.createServer(app); // Crear servidor HTTP
 // Configurar Socket.io
 const io = new Server(server, {
   cors: {
-    origin: 'https://frontend-asistenciauns.vercel.app', // Permitir conexiones WebSocket desde tu frontend
+    origin: 'https://proyectofinalariaskovach-production.up.railway.app', // Permitir conexiones WebSocket desde tu frontend
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
   },
 });
 
 const corsOptions = {
-  origin: 'https://frontend-asistenciauns.vercel.app', // Cambia a tu URL de frontend
+  origin: 'https://proyectofinalariaskovach-production.up.railway.app', // Cambia a tu URL de frontend
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 };
