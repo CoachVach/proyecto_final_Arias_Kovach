@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import '../styles/pages/CrearMesaPage.css';
-import { createMesa, createAlumnos, deleteMesa } from '../services/apiService'; // Update import
+import { createMesa, createAlumnos, deleteMesa } from '../services/apiService';
 import FormInput from '../components/FormInput';
 import FileUpload from '../components/FileUpload';
 import ErrorMessage from '../components/common/ErrorMessage';
@@ -117,16 +117,8 @@ const CrearMesaPage = () => {
         throw new Error('Archivo Invalido');
       }
 
-      const alumnosConMesa = formData.alumnos.map((alumno) => ({
-        ...alumno,
-        presente: false,
-        inscripto: true,
-        id_mesa: mesaId,
-      }));
-
-      // Send a single API call with all alumnos
-      console.log(alumnosConMesa);
-      await createAlumnos(alumnosConMesa);
+      // Send a single API call with all alumnos and mesaId
+      await createAlumnos({ alumnos: formData.alumnos, id_mesa: mesaId });
 
       alert('Mesa y alumnos creados correctamente');
       navigate('/mesas');
