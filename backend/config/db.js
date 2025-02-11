@@ -4,6 +4,7 @@ require("dotenv").config(); // Cargar variables de entorno
 // Obtener la URL completa de conexión desde las variables de entorno
 const DATABASE_URL = process.env.DATABASE_URL;
 
+
 // Configuración de Sequelize con PostgreSQL en Supabase usando la connection string
 const sequelize = new Sequelize(DATABASE_URL, {
     dialect: "postgres",

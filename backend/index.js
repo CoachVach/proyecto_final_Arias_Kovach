@@ -18,7 +18,7 @@ const { verifyToken } = require('./middlewares/authMiddleware');
 
 // Crear aplicación Express
 const app = express();
-const port = process.env.PORT;
+const port = process.env.DB_PORT || 3000;
 
 const server = http.createServer(app); // Crear servidor HTTP
 
