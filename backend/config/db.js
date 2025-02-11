@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-import pg from 'pg';
+const pg = require('pg');
 require("dotenv").config(); // Cargar variables de entorno
 
 // Configuración de Sequelize con PostgreSQL en Supabase
