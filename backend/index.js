@@ -18,24 +18,16 @@ const { verifyToken } = require('./middlewares/authMiddleware');
 
 // Crear aplicación Express
 const app = express();
-const port = process.env.PORT || 3000;
-
+const port = 3000;
 const server = http.createServer(app); // Crear servidor HTTP
 
 // Configurar Socket.io
 const io = new Server(server, {
   cors: {
-    origin: 'https://frontend-asistenciauns.vercel.app', // Permitir conexiones WebSocket desde tu frontend
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
-  },
+    origin: "http://localhost:3001", // Ajusta esto según tu entorno
+    methods: ["GET", "POST"]
+  }
 });
-
-const corsOptions = {
-  origin: 'https://frontend-asistenciauns.vercel.app', // Cambia a tu URL de frontend
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-};
 
 // Middleware de Express
 app.use(express.json());
@@ -110,5 +102,5 @@ app.use(errorMiddleware);
 
 // Iniciar el servidor en el puerto definido
 server.listen(port, () => {
-  console.log(`Servidor ejecutándose en ${port}`);
+  console.log(`Servidor ejecutándose en http://localhost:${port}`);
 });

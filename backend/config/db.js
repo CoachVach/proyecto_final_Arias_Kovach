@@ -1,13 +1,13 @@
 const { Sequelize } = require("sequelize");
-const pg = require('pg');
 require("dotenv").config(); // Cargar variables de entorno
 
-// Configuración de Sequelize con PostgreSQL en Supabase
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+// Obtener la URL completa de conexión desde las variables de entorno
+const DATABASE_URL = process.env.DATABASE_URL;
+console.log(DATABASE_URL);
+
+// Configuración de Sequelize con PostgreSQL en Supabase usando la connection string
+const sequelize = new Sequelize(DATABASE_URL, {
     dialect: "postgres",
-    dialectModule: pg,
     dialectOptions: {
         ssl: {
             require: true,
