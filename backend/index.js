@@ -32,14 +32,19 @@ const io = new Server(server, {
 });
 
 const corsOptions = {
-  origin: 'https://frontend-asistenciauns.vercel.app', // Cambia a tu URL de frontend
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
+  origin: '*', // Permitir todos los orígenes temporalmente para probar
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Agregar más métodos HTTP
+  allowedHeaders: ['Content-Type', 'Authorization'], // Asegurar que se permiten los headers necesarios
+  credentials: true, // Permitir cookies y credenciales si es necesario
 };
+
 
 // Middleware de Express
 app.use(express.json());
 app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
+
 
 // Conectar a la base de datos
 sequelize
