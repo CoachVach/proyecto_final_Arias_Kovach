@@ -48,7 +48,7 @@ const MesasPage = () => {
     return () => {
       socket.off("mesasActualizadas");
     };
-  }, []);
+  }, [email]);
 
   /*const handleDelete = async (idMesa) => {
     try {

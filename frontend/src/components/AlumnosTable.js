@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { updateNotasMesa } from "../services/apiService";
+import React from "react";
 
 const AlumnosTable = ({ alumnos, openModal, mesa, notas, handleNotaChange }) => {
   return (

@@ -3,7 +3,6 @@ import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from '@zxing/
 import '../styles/components/QRScanner.css';
 
 const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
-  const [decodedScanResult, setDecodedScanResult] = useState('');
   const [error, setError] = useState('');
   const [isFront, setIsFront] = useState(false); 
   const videoRef = useRef(null);
@@ -64,7 +63,6 @@ const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
                 nombre_completo : (dataParts[1] || '') + ', ' +(dataParts[2] || ''),
                 nro_identidad: dataParts[4] || '',
               }
-              setDecodedScanResult(datosDiferenciados);
               handleScan(datosDiferenciados);
               setError('');
             } else if (err && err.name !== 'NotFoundException') {
@@ -89,7 +87,7 @@ const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
     };
-  }, [isFront]);
+  }, [isFront, handleScan]);
 
   const toggleCamera = () => {
     setIsFront(!isFront);

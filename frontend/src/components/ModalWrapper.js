@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import Modal from './common/Modal';
 import FileModal from './FileModal';
 import AlumnoMesaUpdate from './alumnoMesaUpdate';

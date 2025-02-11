@@ -22,7 +22,6 @@ const MesasDetailPage = () => {
   });
 
   const [scanResult, setScanResult] = useState(null);
-  const [scanError, setScanError] = useState('');
 
   const openModal = (type, data = null) => setModalState({ type, data });
   const closeModal = () => {
@@ -77,7 +76,6 @@ const MesasDetailPage = () => {
       });
 
       fetchAlumnos();
-      setScanError('');
     } catch (err) {
       console.error('Error al manejar el código QR:', err.message);
     }
@@ -141,7 +139,7 @@ const MesasDetailPage = () => {
       socket.off("datosAlumnosActualizada");
     };
     }
-  }, [mesa]);
+  }, [mesa, fetchAlumnos]);
 
 
   if (!mesa) return <p>No se encontró información de la mesa.</p>;
