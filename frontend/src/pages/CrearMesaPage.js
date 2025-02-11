@@ -117,8 +117,9 @@ const CrearMesaPage = () => {
         throw new Error('Archivo Invalido');
       }
 
-      // Send a single API call with all alumnos and mesaId
+      console.log(formData.alumnos);
       await createAlumnos({ alumnos: formData.alumnos, id_mesa: mesaId });
+      
 
       alert('Mesa y alumnos creados correctamente');
       navigate('/mesas');
