@@ -52,6 +52,7 @@ const QRScanner = ({ onQRCodeScanned, alumnoInscripto }) => {
             width: { min: 640, ideal: 1920, max: 2560 },
             height: { min: 480, ideal: 1080, max: 1440 },
             facingMode: isFront ? 'user' : 'environment',
+            focusMode: 'auto',
           },
         });
 
