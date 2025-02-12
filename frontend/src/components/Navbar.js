@@ -4,7 +4,7 @@ import '../styles/components/Navbar.css';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // Estado de autenticación
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -17,34 +17,19 @@ const Navbar = () => {
       })
         .then((response) => {
           if (response.ok) {
-            setIsAuthenticated(true); // El token es válido
+            setIsAuthenticated(true);
           } else {
             localStorage.removeItem('token');
-            setIsAuthenticated(false); // El token es inválido o expiró
+            setIsAuthenticated(false);
           }
         })
         .catch(() => {
           localStorage.removeItem('token');
-          setIsAuthenticated(false); // Si hay error, también se considera inválido
+          setIsAuthenticated(false);
         });
     } else {
-      setIsAuthenticated(false); // Si no hay token, no está autenticado
+      setIsAuthenticated(false);
     }
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const menu = document.querySelector('.navbar-links');
-      const toggleButton = document.querySelector('.navbar-toggle');
-      if (menu && !menu.contains(event.target) && !toggleButton.contains(event.target)) {
-        setMobileMenuOpen(false); // Cerrar el menú si se hace clic fuera
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
   }, []);
 
   const toggleMenu = () => {
@@ -55,8 +40,8 @@ const Navbar = () => {
     try {
       if (window.confirm('¿Estás seguro de que deseas cerrar sesión?')) {
         localStorage.removeItem('token');
-        setIsAuthenticated(false); // Actualizamos el estado de autenticación
-        window.location.href = '/login'; // Redirigimos al login
+        setIsAuthenticated(false);
+        window.location.href = '/login';
       }
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
@@ -64,53 +49,75 @@ const Navbar = () => {
   };
 
   if (isAuthenticated === null) {
-    return <div>Cargando...</div>; // Pantalla de carga mientras verificamos el token
+    return <div>Cargando...</div>;
   }
 
   return (
-    <nav className="navbar">
+    <nav className="navbar navbar-light bg-light">
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          Asistencia<span>UNS</span>
-        </Link>
-        <button className="navbar-toggle" onClick={toggleMenu}>
-          ☰
-        </button>
-        <ul className={`navbar-links ${isMobileMenuOpen ? 'active' : ''}`}>
-          <li>
-            <Link to="/">Inicio</Link>
-          </li>
+          <Link to="/" className="navbar-logo">
+            Asistencia<span>UNS</span>
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            onClick={toggleMenu}  // ← Aquí está el cambio clave
+            aria-controls="navbarTogglerDemo02"
+            aria-expanded={isMobileMenuOpen}  // ← Controla el estado
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
 
-          {/* Mostrar enlaces si el usuario está logueado */}
-          {isAuthenticated && (
-            <>
-              <li>
-                <Link to="/user">Usuario</Link>
+          <div className={`collapse navbar-collapse ${isMobileMenuOpen ? 'show' : ''}`} id="navbarTogglerDemo02">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <Link to="/" className="nav-link">
+                  Inicio
+                </Link>
               </li>
-              <li>
-                <Link to="/mesas">Mesas</Link>
-              </li>
-              <li>
-                <Link to="/crear-mesa">Crear Mesa</Link>
-              </li>
-              <li>
-                <Link onClick={handleLogout}>Cerrar Sesión</Link>
-              </li>
-            </>
-          )}
 
-          {/* Mostrar enlaces de Login y Register si el usuario NO está logueado */}
-          {!isAuthenticated && (
-            <>
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-              <li>
-                <Link to="/register">Register</Link>
-              </li>
-            </>
-          )}
-        </ul>
+              {isAuthenticated && (
+                <>
+                  <li className="nav-item">
+                    <Link to="/user" className="nav-link">
+                      Usuario
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/mesas" className="nav-link">
+                      Mesas
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/crear-mesa" className="nav-link">
+                      Crear Mesa
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/" onClick={handleLogout} className="nav-link">
+                      Cerrar Sesión
+                    </Link>
+                  </li>
+                </>
+              )}
+
+              {!isAuthenticated && (
+                <>
+                  <li className="nav-item">
+                    <Link to="/login" className="nav-link">
+                      Login
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/register" className="nav-link">
+                      Register
+                    </Link>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
       </div>
     </nav>
   );

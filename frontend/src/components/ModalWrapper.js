@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import Modal from './common/Modal';
 import FileModal from './FileModal';
 import AlumnoMesaUpdate from './alumnoMesaUpdate';
@@ -6,15 +6,27 @@ import QRScanner from './QRScanner';
 import '../styles/components/QRScanner.css';
 
 const ModalWrapper = ({ modalState, closeModal, handleQRCodeScanned, alumnos, mesa, alumnoInscripto }) => {
+  const [scannerActive, setScannerActive] = useState(false);
+
+  useEffect(() => {
+    if (modalState.type === "qrScanner") {
+      setScannerActive(true);
+    } else {
+      setScannerActive(false);
+    }
+  }, [modalState.type]);
 
   if (!modalState.type) return null;
 
   return (
-    <Modal isOpen={true} onClose={closeModal}>
-      {modalState.type === 'qrScanner' && (
+    <Modal isOpen={true}>
+      {modalState.type === 'qrScanner' && scannerActive && (
         <>
           <QRScanner onQRCodeScanned={handleQRCodeScanned} alumnoInscripto={alumnoInscripto} />      
-          <button onClick={closeModal}>Cerrar</button>
+          <button onClick={() => {
+              setScannerActive(false);
+              closeModal();
+            }}>Cerrar</button>
         </>      )}
         {modalState.type === 'fileGenerator' && (
         <FileModal

@@ -2,22 +2,33 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from '@zxing/library';
 import '../styles/components/QRScanner.css';
 
-const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
+const QRScanner = ({ onQRCodeScanned, alumnoInscripto }) => {
   const [error, setError] = useState('');
-  const [isFront, setIsFront] = useState(false); 
+  const [isFront, setIsFront] = useState(false);
   const videoRef = useRef(null);
   const codeReader = useRef(null);
   const streamRef = useRef(null);
+
   const handleScan = (data) => {
     if (data) {
-      onQRCodeScanned(data); 
+      onQRCodeScanned(data);
     }
   };
 
-  /*useEffect(() => {
+  useEffect(() => {
+    let isMounted = true;
+
     const startScanner = async () => {
+      if (!videoRef.current) return;
+
       const hints = new Map();
       hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.PDF_417]);
+
+      // Evita inicializar el escáner si ya existe uno activo
+      if (codeReader.current) {
+        console.log('El escáner ya está activo.');
+        return;
+      }
 
       codeReader.current = new BrowserMultiFormatReader(hints);
 
@@ -30,44 +41,47 @@ const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
           return;
         }
 
-        const selectedDeviceId = videoDevices.find(device => 
-          (isFront && device.label.includes('front')) || 
+        const selectedDeviceId = videoDevices.find(device =>
+          (isFront && device.label.includes('front')) ||
           (!isFront && device.label.includes('back'))
         )?.deviceId;
 
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { 
-            deviceId: { ideal: selectedDeviceId },
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+          video: {
+            deviceId: selectedDeviceId ? { exact: selectedDeviceId } : undefined,
+            width: { min: 640, ideal: 1920, max: 2560 },
+            height: { min: 480, ideal: 1080, max: 1440 },
             facingMode: isFront ? 'user' : 'environment',
-            focusMode: 'auto',
           },
         });
 
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
+        if (!isMounted) return;
+
+        // Solo asignamos el stream si aún no está activo
+        if (!streamRef.current) {
+          streamRef.current = stream;
+          videoRef.current.srcObject = stream;
         }
 
-        streamRef.current = stream;
-        videoRef.current.srcObject = stream;
         await codeReader.current.decodeFromVideoDevice(
           selectedDeviceId,
           videoRef.current,
           (result, err) => {
+            if (!isMounted) return;
+
             if (result) {
               const decodedText = result.getText();
-              const dataParts = decodedText.split('@'); 
+              const dataParts = decodedText.split('@');
               const datosDiferenciados = {
-                nombre_completo : (dataParts[1] || '') + ', ' +(dataParts[2] || ''),
+                nombre_completo: (dataParts[1] || '') + ', ' + (dataParts[2] || ''),
                 nro_identidad: dataParts[4] || '',
-              }
-              handleScan(datosDiferenciados);
+              };
+              onQRCodeScanned(datosDiferenciados);
               setError('');
-            } else if (err && err.name !== 'NotFoundException') { 
+            } else if (err && !err.message.includes('No MultiFormat Readers were able to detect the code.')) {
               console.error('Decoding error:', err);
               setError('Error al decodificar el código.');
-            }            
+            }
           }
         );
       } catch (err) {
@@ -79,104 +93,20 @@ const QRScanner = ({onQRCodeScanned,alumnoInscripto}) => {
     startScanner();
 
     return () => {
+      isMounted = false;
       if (codeReader.current) {
         codeReader.current.reset();
+        codeReader.current = null;
       }
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
       }
     };
-  });
-*/
-useEffect(() => {
-  let isMounted = true; // 👈 Bandera para evitar ejecutar código en un componente desmontado
-
-  const startScanner = async () => {
-    if (!videoRef.current) return;
-    
-    const hints = new Map();
-    hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.PDF_417]);
-
-    codeReader.current = new BrowserMultiFormatReader(hints);
-
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-      if (videoDevices.length === 0) {
-        setError('No se encontró ninguna cámara disponible.');
-        return;
-      }
-
-      const selectedDeviceId = videoDevices.find(device => 
-        (isFront && device.label.includes('front')) || 
-        (!isFront && device.label.includes('back'))
-      )?.deviceId || videoDevices[0].deviceId;
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          deviceId: { exact: selectedDeviceId },
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: isFront ? 'user' : 'environment',
-        },
-      });
-
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-
-      streamRef.current = stream;
-      videoRef.current.srcObject = stream;
-
-      await codeReader.current.decodeFromVideoDevice(
-        selectedDeviceId,
-        videoRef.current,
-        (result, err) => {
-          if (!isMounted) return; // 👈 Evita procesar si el componente se desmontó
-          
-          if (result) {
-            const decodedText = result.getText();
-            const dataParts = decodedText.split('@'); 
-            const datosDiferenciados = {
-              nombre_completo : (dataParts[1] || '') + ', ' +(dataParts[2] || ''),
-              nro_identidad: dataParts[4] || '',
-            };
-            handleScan(datosDiferenciados);
-            setError('');
-          } else if (err && err.name !== 'NotFoundException') { 
-            console.error('Decoding error:', err);
-            setError('Error al decodificar el código.');
-          }            
-        }
-      );
-    } catch (err) {
-      console.error('Error al iniciar el escáner:', err);
-      setError('Error al acceder a la cámara. Asegúrese de otorgar permisos.');
-    }
-  };
-
-  startScanner();
-
-  return () => {
-    isMounted = false; // 👈 Detiene la ejecución cuando se desmonta el componente
-    
-    if (codeReader.current) {
-      codeReader.current.reset();
-    }
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-  };
-}, [isFront]); // 👈 Se ejecuta solo cuando cambia la cámara
-
-
-  
-  
+  }, [isFront]);
 
   const toggleCamera = () => {
-    setIsFront(!isFront);
+    setIsFront(prev => !prev);
   };
 
   return (
@@ -191,14 +121,13 @@ useEffect(() => {
         Cambiar a {isFront ? 'Cámara Trasera' : 'Cámara Frontal'}
       </button>
 
-
       {alumnoInscripto && (
-          <div className={`${alumnoInscripto.inscripto ? 'result-container' : 'error-container'}`}>
-            <h2>{alumnoInscripto.message}</h2>
-            <p>{alumnoInscripto.nombre_completo}</p>
-            <p>DNI: {alumnoInscripto.nro_identidad}</p>
-          </div>
-        )}
+        <div className={`${alumnoInscripto.inscripto ? 'result-container' : 'error-container'}`}>
+          <h2>{alumnoInscripto.message}</h2>
+          <p>{alumnoInscripto.nombre_completo}</p>
+          <p>DNI: {alumnoInscripto.nro_identidad}</p>
+        </div>
+      )}
 
       {error && (
         <div className="error-container">
