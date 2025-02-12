@@ -4,15 +4,6 @@ const MesaAlumnoService = require('../services/mesaAlumnoService');
 const ColaboradorMesaService = require('../services/colaboradorMesaService');
 const AppError  = require('../structure/AppError');
 
-const getAllMesas = async (req, res, next) => {
-    try {
-        const mesas = await MesaExamenService.getAllMesas();
-        res.status(200).json(mesas);
-    } catch (error) {
-        next(new AppError('Error al obtener las mesas de examen', 500, error.message));
-    }
-};
-
 const getMesaById = async (req, res, next) => {
     try {
         const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, req.params.id);
@@ -38,18 +29,6 @@ const createMesa = async (req, res, next) => {
         res.status(201).json(newMesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al crear la mesa de examen', 500, error.message));
-    }
-};
-
-const updateMesa = async (req, res, next) => {
-    try {
-        const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, req.params.id);
-        const { fecha, materia, id_profesor } = req.body;
-
-        await MesaExamenService.updateMesaExamen(mesa, fecha, materia, id_profesor);
-        res.status(200).json(mesa);
-    } catch (error) {
-        next(error instanceof AppError ? error : new AppError('Error al actualizar la mesa de examen', 400, error.message));
     }
 };
 
@@ -104,7 +83,7 @@ const deleteMesa = async (req, res, next) => {
     }
 };
 
-const getMesaByProfesor = async (req, res, next) => {
+const getMesasByProfesor = async (req, res, next) => {
     try {
         const mesas = await MesaExamenService.findMesasByProfesor(req.profesor.id_profesor);
         res.status(200).json(mesas);
@@ -121,7 +100,6 @@ const getMesaByColaborador = async (req, res, next) => {
         next(error instanceof AppError ? error : new AppError('Error al obtener las mesas de examen', 500, error.message));
     }
 };
-
 
 const updateNotasAlumnos = async (req, res, next) => {
     try {
@@ -142,12 +120,10 @@ const updateNotasAlumnos = async (req, res, next) => {
 };
 
 module.exports = {
-    getAllMesas,
     getMesaById,
     createMesa,
-    updateMesa,
     deleteMesa,
-    getMesaByProfesor,
+    getMesasByProfesor,
     updateAlumnoMesa,
     updateDatosAlumnoMesa,
     updateNotasAlumnos,

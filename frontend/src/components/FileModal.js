@@ -31,40 +31,45 @@ const FileModal = ({ alumnos, onClose, materia, fecha }) => {
 
   const generateExcel = () => {
     let filteredAlumnos = alumnos;
-
+  
     if (!includeAusentes) {
       filteredAlumnos = filteredAlumnos.filter((alumno) => alumno.presente);
     }
-
+  
     if (!includeInscriptos) {
       filteredAlumnos = filteredAlumnos.filter((alumno) => !alumno.inscripto);
     }
-
+  
     const dataToExport = filteredAlumnos.map((alumno) =>
       selectedColumns.reduce((acc, col) => {
-        acc[col] = alumno[col];
+        if (col === 'inscripto' || col === 'presente') {
+          acc[col] = alumno[col] ? 'SI' : 'NO'; 
+        } else {
+          acc[col] = alumno[col];
+        }
         return acc;
       }, {})
     );
-
+  
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Alumnos');
-
+  
     const excelBuffer = XLSX.write(workbook, {
       bookType: 'xlsx',
       type: 'array',
     });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-
+  
     const nombreMesa = `${materia}_${fecha.toString()}.xlsx`;
-
+  
     saveAs(blob, nombreMesa);
     onClose();
   };
+  
 
   return (
-    <div className="modal-content">
+    <div>
       <h2>Generar Excel</h2>
       <div>
         <h3>Seleccionar columnas</h3>

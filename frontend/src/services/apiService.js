@@ -51,7 +51,7 @@ export const updateUserData = async (data) => {
 };
 
 // Obtener todas las mesas de examen para un profesor
-export const getAllMesas = async () => {
+export const getAllMesasByProfesor = async () => {
   try {
     const mesas = await fetchWithAuth('/mesas/profesor');
     return mesas;
@@ -60,7 +60,6 @@ export const getAllMesas = async () => {
     throw new Error('No se pudieron obtener las mesas de examen.');
   }
 };
-
 
 // Obtener todas las mesas de examen para un colaborador
 export const getAllMesasByColaborador = async () => {
@@ -162,20 +161,7 @@ export const createAlumnos = async (data) => {
   }
 };
 
-// Actualizar la información de una mesa de examen
-export const updateMesa = async (mesaId, data) => {
-  try {
-    const mesaActualizada = await fetchWithAuth(`/mesas/${mesaId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-    return mesaActualizada;
-  } catch (error) {
-    console.error(`Error al actualizar la mesa ${mesaId}:`, error);
-    throw new Error('No se pudo actualizar la mesa de examen.');
-  }
-};
-  // Actualizar las notas de una mesa de examen
+// Actualizar las notas de una mesa de examen
 export const  updateNotasMesa = async (mesaId, dataNotas) => {
   try {
     const mesaActualizada = await fetchWithAuth(`/mesas/notas/${mesaId}`, {

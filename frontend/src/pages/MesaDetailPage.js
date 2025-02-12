@@ -8,6 +8,9 @@ import { getAlumnos, updateAlumno, createAlumno } from '../services/apiService';
 import ModalWrapper from '../components/ModalWrapper';
 import socket from "../socket"; // Importamos la instancia de WebSockets
 import { updateNotasMesa } from "../services/apiService";
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import ErrorMessage from '../components/common/ErrorMessage'; // Importar el componente de mensaje de error
+
 
 const MesasDetailPage = () => {
   const [alumnos, setAlumnos] = useState([]);
@@ -20,10 +23,9 @@ const MesasDetailPage = () => {
     type: null,
     data: null,
   });
-
   const [scanResult, setScanResult] = useState(null);
-
   const openModal = (type, data = null) => setModalState({ type, data });
+  
   const closeModal = () => {
     setModalState({ type: null, data: null });
     fetchAlumnos();
@@ -134,25 +136,29 @@ const MesasDetailPage = () => {
           fetchAlumnos(); // Recargar la lista de alumnos
         }
       });
-    // Limpiar la suscripción cuando el componente se desmonta
-    return () => {
-      socket.off("datosAlumnosActualizada");
-    };
+      // Limpiar la suscripción cuando el componente se desmonta
+      return () => {
+        socket.off("datosAlumnosActualizada");
+      };
     }
   });
 
 
   if (!mesa) return <p>No se encontró información de la mesa.</p>;
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <LoadingSpinner size="12" color="border-red-600" />
+    </div>
+  );
 
   return (
     <div className="table-container">
       <h1>Alumnos de la Mesa</h1>
+      <ErrorMessage error={error} />
       {alumnos.length > 0 ? (
         <AlumnosTable alumnos={alumnos} openModal={openModal} mesa={mesa} notas = {notas} handleNotaChange = {handleNotaChange} />
       ) : (
-        <p>No hay alumnos registrados en esta mesa.</p>
+        <ErrorMessage error={"No se encontraron alumnos para esta mesa."} />
       )}
       <ActionButtons openModal={openModal} guardarNotas={guardarNotas}/>
 
@@ -164,8 +170,6 @@ const MesasDetailPage = () => {
         mesa={mesa}
         alumnoInscripto={scanResult}
       />
-
-  
     </div>
   );
 };

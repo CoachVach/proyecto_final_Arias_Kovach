@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const ProtectedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -32,7 +33,7 @@ const ProtectedRoute = () => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <h1>Cargando...</h1>; // Puedes mostrar una pantalla de carga mientras verificas
+    return <LoadingSpinner/>; 
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;

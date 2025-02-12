@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { updateUserData, getUserData } from '../services/apiService'; // Importa las funciones desde apiService
 import '../styles/pages/UserPage.css';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const UserPage = () => {
   const [user, setUser] = useState({});
   const [formData, setFormData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -13,6 +15,7 @@ const UserPage = () => {
         const data = await getUserData(); // Usamos la función getUserData desde apiService
         setUser(data);
         setFormData(data);
+        setLoading(false);
       } catch (error) {
         console.error('Error al obtener los datos del usuario:', error);
         alert('No se pudo obtener los datos del usuario');
@@ -38,6 +41,10 @@ const UserPage = () => {
       alert('Ocurrió un error al actualizar los datos. Por favor, inténtalo nuevamente.');
     }
   };
+
+  if(loading){
+    return <LoadingSpinner/>
+  }
 
   return (
     <div className="user-page">

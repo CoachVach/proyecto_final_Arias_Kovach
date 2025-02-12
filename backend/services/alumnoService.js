@@ -15,10 +15,6 @@ class AlumnoService{
         alumno.update({ doc, nro_identidad, lu, nombre_completo});
     }
 
-    static async deleteAlumno(alumno){
-        alumno.delete;
-    }
-
     static async findAllAlumnos() {
         return await (Alumno.findAll({ 
             include: { 
