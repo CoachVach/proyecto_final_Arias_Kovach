@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/components/Navbar.css';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -49,7 +50,7 @@ const Navbar = () => {
   };
 
   if (isAuthenticated === null) {
-    return <div>Cargando...</div>;
+    return <LoadingSpinner/>;
   }
 
   return (
@@ -61,9 +62,9 @@ const Navbar = () => {
           <button
             className="navbar-toggler"
             type="button"
-            onClick={toggleMenu}  // ← Aquí está el cambio clave
+            onClick={toggleMenu} 
             aria-controls="navbarTogglerDemo02"
-            aria-expanded={isMobileMenuOpen}  // ← Controla el estado
+            aria-expanded={isMobileMenuOpen}
             aria-label="Toggle navigation"
           >
             <span className="navbar-toggler-icon"></span>

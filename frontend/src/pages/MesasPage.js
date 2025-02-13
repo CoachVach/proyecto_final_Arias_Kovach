@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllMesas, getAllMesasByColaborador } from '../services/apiService'; // Importa las funciones del apiService
+import { getAllMesasByProfesor, getAllMesasByColaborador } from '../services/apiService'; // Importa las funciones del apiService
 import MesasList from '../components/mesas/MesasList'; // Importar el componente de lista de mesas
-import Loading from '../components/common/Loading'; // Importar el componente de carga
 import ErrorMessage from '../components/common/ErrorMessage'; // Importar el componente de mensaje de error
 import '../styles/pages/MesasPage.css';
 import socket from '../socket.js';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+
 
 const MesasPage = () => {
   const [mesasProfesor, setMesasProfesor] = useState([]);
@@ -17,7 +18,7 @@ const MesasPage = () => {
 
   const fetchMesas = async () => {
     try {
-      const fetchedMesasProfesor = await getAllMesas();
+      const fetchedMesasProfesor = await getAllMesasByProfesor();
       const fetchedMesasColaborador = await getAllMesasByColaborador();
   
       if (!fetchedMesasProfesor.length && !fetchedMesasColaborador.length) {
@@ -50,31 +51,21 @@ const MesasPage = () => {
     };
   }, [email]);
 
-  /*const handleDelete = async (idMesa) => {
-    try {
-      await deleteMesa(idMesa);
-      setMesas((prevMesas) => prevMesas.filter((mesa) => mesa.id_mesa !== idMesa));
-    } catch (error) {
-      console.error(error.message);
-      alert('Hubo un problema al intentar eliminar la mesa.');
-    }
-  };*/
-
-  if (loading) return <Loading />;
+  if (loading) return <LoadingSpinner />;
+  
   return (
     <div className="mesas-page">
       <h1>Mesas de Examen</h1>
       <ErrorMessage error={error} />
       {!mesasProfesor.length && !mesasColaborador.length ? (
-        <div className="no-mesas">
-          <p>No hay mesas de examen asociadas a este profesor.</p>
-        </div>
-      ) : (
-        <div>
-          <MesasList mesas={mesasProfesor} title = {'Mesas como Profesor Titular'}/>
-          <MesasList mesas={mesasColaborador} title = {'Mesas como Colaborador'}/>
-        </div>
-      )}
+          null
+        ) : (
+          <div>
+            <MesasList mesas={mesasProfesor} title = {'Mesas como Profesor Titular'}/>
+            <MesasList mesas={mesasColaborador} title = {'Mesas como Colaborador'}/>
+          </div>
+        )
+      }
       <button onClick={() => navigate('/crear-mesa')} className="create-button">
         Crear Nueva Mesa
       </button>

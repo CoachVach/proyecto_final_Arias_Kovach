@@ -9,43 +9,44 @@ const QRScanner = ({ onQRCodeScanned, alumnoInscripto }) => {
   const codeReader = useRef(null);
   const streamRef = useRef(null);
 
-  const handleScan = (data) => {
-    if (data) {
-      onQRCodeScanned(data);
-    }
-  };
-
   useEffect(() => {
     let isMounted = true;
 
     const startScanner = async () => {
+      // Verificamos si el elemento de video está disponible
       if (!videoRef.current) return;
 
+      // Configuramos los formatos de código de barras a escanear
       const hints = new Map();
       hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.PDF_417]);
 
-      // Evita inicializar el escáner si ya existe uno activo
+      // Evitamos reiniciar el escáner si ya hay uno activo
       if (codeReader.current) {
         console.log('El escáner ya está activo.');
         return;
       }
 
+      // Se crea un nuevo lector de códigos de barras
       codeReader.current = new BrowserMultiFormatReader(hints);
 
       try {
+        // Buscamos y filtramos los dispositivos disponibles quedándonos solo las cámaras
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
+        // Vemos si hay al menos una cámara disponible
         if (videoDevices.length === 0) {
           setError('No se encontró ninguna cámara disponible.');
           return;
         }
 
+        // Seleccionamos el dispositivo de cámara adecuado según la cámara frontal o trasera
         const selectedDeviceId = videoDevices.find(device =>
           (isFront && device.label.includes('front')) ||
           (!isFront && device.label.includes('back'))
         )?.deviceId;
 
+        // Solicitamos acceso a la cámara seleccionada
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
             deviceId: selectedDeviceId ? { exact: selectedDeviceId } : undefined,
@@ -56,31 +57,37 @@ const QRScanner = ({ onQRCodeScanned, alumnoInscripto }) => {
           },
         });
 
+        // Vemos si el componente aún está montado
         if (!isMounted) return;
 
-        // Solo asignamos el stream si aún no está activo
+        // Se asigna el stream de video solo si no hay uno activo
         if (!streamRef.current) {
           streamRef.current = stream;
           videoRef.current.srcObject = stream;
         }
 
+        // El escáner de códigos de barras se activaa
         await codeReader.current.decodeFromVideoDevice(
           selectedDeviceId,
           videoRef.current,
           (result, err) => {
+            // Verificar si el componente aún está montado
             if (!isMounted) return;
 
+            // Manejo de resultados
             if (result) {
+              //Decodificamos el resultado
               const decodedText = result.getText();
               const dataParts = decodedText.split('@');
               const datosDiferenciados = {
                 nombre_completo: (dataParts[1] || '') + ', ' + (dataParts[2] || ''),
                 nro_identidad: dataParts[4] || '',
               };
+              // Notificar el código QR escaneado
               onQRCodeScanned(datosDiferenciados);
               setError('');
             } else if (err && !err.message.includes('No MultiFormat Readers were able to detect the code.')) {
-              console.error('Decoding error:', err);
+              console.error('Error al decodificar el código:', err);
               setError('Error al decodificar el código.');
             }
           }

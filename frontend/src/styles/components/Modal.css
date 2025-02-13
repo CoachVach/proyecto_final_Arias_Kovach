@@ -9,6 +9,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow: hidden; /* Prevents page scrolling */
 }
 
 .modal-content {
@@ -27,6 +28,13 @@
   display: flex;
   overflow-y: auto; /* Enables scrolling inside the modal */
   flex-direction: column;
+<<<<<<< HEAD
+=======
+}
+
+.modal-body {
+  flex: 1; /* Expands to take available space */
+>>>>>>> d739b12ded6ac7ba2925bd7362a1e6d91aa2f675
 }
 
 

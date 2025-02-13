@@ -7,7 +7,7 @@ const Modal = ({ isOpen, children }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <div class="modal-body">
+        <div className="modal-body">
           {children}
         </div>
       </div>

@@ -6,6 +6,8 @@ import { createMesa, createAlumnos, deleteMesa } from '../services/apiService';
 import FormInput from '../components/FormInput';
 import FileUpload from '../components/FileUpload';
 import ErrorMessage from '../components/common/ErrorMessage';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+
 
 const CrearMesaPage = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +19,7 @@ const CrearMesaPage = () => {
   });
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -106,6 +109,7 @@ const CrearMesaPage = () => {
     let mesaId = null;
 
     try {
+      setLoading(true);
       const mesa = await createMesa({
         fecha: formData.fecha,
         materia: formData.materia,
@@ -117,13 +121,10 @@ const CrearMesaPage = () => {
         throw new Error('Archivo Invalido');
       }
 
-      console.log(formData.alumnos);
       await createAlumnos({ alumnos: formData.alumnos, id_mesa: mesaId });
-      
-
-      alert('Mesa y alumnos creados correctamente');
       navigate('/mesas');
     } catch (error) {
+      setLoading(false);
       setFormData((prevData) => ({ ...prevData, error: error.message }));
 
       if (mesaId) {
@@ -156,6 +157,10 @@ const CrearMesaPage = () => {
     }));
   };
 
+  if(loading){
+    return <LoadingSpinner/>;
+  }
+  
   return (
     <div className="crear-mesa-page">
       <h1>Crear Mesa de Examen</h1>

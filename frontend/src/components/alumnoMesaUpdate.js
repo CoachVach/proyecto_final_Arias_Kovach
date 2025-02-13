@@ -41,7 +41,7 @@ const AlumnoMesaUpdate = ({onClose, alumno, id_mesa}) =>{
    
     return (
         <div>
-          <h1>Editar Alumno</h1>
+          <h1>Actualizar datos del Alumno</h1>
           <form onSubmit={handleSubmit} className="crear-mesa-form">
             <div className="form-group">
                 <label htmlFor="inscripto">Inscripto</label>
@@ -108,7 +108,7 @@ const AlumnoMesaUpdate = ({onClose, alumno, id_mesa}) =>{
                 required
               />
             </div>
-            <button type="submit" className="submit-button">Crear</button>
+            <button type="submit" className="submit-button">Actualizar Datos</button>
           </form>
           {error && <div className="error">{error}</div>}
           <button onClick={onClose}>Cerrar</button>

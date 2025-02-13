@@ -25,17 +25,6 @@ class MesaExamenService{
         await mesa.addAlumno(alumno, { through: {carrera, calidad, codigo, plan, presente, inscripto } });
     }
 
-    /*static async validateProfesorMesa(profesorId, mesaId) {
-        const mesa = await MesaExamen.findByPk(mesaId);
-        if (mesa.id_profesor !== profesorId) {
-            throw new AppError('La mesa no pertenece al profesor.', 403);
-        }
-        if (!mesa) {
-            throw new AppError('Mesa de examen no encontrada', 404);
-        }
-        return mesa;
-    }*/
-
     static async validateProfesorMesa(profesorId, mesaId) {
         let mesa = await MesaExamen.findByPk(mesaId);
         if (mesa.id_profesor !== profesorId) {
@@ -46,10 +35,6 @@ class MesaExamenService{
             throw new AppError('Mesa de examen no encontrada', 404);
         }
         return mesa;
-    }
-
-    static async updateMesaExamen(mesa, fecha, materia, id_profesor ){
-        mesa.update({ fecha, materia, id_profesor });
     }
 
     static async deleteMesa(mesa){
