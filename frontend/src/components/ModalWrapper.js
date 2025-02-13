@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from './common/Modal';
 import FileModal from './FileModal';
-import AlumnoMesaUpdate from './AlumnoMesaUpdate';
+import AlumnoMesaUpdate from './alumnoMesaUpdate';
 import QRScanner from './QRScanner';
 import '../styles/components/QRScanner.css';
 
