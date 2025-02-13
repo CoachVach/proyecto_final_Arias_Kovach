@@ -41,7 +41,7 @@ const AlumnoMesaUpdate = ({onClose, alumno, id_mesa}) =>{
    
     return (
         <div>
-          <h1>Crear Mesa de Examen</h1>
+          <h1>Editar Alumno</h1>
           <form onSubmit={handleSubmit} className="crear-mesa-form">
             <div className="form-group">
                 <label htmlFor="inscripto">Inscripto</label>
