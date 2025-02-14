@@ -29,7 +29,7 @@ const fetchWithAuth = async (url, options = {}) => {
   return response.json();
 };
 
-// Obtener los datos del usuario
+
 export const getUserData = async () => {
   try {
     const data = await fetchWithAuth('/profesores');
@@ -165,6 +165,19 @@ export const createAlumnos = async (data) => {
   }
 };
 
+export const agregarColaborador = async (colaborador, mesaID) => {
+  try {
+    const col = await fetchWithAuth(`/mesas/colaborador/${mesaID}`, {
+      method: 'POST',
+      body: JSON.stringify(colaborador),
+    });
+    return col;
+  } catch (error) {
+    console.error(`Error al adherir al colaborador ${colaborador}:`, error);
+    throw new Error('No se pudo actualizar la información del alumno.');
+  }
+};
+
 // Actualizar las notas de una mesa de examen
 export const  updateNotasMesa = async (mesaId, dataNotas) => {
   try {
@@ -179,18 +192,5 @@ export const  updateNotasMesa = async (mesaId, dataNotas) => {
   } catch (error) {
     console.error(`Error al actualizar la mesa ${mesaId}:`, error);
     throw new Error('No se pudo actualizar la mesa de examen.');
-  }
-};
-
-//Agregar un colaborador
-export const agregarColaborador = async (colaborador, mesaID) => {
-  try {
-    await fetchWithAuth(`/mesas/colaborador/${mesaID}`, {
-      method: 'POST',
-      body: JSON.stringify(colaborador),
-    });
-  } catch (error) {
-    console.error(`Error al adherir al colaborador ${colaborador}:`, error);
-    throw new Error('No se pudo actualizar la información del alumno.');
   }
 };

@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Route definitions
 router.get('/profesor', getMesasByProfesor);
-router.get('/colaborador',getMesaByColaborador);
+router.get('/colaborador', getMesaByColaborador);
 router.post('/colaborador/:id_mesa', addColaborador);
 router.get('/:id', getMesaById);
 router.post('/', createMesa);
