@@ -24,6 +24,7 @@ const MesaCard = ({ mesa, handleDelete, soyColaborador }) => {
 
   const handleAgregarColaborador = async () => {
     try{
+      setError('');
       await agregarColaborador(nuevoColaborador, mesa.id_mesa); 
       setNuevoColaborador('');
     }catch (error){
