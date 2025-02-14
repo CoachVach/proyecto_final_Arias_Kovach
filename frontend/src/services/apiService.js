@@ -174,7 +174,7 @@ export const agregarColaborador = async (colaborador, mesaID) => {
     return col;
   } catch (error) {
     console.error(`Error al adherir al colaborador ${colaborador}:`, error);
-    throw new Error('No se pudo actualizar la información del alumno.');
+    throw new Error(error);
   }
 };
 
