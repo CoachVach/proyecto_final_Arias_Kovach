@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllMesasByProfesor, getAllMesasByColaborador } from '../services/apiService'; // Importa las funciones del apiService
+import { getAllMesasByProfesor, getAllMesasByColaborador, deleteMesa } from '../services/apiService'; // Importa las funciones del apiService
 import MesasList from '../components/mesas/MesasList'; // Importar el componente de lista de mesas
 import ErrorMessage from '../components/common/ErrorMessage'; // Importar el componente de mensaje de error
 import '../styles/pages/MesasPage.css';
@@ -36,10 +36,20 @@ const MesasPage = () => {
     }
   };
   
+  const handleDelete = async (mesaId) => {
+    try {
+      if (window.confirm("¿Estás seguro de eliminar esta mesa?")) {
+        await deleteMesa(mesaId);
+        fetchMesas(); 
+      }
+    } catch (error) {
+      setError(error.message); 
+    }
+  };
 
   useEffect(() => {
     fetchMesas();
-    socket.emit("joinProfesor", email); // Unirse a la sala de profesor
+    socket.emit("joinProfesor", email);
     // Escuchar el evento de WebSocket
     socket.on("mesasActualizadas", (data) => {
       console.log("🔄 Se detectó un cambio en las mesasa:", data);
@@ -61,8 +71,8 @@ const MesasPage = () => {
           null
         ) : (
           <div>
-            <MesasList mesas={mesasProfesor} title = {'Mesas como Profesor Titular'}/>
-            <MesasList mesas={mesasColaborador} title = {'Mesas como Colaborador'}/>
+            <MesasList mesas={mesasProfesor} deleteMesa={handleDelete} title={'Mesas como Profesor Titular'} soyColaborador={false} />
+            <MesasList mesas={mesasColaborador} deleteMesa={handleDelete} title={'Mesas como Colaborador'} soyColaborador={true}/>
           </div>
         )
       }

@@ -37,6 +37,17 @@ class MesaExamenService{
         return mesa;
     }
 
+    static async validateProfesorCreador(profesorId, mesaId) {
+        let mesa = await MesaExamen.findByPk(mesaId);
+        if (mesa.id_profesor !== profesorId) {
+            throw new AppError('El usuario no es titular o propietario de esta mesa.',500);
+        }
+        if (!mesa) {
+            throw new AppError('Mesa de examen no encontrada', 404);
+        }
+        return mesa;
+    }
+
     static async deleteMesa(mesa){
         await mesa.destroy();
     }
