@@ -7,7 +7,6 @@ const fetchWithAuth = async (url, options = {}) => {
   if (!token) {
     throw new Error('Token de autenticación no encontrado');
   }
-
   const response = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers: {
