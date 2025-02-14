@@ -98,16 +98,16 @@ const CrearMesaPage = () => {
     e.preventDefault();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(formData.fecha);
+    const selectedDate = new Date(formData.fecha + 'T00:00:00');
     selectedDate.setHours(0, 0, 0, 0);
-
+  
     if (selectedDate < today) {
       alert('La fecha ingresada ya ha pasado. Por favor, selecciona una fecha válida.');
       return;
     }
-
+  
     let mesaId = null;
-
+  
     try {
       setLoading(true);
       const mesa = await createMesa({
@@ -116,17 +116,25 @@ const CrearMesaPage = () => {
         listaColaboradores: formData.listaColaboradores,
       });
       mesaId = mesa.id_mesa;
-
-      if (!formData.alumnos.length) {
-        throw new Error('Archivo Invalido');
+  
+      // Filtrar alumnos inválidos
+      const alumnosValidos = formData.alumnos.filter(
+        (alumno) => alumno.lu !== null && alumno.doc !== null && alumno.nombre_completo !== null &&
+                    alumno.lu !== ' ' && alumno.doc !== ' ' && alumno.nombre_completo !== ' ' &&
+                    alumno.lu !== '' && alumno.doc !== '' && alumno.nombre_completo !== ''
+      );
+      console.log(alumnosValidos);
+  
+      if (alumnosValidos.length === 0) {
+        throw new Error('Archivo Inválido: No se encontraron alumnos con datos completos.');
       }
-
-      await createAlumnos({ alumnos: formData.alumnos, id_mesa: mesaId });
+  
+      await createAlumnos({ alumnos: alumnosValidos, id_mesa: mesaId });
       navigate('/mesas');
     } catch (error) {
       setLoading(false);
       setFormData((prevData) => ({ ...prevData, error: error.message }));
-
+  
       if (mesaId) {
         try {
           await deleteMesa(mesaId);
@@ -137,6 +145,7 @@ const CrearMesaPage = () => {
       }
     }
   };
+  
 
   const handleEmailChange = (e) => setEmail(e.target.value);
 

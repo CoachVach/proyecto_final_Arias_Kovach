@@ -86,6 +86,7 @@ const assignAlumnosToMesa = async (req, res, next) => {
             }
 
             let alumno = await AlumnoService.findAlumnoByNroIden(nro_identidad);
+            console.log(alumno);
 
             if (!alumno) {
                 alumno = await AlumnoService.createAlumno(doc, nro_identidad, lu, nombre_completo);

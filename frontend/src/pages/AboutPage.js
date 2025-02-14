@@ -32,7 +32,7 @@ const AboutPage = () => {
         <div className="team-container">
             <div className="team-card">
                 <h3>Erik Kovach</h3>
-                <p className="email">✉ kovacherik@email.com</p>
+                <p className="email">✉ kovacherik@gmail.com</p>
                 <a href="https://www.linkedin.com/in/erik-kovach-1420b2208/" target="_blank" rel="noopener noreferrer">
                 🔗 LinkedIn
                 </a>
@@ -40,7 +40,7 @@ const AboutPage = () => {
 
             <div className="team-card">
                 <h3>Federico Arias</h3>
-                <p className="email">✉ ariasfede596@email.com</p>
+                <p className="email">✉ ariasfede596@gmail.com</p>
                 <a href="https://www.linkedin.com/in/federico-arias-09b9a2327/" target="_blank" rel="noopener noreferrer">
                 🔗 LinkedIn
                 </a>
