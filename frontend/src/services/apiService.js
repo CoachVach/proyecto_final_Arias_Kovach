@@ -7,7 +7,7 @@ const fetchWithAuth = async (url, options = {}) => {
   if (!token) {
     throw new Error('Token de autenticación no encontrado');
   }
-
+  
   const response = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers: {
@@ -169,7 +169,7 @@ export const agregarColaborador = async (colaborador, mesaID) => {
   try {
     const col = await fetchWithAuth(`/mesas/colaborador/${mesaID}`, {
       method: 'POST',
-      body: JSON.stringify(colaborador),
+      body: JSON.stringify({colaborador: colaborador}),
     });
     return col;
   } catch (error) {
