@@ -75,8 +75,9 @@ const updateDatosAlumnoMesa = async (req, res, next) => {
 
 const deleteMesa = async (req, res, next) => {
     try {
-        const mesa = await MesaExamenService.validateProfesorMesa(req.profesor.id_profesor, req.params.id);
+        const mesa = await MesaExamenService.validateProfesorCreador(req.profesor.id_profesor, req.params.id);
         await MesaExamenService.deleteMesa(mesa);
+        req.io.to(`profesor_${req.profesor.email}`).emit('mesasActualizadas', { id_mesa: newMesa.id_mesa });
         res.status(200).json({ message: 'Mesa de examen eliminada correctamente' });
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al eliminar la mesa de examen', 500, error.message));
