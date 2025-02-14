@@ -181,3 +181,16 @@ export const  updateNotasMesa = async (mesaId, dataNotas) => {
     throw new Error('No se pudo actualizar la mesa de examen.');
   }
 };
+
+//Agregar un colaborador
+export const agregarColaborador = async (colaborador, mesaID) => {
+  try {
+    await fetchWithAuth(`/mesas/colaborador/${mesaID}`, {
+      method: 'POST',
+      body: JSON.stringify(colaborador),
+    });
+  } catch (error) {
+    console.error(`Error al adherir al colaborador ${colaborador}:`, error);
+    throw new Error('No se pudo actualizar la información del alumno.');
+  }
+};
