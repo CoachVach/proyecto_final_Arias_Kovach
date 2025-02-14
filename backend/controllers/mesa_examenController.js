@@ -125,7 +125,7 @@ const addColaborador = async(req, res, next) =>{
         const colaborador = [req.body.colaborador];
         console.log(colaborador);
         const mesa = await MesaExamenService.validateProfesorCreador(req.profesor.id_profesor, req.params.id_mesa);
-        await ColaboradorMesaService.addColaborador(colaborador, mesa.id_mesa, req.io);
+        await ColaboradorMesaService.addColaborador(colaborador, mesa, req.io);
         res.status(200).json({ message: 'Colaborador agregado correctamente' });
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al adherir un colaborador', 500, error.message));
