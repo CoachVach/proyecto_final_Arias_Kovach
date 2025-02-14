@@ -120,6 +120,19 @@ const updateNotasAlumnos = async (req, res, next) => {
     }
 };
 
+const addColaborador = async(req, res, next) =>{
+    try{
+        const colaborador = [req.body];
+        const mesa = await MesaExamenService.validateProfesorCreador(req.profesor.id_profesor, req.params.id);
+        await ColaboradorMesaService.addColaborador(colaborador, mesa.id_mesa, req.io);
+        res.status(200).json({ message: 'Colaborador agregado correctamente' });
+    } catch{
+        next(error instanceof AppError ? error : new AppError('Error al adherir un colaborador', 500, error.message));
+    }
+
+
+}
+
 module.exports = {
     getMesaById,
     createMesa,
@@ -128,5 +141,6 @@ module.exports = {
     updateAlumnoMesa,
     updateDatosAlumnoMesa,
     updateNotasAlumnos,
-    getMesaByColaborador
+    getMesaByColaborador,
+    addColaborador
 };
