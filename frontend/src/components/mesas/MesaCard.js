@@ -6,8 +6,10 @@ const MesaCard = ({ mesa, handleDelete, soyColaborador }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const deleteMesa = async () => {
+    if (window.confirm("¿Estás seguro de eliminar esta mesa?")) {
       setLoading(true);
       handleDelete(mesa.id_mesa)
+    }
   };
 
   if (loading) return (

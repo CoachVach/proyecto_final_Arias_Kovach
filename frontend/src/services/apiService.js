@@ -18,8 +18,12 @@ const fetchWithAuth = async (url, options = {}) => {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error: ${response.status} - ${errorText}`);
+    const errorData = await response.json();
+    if (errorData.error){
+      throw new Error(errorData.error.message);
+    }else{
+      throw new Error(errorData.error);
+    }
   }
 
   return response.json();
@@ -105,7 +109,7 @@ export const createMesa = async (data) => {
     return nuevaMesa;
   } catch (error) {
     console.error('Error al crear la mesa:', error);
-    throw new Error('No se pudo crear la mesa de examen.');
+    throw new Error(error);
   }
 };
 
@@ -157,7 +161,7 @@ export const createAlumnos = async (data) => {
     return nuevosAlumnos;
   } catch (error) {
     console.error('Error al crear los alumnos:', error);
-    throw new Error('No se pudieron crear los alumnos.');
+    throw new Error(error);
   }
 };
 

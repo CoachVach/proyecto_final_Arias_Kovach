@@ -38,10 +38,8 @@ const MesasPage = () => {
   
   const handleDelete = async (mesaId) => {
     try {
-      if (window.confirm("¿Estás seguro de eliminar esta mesa?")) {
-        await deleteMesa(mesaId);
-        fetchMesas(); 
-      }
+      await deleteMesa(mesaId);
+      fetchMesas(); 
     } catch (error) {
       setError(error.message); 
     }

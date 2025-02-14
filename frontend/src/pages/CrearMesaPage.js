@@ -98,20 +98,23 @@ const CrearMesaPage = () => {
     e.preventDefault();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(formData.fecha + 'T00:00:00');
+
+    // Ajusta la fecha seleccionada para que se interprete en la zona horaria local
+    const [year, month, day] = formData.fecha.split('-');
+    const selectedDate = new Date(year, month - 1, day); // Meses en JavaScript son 0-indexados
     selectedDate.setHours(0, 0, 0, 0);
-  
+
     if (selectedDate < today) {
       alert('La fecha ingresada ya ha pasado. Por favor, selecciona una fecha válida.');
       return;
     }
-  
+
     let mesaId = null;
-  
+
     try {
       setLoading(true);
       const mesa = await createMesa({
-        fecha: formData.fecha,
+        fecha: selectedDate,
         materia: formData.materia,
         listaColaboradores: formData.listaColaboradores,
       });
@@ -177,8 +180,8 @@ const CrearMesaPage = () => {
         <FormInput label="Fecha:" type="date" name="fecha" value={formData.fecha} onChange={handleInputChange} required />
         <FormInput label="Materia:" type="text" name="materia" value={formData.materia} onChange={handleInputChange} required />
         <FileUpload onFileChange={handleFileUpload} />
+        <label>Colaboradores: </label>
         <div className="email-input-container">
-          <label>Colaboradores: </label>
           <input type="email" value={email} onChange={handleEmailChange} placeholder="Agregar correo" />
           <button type="button" onClick={addEmail} className="add-email-button">Agregar</button>
         </div>
