@@ -122,7 +122,7 @@ const updateNotasAlumnos = async (req, res, next) => {
 
 const addColaborador = async(req, res, next) =>{
     try{
-        const colaborador = [req.body];
+        const colaborador = [req.body.colaborador];
         console.log(colaborador);
         const mesa = await MesaExamenService.validateProfesorCreador(req.profesor.id_profesor, req.params.id_mesa);
         await ColaboradorMesaService.addColaborador(colaborador, mesa.id_mesa, req.io);
