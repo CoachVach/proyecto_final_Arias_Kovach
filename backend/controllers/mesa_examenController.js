@@ -25,7 +25,7 @@ const createMesa = async (req, res, next) => {
             throw new AppError('Formato incorrecto de datos', 400);
         }
         req.io.to(`profesor_${req.profesor.email}`).emit('mesasActualizadas', { id_mesa: newMesa.id_mesa });
-        await ColaboradorMesaService.addColaborador(listaColaboradores, newMesa.id_mesa,req.io);
+        await ColaboradorMesaService.addColaborador(listaColaboradores, newMesa, req.io);
         res.status(201).json(newMesa);
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al crear la mesa de examen', 500, error.message));
@@ -77,7 +77,7 @@ const deleteMesa = async (req, res, next) => {
     try {
         const mesa = await MesaExamenService.validateProfesorCreador(req.profesor.id_profesor, req.params.id);
         await MesaExamenService.deleteMesa(mesa);
-        req.io.to(`profesor_${req.profesor.email}`).emit('mesasActualizadas', { id_mesa: newMesa.id_mesa });
+        req.io.to(`profesor_${req.profesor.email}`).emit('mesasActualizadas', { id_mesa: mesa.id_mesa });
         res.status(200).json({ message: 'Mesa de examen eliminada correctamente' });
     } catch (error) {
         next(error instanceof AppError ? error : new AppError('Error al eliminar la mesa de examen', 500, error.message));

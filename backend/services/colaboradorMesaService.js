@@ -7,19 +7,19 @@ const { Op } = require('sequelize');
 
 class ColaboradorMesaService{
 
-    static async addColaborador(listaColaboradores, mesaID, io){
+    static async addColaborador(listaColaboradores, mesa, io){
         for (const colab of listaColaboradores ){
             let profesor = await ProfesorService.verifyProfessor(colab);
             if (!profesor) {
-                await MesaExamenService.deleteMesa(newMesa);
+                await MesaExamenService.deleteMesa(mesa);
                 throw new AppError('Uno de los mails proporcionados no pertenecen a un profesor registrado', 404);
             }
             await ColaboradorMesa.create({
                 id_profesor: profesor.id_profesor,
-                id_mesa: mesaID
+                id_mesa: mesa.id_mesa
             });
             // Emitir evento de actualización a todos los clientes
-            io.to(`profesor_${profesor.email}`).emit('mesasActualizadas', { id_mesa: mesaID });
+            io.to(`profesor_${profesor.email}`).emit('mesasActualizadas', { id_mesa: mesa.id_mesa });
         }
     }
 
