@@ -23,6 +23,21 @@ class ColaboradorMesaService{
         }
     }
 
+    static async addColaboradorUnitario(listaColaboradores, mesa, io){
+        for (const colab of listaColaboradores ){
+            let profesor = await ProfesorService.verifyProfessor(colab);
+            if (!profesor) {
+                throw new AppError('El mail proporcionado no pertenece a un profesor registrado', 404);
+            }
+            await ColaboradorMesa.create({
+                id_profesor: profesor.id_profesor,
+                id_mesa: mesa.id_mesa
+            });
+            // Emitir evento de actualización a todos los clientes
+            io.to(`profesor_${profesor.email}`).emit('mesasActualizadas', { id_mesa: mesa.id_mesa });
+        }
+    }
+
     static async findMesasByColaborador(idColaborador){
         const idMesas = await ColaboradorMesa.findAll({ where: { id_profesor: idColaborador } });
         let mesas=[]; 
