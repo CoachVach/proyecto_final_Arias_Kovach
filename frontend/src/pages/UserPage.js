@@ -76,15 +76,6 @@ const UserPage = () => {
               onChange={handleChange}
             />
           </label>
-          <label>
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.email || ''}
-              onChange={handleChange}
-            />
-          </label>
           <button type="submit">Guardar</button>
           <button type="button" onClick={() => setIsEditing(false)}>
             Cancelar
