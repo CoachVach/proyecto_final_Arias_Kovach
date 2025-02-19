@@ -107,12 +107,12 @@ const Navbar = () => {
                 <>
                   <li className="nav-item">
                     <Link to="/login" className="nav-link">
-                      Login
+                      Iniciar Sesión
                     </Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/register" className="nav-link">
-                      Register
+                      Registrar
                     </Link>
                   </li>
                 </>
